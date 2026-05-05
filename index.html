@@ -80,13 +80,15 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem}
 .landing h2{font-size:1.75rem;font-weight:600;color:var(--text);margin-bottom:6px;text-align:center}
 .landing-sub{font-size:0.875rem;color:var(--muted);margin-bottom:3rem;text-align:center}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:560px;width:100%}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:680px;width:100%}
 .lcard{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:2rem 1.5rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s,transform 0.15s;text-align:center}
 .lcard:hover{border-color:var(--primary);box-shadow:0 6px 24px rgba(33,122,61,0.1);transform:translateY(-2px)}
 .lcard-icon{width:48px;height:48px;border-radius:10px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
 .lcard-icon svg{width:22px;height:22px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .lcard h3{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:6px}
 .lcard p{font-size:0.8rem;color:var(--muted);line-height:1.6}
+/* Submit card spans full width on its own row when it's 1-of-3 */
+.cards.three { grid-template-columns: 1fr 1fr 1fr; }
 
 /* ── ANALYTICS STRIP (tracker inline) ── */
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
@@ -253,6 +255,136 @@ tr:hover td{background:var(--bg)}
 .analytics-view-scroll::-webkit-scrollbar{width:4px}
 .analytics-view-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
+/* ── SERVICES VIEW ── */
+.services-scroll { flex:1; overflow-y:auto; padding:1.75rem; }
+.services-scroll::-webkit-scrollbar { width:4px; }
+.services-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.sv-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap; }
+.sv-toolbar h2 { font-size:1.25rem; font-weight:600; color:var(--text); }
+.sv-toolbar-right { display:flex; align-items:center; gap:8px; }
+.sv-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1rem; }
+.sv-card {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:10px; padding:1.125rem 1.25rem;
+  display:flex; flex-direction:column; gap:8px;
+  transition:border-color 0.15s, box-shadow 0.15s;
+}
+.sv-card:hover { border-color:var(--k300); box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+.sv-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+.sv-card-name { font-size:0.9375rem; font-weight:600; color:var(--text); flex:1; }
+.sv-card-category {
+  font-size:0.63rem; font-weight:600; padding:2px 8px;
+  border-radius:20px; background:var(--primary-lt); color:var(--primary-dk);
+  white-space:nowrap; flex-shrink:0;
+}
+.sv-card-desc { font-size:0.8125rem; color:var(--muted); line-height:1.65; }
+.sv-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+.sv-card-price { font-size:0.8rem; font-weight:600; color:var(--primary-dk); }
+.sv-card-actions { display:flex; gap:6px; }
+.sv-card-actions button {
+  font-family:'Rubik',sans-serif; font-size:0.72rem; font-weight:500;
+  padding:4px 10px; border-radius:6px; cursor:pointer; transition:all 0.15s;
+}
+.sv-btn-edit { background:var(--bg); border:1.5px solid var(--border); color:var(--muted); }
+.sv-btn-edit:hover { border-color:var(--primary); color:var(--primary); }
+.sv-btn-del { background:var(--tomato-lt); border:1.5px solid #fbbdbd; color:var(--tomato); }
+.sv-btn-del:hover { background:#ffd0d0; }
+.sv-empty { text-align:center; padding:4rem 2rem; color:var(--muted); font-size:0.875rem; }
+.sv-empty p { margin-top:8px; }
+
+/* ── SERVICE MODAL ── */
+.svc-modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.45); z-index:999;
+  align-items:center; justify-content:center; padding:1.5rem;
+}
+.svc-modal-overlay.open { display:flex; }
+.svc-modal {
+  background:var(--surface); border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.18);
+  padding:28px; width:100%; max-width:520px;
+  max-height:90vh; overflow-y:auto;
+}
+.svc-modal h3 { font-size:1rem; font-weight:600; margin-bottom:1.25rem; }
+.svc-form-group { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+.svc-form-group label { font-size:0.75rem; font-weight:500; color:var(--muted); }
+.svc-form-group input,
+.svc-form-group textarea,
+.svc-form-group select {
+  font-family:'Rubik',sans-serif; font-size:0.875rem; color:var(--text);
+  background:var(--bg); border:1.5px solid var(--border); border-radius:7px;
+  padding:8px 10px; outline:none; transition:border-color 0.15s;
+  width:100%;
+}
+.svc-form-group input:focus,
+.svc-form-group textarea:focus,
+.svc-form-group select:focus { border-color:var(--primary); }
+.svc-form-group textarea { resize:vertical; min-height:80px; line-height:1.6; }
+.svc-modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; }
+.svc-modal-actions .btn-cancel {
+  font-family:'Rubik',sans-serif; font-size:0.8125rem; font-weight:500;
+  padding:7px 16px; border-radius:7px; cursor:pointer;
+  background:transparent; border:1.5px solid var(--border); color:var(--muted);
+  transition:all 0.15s;
+}
+.svc-modal-actions .btn-cancel:hover { border-color:var(--muted); color:var(--text); }
+.svc-modal-actions .btn-save {
+  font-family:'Rubik',sans-serif; font-size:0.8125rem; font-weight:500;
+  padding:7px 20px; border-radius:7px; cursor:pointer;
+  background:var(--primary); border:none; color:#fff; transition:background 0.15s;
+}
+.svc-modal-actions .btn-save:hover { background:var(--primary-dk); }
+.svc-modal-actions .btn-save:disabled { opacity:0.6; cursor:not-allowed; }
+
+/* ── SERVICES PREVIEW MODAL (in form) ── */
+.svc-preview-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.45); z-index:9000;
+  align-items:center; justify-content:center; padding:1.5rem;
+}
+.svc-preview-overlay.open { display:flex; }
+.svc-preview-panel {
+  background:var(--surface); border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.18);
+  width:100%; max-width:640px; max-height:86vh;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.svc-preview-header {
+  padding:16px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.svc-preview-header h3 { font-size:1rem; font-weight:600; }
+.svc-preview-close {
+  background:none; border:none; cursor:pointer;
+  color:var(--muted); padding:4px; border-radius:4px; transition:color 0.15s;
+}
+.svc-preview-close:hover { color:var(--text); }
+.svc-preview-body { flex:1; overflow-y:auto; padding:1.25rem; }
+.svc-preview-body::-webkit-scrollbar { width:4px; }
+.svc-preview-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.svc-preview-list { display:flex; flex-direction:column; gap:10px; }
+.svc-preview-item {
+  border:1.5px solid var(--border); border-radius:8px;
+  padding:12px 14px;
+}
+.svc-preview-item-name { font-size:0.9rem; font-weight:600; color:var(--text); margin-bottom:4px; }
+.svc-preview-item-cat { font-size:0.63rem; font-weight:600; color:var(--primary-dk); background:var(--primary-lt); border-radius:20px; padding:1px 8px; display:inline-block; margin-bottom:6px; }
+.svc-preview-item-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+.svc-preview-item-price { font-size:0.8rem; font-weight:600; color:var(--primary-dk); margin-top:6px; }
+
+/* ── STATUS TOAST ── */
+.toast {
+  position:fixed; bottom:20px; right:28px;
+  background:var(--k800); color:#fff;
+  padding:10px 16px; border-radius:8px;
+  font-family:'Rubik',sans-serif; font-size:13px; font-weight:500;
+  box-shadow:0 6px 32px rgba(0,0,0,.15);
+  transform:translateY(80px); opacity:0;
+  transition:all .3s ease; z-index:9999;
+  display:flex; align-items:center; gap:8px;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+
 @media(max-width:640px){
   .body{flex-direction:column}
   .sidebar{width:100%;height:240px;border-right:none;border-bottom:1px solid var(--border)}
@@ -260,9 +392,11 @@ tr:hover td{background:var(--bg)}
   .analytics-row{flex-direction:column}
   .chart-grid{grid-template-columns:1fr}
   .sc-grid{grid-template-columns:repeat(2,1fr)}
+  .sv-grid{grid-template-columns:1fr}
 }
 @media(max-width:540px){
   .cards{grid-template-columns:1fr}
+  .cards.three{grid-template-columns:1fr}
   .landing h2{font-size:1.375rem}
   .shell-header{padding:0 1rem}
 }
@@ -321,6 +455,10 @@ tr:hover td{background:var(--bg)}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
       Tracker
     </button>
+    <button class="tab" id="tab-services" onclick="switchTab('services')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
+      List of Services
+    </button>
     <button class="tab" id="tab-analytics" onclick="switchTab('analytics')" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Analytics
@@ -332,12 +470,14 @@ tr:hover td{background:var(--bg)}
   </div>
 
   <div class="views">
+
     <!-- LANDING -->
     <div class="view on" id="view-landing">
       <div class="landing">
         <h2>What would you like to do?</h2>
         <p class="landing-sub">Select an option to get started.</p>
-        <div class="cards">
+        <!-- 3 cards: submit, tracker, services -->
+        <div class="cards three" id="landingCards">
           <div class="lcard" onclick="openForm()">
             <div class="lcard-icon">
               <svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg>
@@ -352,13 +492,19 @@ tr:hover td{background:var(--bg)}
             <h3>View Tracker</h3>
             <p id="trackerCardDesc">Monitor the status of service requests and activity tickets.</p>
           </div>
+          <div class="lcard" onclick="switchTab('services')">
+            <div class="lcard-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
+            </div>
+            <h3>List of Services</h3>
+            <p>Browse all available Platform Operations services and what they cover.</p>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- TRACKER VIEW -->
     <div class="view" id="view-tracker">
-      <!-- ANALYTICS STRIP -->
       <div class="analytics" id="analytics">
         <div class="analytics-row" id="scRow">
           <div class="sc" data-lc="all" onclick="scFilter(this)"><div class="sc-label">Total</div><div class="sc-value" id="sc-total">—</div><div class="sc-sub">All requests</div></div>
@@ -371,7 +517,6 @@ tr:hover td{background:var(--bg)}
         </div>
         <div class="analytics-meta" id="analyticsMeta"></div>
       </div>
-
       <div class="body">
         <div class="sidebar">
           <div class="sb-search">
@@ -398,6 +543,26 @@ tr:hover td{background:var(--bg)}
       </div>
     </div>
 
+    <!-- SERVICES VIEW -->
+    <div class="view" id="view-services">
+      <div class="services-scroll">
+        <div class="sv-toolbar">
+          <h2>List of Services</h2>
+          <div class="sv-toolbar-right">
+            <!-- Edit controls — shown to internal users only -->
+            <span id="sv-sync-msg" style="font-size:0.75rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span>
+            <button class="btn btn-primary" id="sv-add-btn" onclick="openServiceModal()" style="display:none">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:4px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Service
+            </button>
+          </div>
+        </div>
+        <div id="sv-grid" class="sv-grid">
+          <div class="sv-empty"><span class="spinner"></span><p>Loading services…</p></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ANALYTICS VIEW -->
     <div class="view" id="view-analytics">
       <div class="analytics-view-scroll">
@@ -412,7 +577,6 @@ tr:hover td{background:var(--bg)}
               <button class="btn" onclick="clearFilter()">All time</button>
             </div>
           </div>
-
           <div class="sc-grid">
             <div class="sc-an highlight"><div class="sc-label">Total Requests</div><div class="sc-value" id="an-total">—</div><div class="sc-sub">In selected period</div></div>
             <div class="sc-an"><div class="sc-label">For Quotation</div><div class="sc-value" id="an-fq">—</div><div class="sc-sub">Awaiting review</div></div>
@@ -425,7 +589,6 @@ tr:hover td{background:var(--bg)}
             <div class="sc-an revenue-in"><div class="sc-label">Revenue Received</div><div class="sc-value" id="an-rev-in">—</div><div class="sc-sub">Paid requests total</div></div>
             <div class="sc-an revenue-out"><div class="sc-label">Revenue Lost</div><div class="sc-value" id="an-rev-out">—</div><div class="sc-sub">Waived requests total</div></div>
           </div>
-
           <div class="chart-grid">
             <div class="chart-card"><h3>Requests over time</h3><div class="chart-wrap tall"><canvas id="an-chartMonthly"></canvas></div></div>
             <div class="chart-card"><h3>By lifecycle stage</h3><div class="chart-wrap tall"><canvas id="an-chartLifecycle"></canvas></div></div>
@@ -450,6 +613,7 @@ tr:hover td{background:var(--bg)}
         </div>
       </div>
     </div>
+
     <!-- QUOTATION VIEW -->
     <div class="view" id="view-quotation">
       <div id="quotation-frame-wrap" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
@@ -463,13 +627,47 @@ tr:hover td{background:var(--bg)}
   </div>
 </div>
 
+<!-- SERVICE EDIT MODAL (internal) -->
+<div class="svc-modal-overlay" id="svcModal">
+  <div class="svc-modal">
+    <h3 id="svcModalTitle">Add Service</h3>
+    <input type="hidden" id="svcEditId"/>
+    <div class="svc-form-group">
+      <label>Service Name <span style="color:var(--tomato)">*</span></label>
+      <input type="text" id="svcName" placeholder="e.g. Data Migration"/>
+    </div>
+    <div class="svc-form-group">
+      <label>Category <span style="color:var(--tomato)">*</span></label>
+      <input type="text" id="svcCategory" placeholder="e.g. Database, Configuration"/>
+    </div>
+    <div class="svc-form-group">
+      <label>Description / Overview</label>
+      <textarea id="svcDesc" rows="4" placeholder="What does this service involve? What's included?"></textarea>
+    </div>
+    <div class="svc-form-group">
+      <label>Starting Price <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <input type="text" id="svcPrice" placeholder="e.g. Starts at ₱5,000 or Quoted per request"/>
+    </div>
+    <div class="svc-modal-actions">
+      <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
+      <button class="btn-save" id="svcSaveBtn" onclick="saveService()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
+  <span id="toastMsg">Done</span>
+</div>
+
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
 var GAS_URL     = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
 var PASSPHRASE  = 'Sprout2026!!';
 var SESSION_KEY = 'platops_v2';
 
-var userEmail='', userRole='client', isInternal=false, trackerInit=false, analyticsInit=false;
+var userEmail='', userRole='client', isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false;
 
 // ── GATE ───────────────────────────────────────────────────
 async function login() {
@@ -515,13 +713,18 @@ function initApp(email,role) {
   if (isInternal) {
     document.getElementById('tab-analytics').style.display='flex';
     document.getElementById('tab-quotation').style.display='flex';
+    document.getElementById('sv-add-btn').style.display='flex';
   }
   if (!isInternal) document.getElementById('trackerCardDesc').textContent='View your submitted service requests and their current status.';
+
+  // Pre-warm tracker cache
   var cacheKey='tracker_cache_'+email;
   if (!sessionStorage.getItem(cacheKey)) {
     fetch(GAS_URL+'?action=list&email='+encodeURIComponent(email)).then(r=>r.json())
       .then(d=>sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}))).catch(()=>{});
   }
+  // Pre-warm services cache
+  loadServicesData();
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────
@@ -537,16 +740,13 @@ function switchTab(name){
   if(name==='form'){openForm();return;}
   if(name==='quotation'){
     openView('quotation');
-    // Lazy-load: set src only on first open
     var iframe=document.getElementById('quotation-iframe');
-    if(iframe && !iframe.dataset.loaded){
-      iframe.src='quotation.html';
-      iframe.dataset.loaded='1';
-    }
+    if(iframe&&!iframe.dataset.loaded){iframe.src='quotation.html';iframe.dataset.loaded='1';}
     return;
   }
   openView(name);
   if(name==='tracker'&&!trackerInit){trackerInit=true;USER_EMAIL=userEmail;IS_INTERNAL=isInternal;init_tracker();}
+  if(name==='services'){renderServicesView();}
   if(name==='analytics'&&!analyticsInit){
     analyticsInit=true;
     var from=new Date();from.setDate(1);
@@ -559,6 +759,195 @@ function switchTab(name){
 }
 var saved=sessionStorage.getItem(SESSION_KEY);
 if(saved){try{var s=JSON.parse(saved);document.getElementById('gate').style.display='none';initApp(s.email,s.role);}catch(e){sessionStorage.removeItem(SESSION_KEY);}}
+
+// ═══════════════════════════════════════════════════════════
+// ── SERVICES MODULE ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+var SVC_LS_KEY = 'platops_services_cache';
+var servicesList = []; // { id, name, category, description, price, sortOrder }
+
+function lsReadServices() {
+  try { return JSON.parse(localStorage.getItem(SVC_LS_KEY)||'[]'); } catch(e){ return []; }
+}
+function lsWriteServices(arr) {
+  try { localStorage.setItem(SVC_LS_KEY, JSON.stringify(arr)); } catch(e){}
+}
+
+async function loadServicesData() {
+  // Show cached immediately
+  var cached = lsReadServices();
+  if (cached.length) { servicesList = cached; }
+
+  // Fetch from GAS (source of truth)
+  try {
+    var res = await fetch(GAS_URL + '?action=getServices');
+    var d   = await res.json();
+    if (d.services) {
+      servicesList = d.services;
+      lsWriteServices(servicesList);
+      renderServicesView();
+    }
+  } catch(e) {
+    console.warn('Services fetch failed, using cache:', e);
+  }
+}
+
+function renderServicesView() {
+  var grid = document.getElementById('sv-grid');
+  if (!grid) return;
+  if (!servicesList.length) {
+    grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isInternal ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
+    return;
+  }
+  grid.innerHTML = servicesList.map(function(svc) {
+    var actionsHtml = '';
+    if (isInternal) {
+      actionsHtml = '<div class="sv-card-actions">'
+        + '<button class="sv-btn-edit" onclick="openServiceModal(' + JSON.stringify(svc.id) + ')">Edit</button>'
+        + '<button class="sv-btn-del" onclick="deleteService(' + JSON.stringify(svc.id) + ')">Delete</button>'
+        + '</div>';
+    }
+    var priceHtml = svc.price ? '<span class="sv-card-price">' + esc(svc.price) + '</span>' : '<span></span>';
+    return '<div class="sv-card">'
+      + '<div class="sv-card-header">'
+      + '<span class="sv-card-name">' + esc(svc.name) + '</span>'
+      + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
+      + '</div>'
+      + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
+      + '<div class="sv-card-footer">' + priceHtml + actionsHtml + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── SERVICE MODAL ───────────────────────────────────────────
+var editingServiceId = null;
+
+function openServiceModal(id) {
+  editingServiceId = id || null;
+  document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
+  document.getElementById('svcName').value     = '';
+  document.getElementById('svcCategory').value = '';
+  document.getElementById('svcDesc').value     = '';
+  document.getElementById('svcPrice').value    = '';
+
+  if (id) {
+    var svc = servicesList.find(function(s){ return s.id === id; });
+    if (svc) {
+      document.getElementById('svcName').value     = svc.name || '';
+      document.getElementById('svcCategory').value = svc.category || '';
+      document.getElementById('svcDesc').value     = svc.description || '';
+      document.getElementById('svcPrice').value    = svc.price || '';
+    }
+  }
+  document.getElementById('svcModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('svcName').focus(); }, 100);
+}
+
+function closeSvcModal() {
+  document.getElementById('svcModal').classList.remove('open');
+  editingServiceId = null;
+}
+
+async function saveService() {
+  var name     = document.getElementById('svcName').value.trim();
+  var category = document.getElementById('svcCategory').value.trim();
+  var desc     = document.getElementById('svcDesc').value.trim();
+  var price    = document.getElementById('svcPrice').value.trim();
+
+  if (!name) { document.getElementById('svcName').focus(); return; }
+  if (!category) { document.getElementById('svcCategory').focus(); return; }
+
+  var btn = document.getElementById('svcSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  var svc = {
+    id:          editingServiceId || ('svc_' + Date.now()),
+    name:        name,
+    category:    category,
+    description: desc,
+    price:       price,
+    sortOrder:   editingServiceId
+      ? (servicesList.find(function(s){ return s.id===editingServiceId; })||{}).sortOrder || 0
+      : servicesList.length + 1,
+  };
+
+  // Update local state immediately
+  if (editingServiceId) {
+    var idx = servicesList.findIndex(function(s){ return s.id === editingServiceId; });
+    if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc);
+  } else {
+    servicesList.push(svc);
+  }
+  lsWriteServices(servicesList);
+  renderServicesView();
+
+  // Also push name list to form.html via localStorage so form can pick it up
+  syncServiceNamesToForm();
+
+  // Sync to GAS in background
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'saveService', service: svc })
+    });
+  } catch(e) { console.warn('Service sync failed:', e); }
+
+  btn.disabled = false; btn.textContent = 'Save';
+  closeSvcModal();
+  showToast(editingServiceId ? 'Service updated.' : 'Service added.');
+  showSyncMsg();
+}
+
+async function deleteService(id) {
+  if (!confirm('Delete this service?')) return;
+  var svc = servicesList.find(function(s){ return s.id === id; });
+  var name = svc ? svc.name : '';
+  servicesList = servicesList.filter(function(s){ return s.id !== id; });
+  lsWriteServices(servicesList);
+  renderServicesView();
+  syncServiceNamesToForm();
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'deleteService', id: id })
+    });
+  } catch(e) { console.warn('Service delete sync failed:', e); }
+
+  showToast('Service deleted.');
+  showSyncMsg();
+}
+
+// Push service names to localStorage so form.html reads them on load
+function syncServiceNamesToForm() {
+  var names = servicesList.map(function(s){ return s.name; });
+  try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e){}
+}
+
+function showSyncMsg() {
+  var el = document.getElementById('sv-sync-msg');
+  if (!el) return;
+  el.style.display = 'inline';
+  setTimeout(function(){ el.style.display='none'; }, 3000);
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+// Close service modal on overlay click
+document.getElementById('svcModal').addEventListener('click', function(e){
+  if (e.target === this) closeSvcModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key==='Escape') closeSvcModal();
+});
 
 // ── TRACKER GLOBALS ────────────────────────────────────────
 var USER_EMAIL='', IS_INTERNAL=false;
@@ -574,7 +963,7 @@ async function loadList(){
   const cacheKey='tracker_cache_'+USER_EMAIL;
   const cached=sessionStorage.getItem(cacheKey);
   if(cached){
-    try{const{data}=JSON.parse(cached);all=data.submissions||[];render();}catch(e){console.error('loadAnalytics exception:',e);}
+    try{const{data}=JSON.parse(cached);all=data.submissions||[];render();}catch(e){console.error('loadList cache error:',e);}
     fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL)).then(r=>r.json())
       .then(d=>{sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}));all=d.submissions||[];render();}).catch(()=>{});
     return;
@@ -587,15 +976,14 @@ async function loadList(){
     clearTimeout(to); const d=await res.json();
     sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}));
     all=d.submissions||[]; render();
-  }catch(e){document.getElementById('sbList').innerHTML='<div class="empty-sb">Failed to load requests.<br><span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadList()">Retry</span><br><span style="font-size:0.7rem;color:var(--muted)">Check GAS deployment if error persists.</span></div>';}
+  }catch(e){document.getElementById('sbList').innerHTML='<div class="empty-sb">Failed to load requests.<br><span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadList()">Retry</span></div>';}
 }
 async function refresh(){sessionStorage.removeItem('tracker_cache_'+USER_EMAIL);all=[];activeKey=null;document.getElementById('detail').innerHTML='<div class="state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Select a request to view details</p></div>';await loadList();if(IS_INTERNAL)loadAnalytics();}
 async function loadAnalytics(){
   try{
     const res=await fetch(GAS_URL+'?action=analytics');
     const data=await res.json();
-    console.log('Analytics response:', JSON.stringify(data));
-    if(!data||data.error){console.warn('Analytics error:',data&&data.error);return;}
+    if(!data||data.error)return;
     const lc=data.lifecycleCounts||{};
     document.getElementById('sc-total').textContent=data.total!=null?data.total:'—';
     document.getElementById('sc-fq').textContent=lc['For Quotation']!=null?lc['For Quotation']:'—';
@@ -719,32 +1107,24 @@ var charts={};
 var COLORS={green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8'};
 var LC_COLORS=[COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.greenL];
 var LC_BORDERS=[COLORS.gray,COLORS.amber,COLORS.blue,COLORS.purple,COLORS.teal,COLORS.green];
-
 function fmtPhp(n){if(n===null||n===undefined)return'—';if(n>=1000000)return'₱'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'₱'+(n/1000).toFixed(0)+'K';return'₱'+n.toLocaleString('en-PH',{minimumFractionDigits:0,maximumFractionDigits:0});}
-
 async function load_analytics(from,to){
   document.getElementById('an-loadingState').style.display='flex';
   document.getElementById('an-content').style.display='none';
   try{
     let url=GAS_URL+'?action=analytics';
     if(from)url+='&from='+from; if(to)url+='&to='+to;
-    const res=await fetch(url);
-    const data=await res.json();
+    const res=await fetch(url); const data=await res.json();
     render_analytics(data);
     document.getElementById('an-loadingState').style.display='none';
     document.getElementById('an-content').style.display='block';
   }catch(e){
-    console.error('load_analytics error:',e);
     const ls=document.getElementById('an-loadingState');
-    if(ls)ls.innerHTML='<p style="color:var(--muted)">Failed to load analytics data. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="load_analytics()">Retry</span></p><p style="font-size:0.75rem;color:var(--muted);margin-top:8px">If this keeps happening, the GAS deployment may need to be updated.</p>';
+    if(ls)ls.innerHTML='<p style="color:var(--muted)">Failed to load analytics. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="load_analytics()">Retry</span></p>';
   }
 }
 function render_analytics(data){
-  console.log('render_analytics data:', JSON.stringify(data));
-  const lc=data.lifecycleCounts||{};
-  const svc=data.byService||{};
-  const cost=data.byCost||{};
-  const urg=data.byUrgency||{};
+  const lc=data.lifecycleCounts||{};const svc=data.byService||{};const cost=data.byCost||{};const urg=data.byUrgency||{};
   const svcKeys=Object.keys(svc).sort((a,b)=>svc[b]-svc[a]);
   document.getElementById('an-total').textContent=data.total??'—';
   document.getElementById('an-fq').textContent=lc['For Quotation']??'—';
@@ -756,12 +1136,10 @@ function render_analytics(data){
   document.getElementById('an-avg').textContent=data.avgDays!=null?data.avgDays+'d':'—';
   document.getElementById('an-rev-in').textContent=fmtPhp(data.revenueReceived??null);
   document.getElementById('an-rev-out').textContent=fmtPhp(data.revenueLost??null);
-
   const tbody=document.querySelector('#an-serviceTable tbody');
   if(tbody){tbody.innerHTML='';const total=Object.values(svc).reduce((a,b)=>a+b,0)||1;svcKeys.forEach(k=>{const pct=Math.round((svc[k]/total)*100);tbody.innerHTML+=`<tr><td>${k}</td><td>${svc[k]}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px"><div style="width:${pct}%;height:100%;background:var(--primary);border-radius:3px"></div></div><span style="font-size:0.72rem;color:var(--muted);min-width:30px">${pct}%</span></div></td></tr>`;});}
-
   setTimeout(()=>{
-    if(typeof Chart==='undefined'){return;}
+    if(typeof Chart==='undefined')return;
     const monthly=data.monthlyArr||[];
     const lcLabels=['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
     const lcShort=['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done'];
@@ -771,27 +1149,11 @@ function render_analytics(data){
     buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
-
-    // Revenue over time — grouped bar: received vs lost by month
-    const revMonthly = data.revenueByMonth || [];
-    buildChart('an-chartRevTime','bar',{
-      labels: revMonthly.map(m=>fmtMonth(m.month)),
-      datasets:[
-        {label:'Received',data:revMonthly.map(m=>m.received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},
-        {label:'Lost (Waived)',data:revMonthly.map(m=>m.lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4},
-      ]
-    },{scales:{y:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
-
-    // Revenue by service type — horizontal bar
-    const revSvc     = data.revenueByService || {};
-    const revSvcKeys = Object.keys(revSvc).sort((a,b)=>(revSvc[b].received+revSvc[b].lost)-(revSvc[a].received+revSvc[a].lost));
-    buildChart('an-chartRevService','bar',{
-      labels: revSvcKeys,
-      datasets:[
-        {label:'Received',data:revSvcKeys.map(k=>revSvc[k].received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},
-        {label:'Lost (Waived)',data:revSvcKeys.map(k=>revSvc[k].lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4},
-      ]
-    },{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
+    const revMonthly=data.revenueByMonth||[];
+    buildChart('an-chartRevTime','bar',{labels:revMonthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Received',data:revMonthly.map(m=>m.received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revMonthly.map(m=>m.lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
+    const revSvc=data.revenueByService||{};
+    const revSvcKeys=Object.keys(revSvc).sort((a,b)=>(revSvc[b].received+revSvc[b].lost)-(revSvc[a].received+revSvc[a].lost));
+    buildChart('an-chartRevService','bar',{labels:revSvcKeys,datasets:[{label:'Received',data:revSvcKeys.map(k=>revSvc[k].received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revSvcKeys.map(k=>revSvc[k].lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
   },150);
 }
 function buildChart(id,type,data,options){if(charts[id])charts[id].destroy();const ctx=document.getElementById(id).getContext('2d');charts[id]=new Chart(ctx,{type,data,options:Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type==='doughnut',labels:{font:{family:"'Rubik'"}}}},scales:type==='doughnut'?{}:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}}}},options||{})});}
@@ -800,99 +1162,52 @@ function clearFilter(){document.getElementById('an-fromDate').value='';document.
 function fmtMonth(ym){if(!ym)return'';const[y,m]=ym.split('-');const names=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return(names[parseInt(m,10)-1]||m)+' '+y;}
 
 // ── OPERATIONAL DETAILS CARD ───────────────────────────────────────────────
-function renderOpCard(s) {
-  if (!IS_INTERNAL) return '';
-  const cost  = s && s.serviceCost != null ? s.serviceCost : '';
-  const adate = s && s.activityDate ? s.activityDate.substring(0,10) : '';
-  const cstat = s && s.costStatus   ? s.costStatus : 'Pending';
-  const jk    = s && s.jiraKey      ? s.jiraKey    : '';
-  const statusOpts = ['Pending','Paid','Waived'].map(o =>
-    `<option value="${o}"${cstat===o?' selected':''}>${o}</option>`).join('');
-  return `<div class="dsec" id="opCard">
-    <div class="dsh">
-      <h3>Operational details</h3>
-      <span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span>
-    </div>
-    <div class="dsb">
-      <div class="igrid">
-        <div class="iitem">
-          <label>Service / Operational Cost (₱)</label>
-          <input type="number" id="op-cost" value="${esc(String(cost))}" min="0" step="100"
-            placeholder="e.g. 5000"
-            style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s"
-            onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/>
-        </div>
-        <div class="iitem">
-          <label>Activity Date</label>
-          <input type="date" id="op-date" value="${adate}"
-            style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s"
-            onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/>
-        </div>
-        <div class="iitem">
-          <label>Cost Status</label>
-          <select id="op-status"
-            style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">
-            ${statusOpts}
-          </select>
-        </div>
-        <div class="iitem" style="display:flex;align-items:flex-end">
-          <button onclick="saveOpDetails(\'${jk}\')"
-            style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%"
-            onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">
-            Save
-          </button>
-        </div>
+function renderOpCard(s){
+  if(!IS_INTERNAL)return'';
+  const cost=s&&s.serviceCost!=null?s.serviceCost:'';
+  const adate=s&&s.activityDate?s.activityDate.substring(0,10):'';
+  const cstat=s&&s.costStatus?s.costStatus:'Pending';
+  const jk=s&&s.jiraKey?s.jiraKey:'';
+  const statusOpts=['Pending','Paid','Waived'].map(o=>`<option value="${o}"${cstat===o?' selected':''}>${o}</option>`).join('');
+  return`<div class="dsec" id="opCard">
+    <div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>
+    <div class="dsb"><div class="igrid">
+      <div class="iitem"><label>Service / Operational Cost (₱)</label>
+        <input type="number" id="op-cost" value="${esc(String(cost))}" min="0" step="100" placeholder="e.g. 5000"
+          style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s"
+          onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
       </div>
-    </div>
+      <div class="iitem"><label>Activity Date</label>
+        <input type="date" id="op-date" value="${adate}"
+          style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s"
+          onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+      </div>
+      <div class="iitem"><label>Cost Status</label>
+        <select id="op-status" style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">${statusOpts}</select>
+      </div>
+      <div class="iitem" style="display:flex;align-items:flex-end">
+        <button onclick="saveOpDetails('${jk}')"
+          style="font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%"
+          onmouseover="this.style.background='var(--primary-dk)'" onmouseout="this.style.background='var(--primary)'">Save</button>
+      </div>
+    </div></div>
   </div>`;
 }
-
-async function saveOpDetails(jiraKey) {
-  const cost   = document.getElementById('op-cost').value;
-  const date   = document.getElementById('op-date').value;
-  const status = document.getElementById('op-status').value;
-  const msgEl  = document.getElementById('opSaveMsg');
-  if (msgEl) { msgEl.style.display='none'; }
-
-  try {
-    // no-cors + text/plain to avoid GAS CORS preflight block
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action:       'update',
-        jiraKey:      jiraKey,
-        serviceCost:  cost,
-        activityDate: date,
-        costStatus:   status,
-      })
-    });
-    // no-cors response is opaque — assume success and update local state
-    if (true) {
-      // Update local state
-      const entry = all.find(x => x.jiraKey === jiraKey);
-      if (entry) {
-        entry.serviceCost  = cost !== '' ? parseFloat(cost) : null;
-        entry.activityDate = date;
-        entry.costStatus   = status;
-      }
-      // Update cost badge in detail header
-      const cb = document.querySelector('.dh-meta .cost-badge');
-      if (cb) {
-        const cc = status==='Paid'?'cost-paid':status==='Waived'?'cost-waived':'cost-pending';
-        cb.className = 'cost-badge ' + cc;
-        cb.textContent = status;
-      }
-      // Update sidebar card badge too
-      render();
-      if (msgEl) { msgEl.style.display='inline'; setTimeout(()=>{ if(msgEl) msgEl.style.display='none'; },3000); }
-    } else {
-      alert('Save failed: ' + (d.error || 'Unknown error'));
-    }
-  } catch(e) {
-    alert('Save failed: ' + e.message);
-  }
+async function saveOpDetails(jiraKey){
+  const cost=document.getElementById('op-cost').value;
+  const date=document.getElementById('op-date').value;
+  const status=document.getElementById('op-status').value;
+  const msgEl=document.getElementById('opSaveMsg');
+  if(msgEl)msgEl.style.display='none';
+  try{
+    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'update',jiraKey,serviceCost:cost,activityDate:date,costStatus:status})});
+    const entry=all.find(x=>x.jiraKey===jiraKey);
+    if(entry){entry.serviceCost=cost!==''?parseFloat(cost):null;entry.activityDate=date;entry.costStatus=status;}
+    const cb=document.querySelector('.dh-meta .cost-badge');
+    if(cb){const cc=status==='Paid'?'cost-paid':status==='Waived'?'cost-waived':'cost-pending';cb.className='cost-badge '+cc;cb.textContent=status;}
+    render();
+    if(msgEl){msgEl.style.display='inline';setTimeout(()=>{if(msgEl)msgEl.style.display='none';},3000);}
+  }catch(e){alert('Save failed: '+e.message);}
 }
 </script>
 </body>
