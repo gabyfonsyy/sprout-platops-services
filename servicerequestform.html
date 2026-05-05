@@ -1150,11 +1150,14 @@ function renderServiceTiles() {
 
   grid.innerHTML = visible.map(function(name, idx) {
     var id = 'svc-dyn-' + idx;
-    return '<div class=\"service-option\">'\n      + '<input type=\"radio\" name=\"serviceType\" id=\"' + id + '\" value=\"' + name.replace(/\"/g,'&quot;') + '\"/>'\n      + '<label for=\"' + id + '\">' + name + '</label>'\n      + '</div>';
+    return '<div class="service-option">'
+      + '<input type="radio" name="serviceType" id="' + id + '" value="' + name.replace(/"/g,'&quot;') + '"/>'
+      + '<label for="' + id + '">' + name + '</label>'
+      + '</div>';
   }).join('');
 
   // Re-attach change listeners on fresh tiles
-  document.querySelectorAll('input[name=\"serviceType\"]').forEach(function(r) {
+  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
     r.addEventListener('change', function() {
       var val = this.value;
       if (val === 'Others') {
@@ -1662,10 +1665,10 @@ document.addEventListener('keydown', function(e) {
         <table class="pd-table">
           <thead><tr><th>Scenario</th><th>Escalation Path</th></tr></thead>
           <tbody>
-            <tr><td>Request stalled with no response</td><td class="td-m">Requester → CSM → Platform Ops Lead</td></tr>
+            <tr><td>Request stalled with no response</td><td class="td-m">CSM → Platform Ops Lead</td></tr>
             <tr><td>Scope or feasibility unclear</td><td class="td-m">Platform Ops → Engineering Manager</td></tr>
             <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-m">CSM → Lead CSM</td></tr>
-            <tr><td>Fee waiver without CTO approval</td><td class="td-m">Platform Ops Lead → CTO</td></tr>
+            <tr><td>Fee waiver without CTO approval</td><td class="td-m">CSM → CTO</td></tr>
             <tr><td>Scope change mid-execution</td><td class="td-m">Platform Ops Tech Lead → Platform Ops Lead</td></tr>
             <tr><td>Downtime window not agreed in time</td><td class="td-m">CSM → Lead CSM → Platform Ops Lead</td></tr>
           </tbody>
