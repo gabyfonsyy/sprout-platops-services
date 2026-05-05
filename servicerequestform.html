@@ -575,6 +575,18 @@
     transition: color 0.15s;
   }
   .view-services-btn:hover { color: var(--green); }
+
+  .svc-preview-selectable { cursor: pointer; position: relative; transition: border-color 0.15s, background 0.15s; }
+  .svc-preview-selectable:hover { border-color: var(--green-mid) !important; background: var(--green-light) !important; }
+  .svc-preview-select-hint {
+    display: none;
+    position: absolute; top: 10px; right: 12px;
+    font-size: 0.65rem; font-weight: 600;
+    color: var(--green); background: var(--green-light);
+    border: 1px solid var(--green-muted);
+    border-radius: 20px; padding: 2px 8px;
+  }
+  .svc-preview-selectable:hover .svc-preview-select-hint { display: inline-flex; }
   /* ── PROCESS DRAWER ── */
   .proc-fab {
     position: fixed;
@@ -825,10 +837,10 @@
       <div class="field" id="f-service">
         <label>Service type <span class="req">*</span></label>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div class="field-hint" style="margin-bottom:0">Select the category that best matches your request.</div>
+          <div class="field-hint" style="margin-bottom:0">Showing top 6. Don't see what you need?</div>
           <button type="button" class="view-services-btn" onclick="openServicesPreview()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            View services
+            View all services
           </button>
         </div>
         <!-- Tiles are rendered dynamically from localStorage (synced by index.html) -->
@@ -1129,20 +1141,20 @@ function renderServiceTiles() {
   if (!grid) return;
   var names = getServiceNames();
   // Always ensure "Others" is last
-  var others = names.filter(function(n){ return n.toLowerCase() === 'others'; });
-  var rest   = names.filter(function(n){ return n.toLowerCase() !== 'others'; });
-  var ordered = rest.concat(others.length ? others : ['Others']);
+  var others  = names.filter(function(n){ return n.toLowerCase() === 'others'; });
+  var rest    = names.filter(function(n){ return n.toLowerCase() !== 'others'; });
+  var othersName = others.length ? others[0] : 'Others';
 
-  grid.innerHTML = ordered.map(function(name, idx) {
+  // Show first 5 non-Others + Others as tile 6
+  var visible = rest.slice(0, 5).concat([othersName]);
+
+  grid.innerHTML = visible.map(function(name, idx) {
     var id = 'svc-dyn-' + idx;
-    return '<div class="service-option">'
-      + '<input type="radio" name="serviceType" id="' + id + '" value="' + name.replace(/"/g,'&quot;') + '"/>'
-      + '<label for="' + id + '">' + name + '</label>'
-      + '</div>';
+    return '<div class=\"service-option\">'\n      + '<input type=\"radio\" name=\"serviceType\" id=\"' + id + '\" value=\"' + name.replace(/\"/g,'&quot;') + '\"/>'\n      + '<label for=\"' + id + '\">' + name + '</label>'\n      + '</div>';
   }).join('');
 
   // Re-attach change listeners on fresh tiles
-  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
+  document.querySelectorAll('input[name=\"serviceType\"]').forEach(function(r) {
     r.addEventListener('change', function() {
       var val = this.value;
       if (val === 'Others') {
@@ -1173,16 +1185,20 @@ function openServicesPreview() {
     // Fall back to just names
     var names = getServiceNames();
     list.innerHTML = names.map(function(n) {
-      return '<div class="svc-preview-item"><div class="svc-preview-item-name">' + n + '</div></div>';
+      return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + n.replace(/'/g,"\\'") + '\')">'
+        + '<div class="svc-preview-item-name">' + n + '</div>'
+        + '<span class="svc-preview-select-hint">Select</span>'
+        + '</div>';
     }).join('');
   } else {
     list.innerHTML = services.map(function(svc) {
       var catHtml  = svc.category    ? '<span class="svc-preview-item-cat">'  + svc.category    + '</span>' : '';
       var descHtml = svc.description ? '<p class="svc-preview-item-desc">'    + svc.description + '</p>'    : '';
       var priceHtml= svc.price       ? '<p class="svc-preview-item-price">'   + svc.price       + '</p>'    : '';
-      return '<div class="svc-preview-item">'
+      return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + svc.name.replace(/'/g,"\\'") + '\')">'
         + '<div class="svc-preview-item-name">' + svc.name + '</div>'
         + catHtml + descHtml + priceHtml
+        + '<span class="svc-preview-select-hint">Select</span>'
         + '</div>';
     }).join('');
   }
@@ -1193,6 +1209,49 @@ function openServicesPreview() {
 function closeServicesPreview() {
   var overlay = document.getElementById('svcPreviewOverlay');
   if (overlay) overlay.classList.remove('open');
+}
+
+function selectServiceFromPreview(name) {
+  // Close the preview
+  closeServicesPreview();
+
+  // Check if this service already exists as a tile
+  var existingRadio = document.querySelector('input[name="serviceType"][value="' + name.replace(/"/g,'&quot;') + '"]');
+  if (existingRadio) {
+    existingRadio.checked = true;
+    existingRadio.dispatchEvent(new Event('change'));
+    return;
+  }
+
+  // Service not in current tiles — inject it temporarily as a selected tile
+  var grid = document.getElementById('serviceGrid');
+  var tempId = 'svc-temp-selected';
+  var existing = document.getElementById(tempId);
+  if (existing) existing.parentElement.remove();
+
+  var div = document.createElement('div');
+  div.className = 'service-option';
+  div.innerHTML = '<input type="radio" name="serviceType" id="' + tempId + '" value="' + name.replace(/"/g,'&quot;') + '" checked/>'
+    + '<label for="' + tempId + '">' + name + '</label>';
+  grid.appendChild(div);
+
+  // Attach change listener
+  var radio = document.getElementById(tempId);
+  radio.addEventListener('change', function() {
+    var val = this.value;
+    document.getElementById('othersField').classList[val === 'Others' ? 'add' : 'remove']('visible');
+    if (val !== 'Others') document.getElementById('othersSpecify').value = '';
+    showNoticeFor(val);
+  });
+
+  // Trigger notice logic
+  if (name === 'Others') {
+    document.getElementById('othersField').classList.add('visible');
+  } else {
+    document.getElementById('othersField').classList.remove('visible');
+    document.getElementById('othersSpecify').value = '';
+  }
+  showNoticeFor(name);
 }
 
 document.getElementById('svcPreviewOverlay').addEventListener('click', function(e) {
