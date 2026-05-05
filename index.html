@@ -385,21 +385,147 @@ tr:hover td{background:var(--bg)}
 }
 .toast.show { transform:translateY(0); opacity:1; }
 
+/* ── PROCESS VIEW ── */
+.process-scroll { flex:1; overflow-y:auto; padding:0; }
+.process-scroll::-webkit-scrollbar { width:4px; }
+.process-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.process-hero {
+  background:var(--k800);
+  padding:3rem 2.5rem 2.5rem;
+  color:#fff;
+}
+.process-hero-inner { max-width:760px; margin:0 auto; }
+.process-hero h2 { font-size:1.625rem; font-weight:600; margin-bottom:8px; }
+.process-hero p { font-size:0.9rem; color:var(--k300); line-height:1.75; max-width:600px; }
+.process-body { max-width:800px; margin:0 auto; padding:2rem 2.5rem 4rem; }
+.proc-section { margin-bottom:2.5rem; }
+.proc-section-label {
+  font-size:0.65rem; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--muted);
+  margin-bottom:0.5rem;
+}
+.proc-section-title {
+  font-size:1.125rem; font-weight:600; color:var(--text);
+  margin-bottom:1rem;
+}
+.proc-overview-card {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:10px; padding:1.25rem 1.5rem;
+  font-size:0.875rem; color:var(--text); line-height:1.8;
+}
+.proc-overview-card p { margin-bottom:0.75rem; }
+.proc-overview-card p:last-child { margin-bottom:0; }
+
+/* lifecycle stepper */
+.proc-lifecycle {
+  display:flex; align-items:flex-start; gap:0;
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:10px; padding:1.75rem 1.5rem 1.5rem;
+  overflow-x:auto;
+}
+.proc-lifecycle::-webkit-scrollbar { height:3px; }
+.proc-lifecycle::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.proc-step {
+  display:flex; flex-direction:column; align-items:center;
+  flex:1; min-width:100px; position:relative;
+}
+.proc-step:not(:last-child)::after {
+  content:''; position:absolute; top:19px; left:50%;
+  width:100%; height:2px; background:var(--k100); z-index:0;
+}
+.proc-step-num {
+  width:38px; height:38px; border-radius:50%;
+  background:var(--primary-lt); border:2px solid var(--k300);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.8rem; font-weight:700; color:var(--primary-dk);
+  z-index:1; flex-shrink:0; transition:all 0.2s;
+}
+.proc-step-label {
+  font-size:0.675rem; font-weight:600; text-align:center;
+  color:var(--text); margin-top:10px; line-height:1.4;
+  padding:0 4px;
+}
+.proc-step-sub {
+  font-size:0.6rem; color:var(--muted); text-align:center;
+  margin-top:3px; padding:0 4px; line-height:1.4;
+}
+.proc-step-notes {
+  display:grid; gap:8px; margin-top:1.25rem;
+}
+.proc-step-note {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:8px; padding:1rem 1.125rem;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.proc-step-note-num {
+  width:26px; height:26px; border-radius:50%;
+  background:var(--primary-lt); color:var(--primary-dk);
+  font-size:0.72rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; margin-top:1px;
+}
+.proc-step-note-body strong {
+  display:block; font-size:0.8125rem; font-weight:600;
+  color:var(--text); margin-bottom:3px;
+}
+.proc-step-note-body span {
+  font-size:0.8rem; color:var(--muted); line-height:1.65;
+}
+
+/* guardrails / exit / escalation tables */
+.proc-table-wrap {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:10px; overflow:hidden;
+}
+.proc-table { width:100%; border-collapse:collapse; font-size:0.8125rem; }
+.proc-table th {
+  background:var(--bg); text-align:left;
+  font-size:0.63rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.07em; color:var(--muted);
+  padding:10px 14px; border-bottom:1px solid var(--border);
+}
+.proc-table td {
+  padding:11px 14px; border-bottom:1px solid var(--border);
+  color:var(--text); vertical-align:top; line-height:1.6;
+}
+.proc-table tr:last-child td { border-bottom:none; }
+.proc-table tr:hover td { background:var(--bg); }
+.proc-table td:first-child { font-weight:500; white-space:nowrap; }
+.proc-table .td-muted { color:var(--muted); font-size:0.78rem; }
+.proc-tag {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:0.65rem; font-weight:600; padding:2px 8px;
+  border-radius:20px; white-space:nowrap;
+}
+.proc-tag-amber { background:var(--mango-lt); color:#7a4800; }
+.proc-tag-red   { background:var(--tomato-lt); color:#7a1010; }
+.proc-tag-blue  { background:var(--blueberry-lt); color:#1c3a9e; }
+
+/* CTA at bottom of process */
+.proc-cta {
+  background:var(--k800); border-radius:12px;
+  padding:2rem 2rem; display:flex;
+  align-items:center; justify-content:space-between;
+  gap:1.5rem; flex-wrap:wrap; margin-top:1rem;
+}
+.proc-cta-text h3 { font-size:1rem; font-weight:600; color:#fff; margin-bottom:4px; }
+.proc-cta-text p  { font-size:0.8125rem; color:var(--k300); line-height:1.6; }
+.proc-cta-btn {
+  font-family:'Rubik',sans-serif; font-size:0.875rem; font-weight:600;
+  padding:10px 24px; border-radius:8px; cursor:pointer;
+  background:#fff; color:var(--k800); border:none;
+  transition:opacity 0.15s; white-space:nowrap; flex-shrink:0;
+}
+.proc-cta-btn:hover { opacity:0.9; }
+
 @media(max-width:640px){
-  .body{flex-direction:column}
-  .sidebar{width:100%;height:240px;border-right:none;border-bottom:1px solid var(--border)}
-  .igrid{grid-template-columns:1fr}
-  .analytics-row{flex-direction:column}
-  .chart-grid{grid-template-columns:1fr}
-  .sc-grid{grid-template-columns:repeat(2,1fr)}
-  .sv-grid{grid-template-columns:1fr}
+  .process-hero { padding:2rem 1.25rem 1.75rem; }
+  .process-body { padding:1.5rem 1.25rem 3rem; }
+  .proc-lifecycle { padding:1.25rem 1rem 1rem; }
+  .proc-step { min-width:80px; }
+  .proc-cta { flex-direction:column; text-align:center; }
 }
-@media(max-width:540px){
-  .cards{grid-template-columns:1fr}
-  .cards.three{grid-template-columns:1fr}
-  .landing h2{font-size:1.375rem}
-  .shell-header{padding:0 1rem}
-}
+
 </style>
 </head>
 <body>
@@ -447,6 +573,10 @@ tr:hover td{background:var(--bg)}
   </div>
 
   <div class="tab-bar" id="tabBar" style="display:none">
+    <button class="tab" id="tab-process" onclick="switchTab('process')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Process
+    </button>
     <button class="tab" id="tab-services" onclick="switchTab('services')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
       List of Services
@@ -476,8 +606,15 @@ tr:hover td{background:var(--bg)}
       <div class="landing">
         <h2>What would you like to do?</h2>
         <p class="landing-sub">Select an option to get started.</p>
-        <!-- 3 cards: services, submit, tracker -->
-        <div class="cards three" id="landingCards">
+        <!-- 4 cards: process, services, submit, tracker -->
+        <div class="cards" style="grid-template-columns:repeat(2,1fr);max-width:680px" id="landingCards">
+          <div class="lcard" onclick="switchTab('process')">
+            <div class="lcard-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            </div>
+            <h3>How It Works</h3>
+            <p>Learn about the request process, lifecycle stages, guardrails, and escalation paths.</p>
+          </div>
           <div class="lcard" onclick="switchTab('services')">
             <div class="lcard-icon">
               <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
@@ -499,6 +636,221 @@ tr:hover td{background:var(--bg)}
             <h3>View Tracker</h3>
             <p id="trackerCardDesc">Monitor the status of service requests and activity tickets.</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCESS VIEW -->
+    <div class="view" id="view-process">
+      <div class="process-scroll">
+        <!-- Hero -->
+        <div class="process-hero">
+          <div class="process-hero-inner">
+            <h2>Platform Operations Services — How It Works</h2>
+            <p>This portal covers paid backend services for active clients: data migrations, database operations, configuration changes, and other work not covered by standard BAU. All requests go through a structured review, costing, and approval process before any work begins.</p>
+          </div>
+        </div>
+
+        <div class="process-body">
+
+          <!-- 01 Overview -->
+          <div class="proc-section">
+            <div class="proc-section-label">01 — Overview</div>
+            <div class="proc-section-title">What qualifies as a Platform Operations service request?</div>
+            <div class="proc-overview-card">
+              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies. This includes data migrations, data extractions, HR URL changes, database renames, database backups, and similar activities.</p>
+              <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. For requests where a fee waiver is sought, written approval from the Chief Technology Officer (CTO) is required before the request can be scheduled.</p>
+              <p>If you are unsure whether your request falls under this portal, reach out to your CSM or the Platform Operations team before submitting.</p>
+            </div>
+          </div>
+
+          <!-- 02 Lifecycle -->
+          <div class="proc-section">
+            <div class="proc-section-label">02 — Request Lifecycle</div>
+            <div class="proc-section-title">From submission to completion</div>
+
+            <!-- Stepper -->
+            <div class="proc-lifecycle" style="margin-bottom:1rem">
+              <div class="proc-step">
+                <div class="proc-step-num">1</div>
+                <div class="proc-step-label">Quotation<br>Request</div>
+                <div class="proc-step-sub">You submit this form</div>
+              </div>
+              <div class="proc-step">
+                <div class="proc-step-num">2</div>
+                <div class="proc-step-label">Assessment &amp;<br>Coordination</div>
+                <div class="proc-step-sub">Ops reviews &amp; estimates</div>
+              </div>
+              <div class="proc-step">
+                <div class="proc-step-num">3</div>
+                <div class="proc-step-label">Scheduling</div>
+                <div class="proc-step-sub">If downtime is required</div>
+              </div>
+              <div class="proc-step">
+                <div class="proc-step-num">4</div>
+                <div class="proc-step-label">CRF + Signed<br>Work Order</div>
+                <div class="proc-step-sub">Required to proceed</div>
+              </div>
+              <div class="proc-step">
+                <div class="proc-step-num">5</div>
+                <div class="proc-step-label">Activity<br>Execution</div>
+                <div class="proc-step-sub">Work is carried out</div>
+              </div>
+            </div>
+
+            <!-- Step detail notes -->
+            <div class="proc-step-notes">
+              <div class="proc-step-note">
+                <div class="proc-step-note-num">1</div>
+                <div class="proc-step-note-body">
+                  <strong>Quotation Request</strong>
+                  <span>You submit a request through this portal with client details, the service needed, target date, and any known constraints. Submitting does not guarantee approval or scheduling — it opens the request for review.</span>
+                </div>
+              </div>
+              <div class="proc-step-note">
+                <div class="proc-step-note-num">2</div>
+                <div class="proc-step-note-body">
+                  <strong>Assessment &amp; Coordination</strong>
+                  <span>Platform Ops assesses the request for feasibility and complexity, prepares a cost estimate, and coordinates next steps with the requester and CSM. Additional information may be requested at this stage.</span>
+                </div>
+              </div>
+              <div class="proc-step-note">
+                <div class="proc-step-note-num">3</div>
+                <div class="proc-step-note-body">
+                  <strong>Scheduling <span style="font-weight:400;color:var(--muted)">(if downtime is required)</span></strong>
+                  <span>For services that involve system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed upon with the client before a CRF is raised. No downtime activity proceeds without a locked schedule.</span>
+                </div>
+              </div>
+              <div class="proc-step-note">
+                <div class="proc-step-note-num">4</div>
+                <div class="proc-step-note-body">
+                  <strong>CRF + Signed Work Order</strong>
+                  <span>A Change Request Form (CRF) with a signed Work Order must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration requests, an Account Creation Form is also required. No work begins without these documents.</span>
+                </div>
+              </div>
+              <div class="proc-step-note">
+                <div class="proc-step-note-num">5</div>
+                <div class="proc-step-note-body">
+                  <strong>Activity Execution</strong>
+                  <span>The service is executed by the assigned Platform Ops team member. Results are validated and the request is updated in the tracker. The requester and CSM are notified upon completion.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 03 Guardrails -->
+          <div class="proc-section">
+            <div class="proc-section-label">03 — Scope &amp; Quality Safeguards</div>
+            <div class="proc-section-title">Guardrails that apply to all requests</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>Guardrail</th><th>What It Means</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>All requests through this portal</td>
+                    <td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs are tracked or prioritized.</td>
+                    <td class="td-muted">Redirect requester to submit via this form.</td>
+                  </tr>
+                  <tr>
+                    <td>Assessment before execution</td>
+                    <td class="td-muted">No work begins without a completed review that determines scope, cost, and timeline.</td>
+                    <td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td>
+                  </tr>
+                  <tr>
+                    <td>Signed Work Order required</td>
+                    <td class="td-muted">A signed Work Order attached to the CRF must be received at least 2 business days before the target date.</td>
+                    <td class="td-muted">CSM follows up with client if documents are pending.</td>
+                  </tr>
+                  <tr>
+                    <td>All services are subject to fees</td>
+                    <td class="td-muted">Platform Operations backend services are billable engagements. Fee waivers are not granted by default.</td>
+                    <td class="td-muted">Written CTO approval is required for any fee waiver before the request can proceed.</td>
+                  </tr>
+                  <tr>
+                    <td>No unapproved scope changes</td>
+                    <td class="td-muted">Any new requirement identified mid-execution is treated as a separate request, not absorbed into the current one.</td>
+                    <td class="td-muted">Log a new request. Re-assess and re-estimate.</td>
+                  </tr>
+                  <tr>
+                    <td>Downtime must be confirmed</td>
+                    <td class="td-muted">For activities requiring a maintenance window, no CRF is raised until a schedule is confirmed with the client.</td>
+                    <td class="td-muted">Platform Ops coordinates with the CSM to lock the window before proceeding.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 04 Exit Criteria -->
+          <div class="proc-section">
+            <div class="proc-section-label">04 — Exit Criteria</div>
+            <div class="proc-section-title">When is a request considered complete?</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>#</th><th>Condition</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>The activity has been executed successfully in the target client environment.</td></tr>
+                  <tr><td>2</td><td>Output or results have been validated by the requester or CSM.</td></tr>
+                  <tr><td>3</td><td>The service fee has been settled or a waiver has been formally approved by the CTO.</td></tr>
+                  <tr><td>4</td><td>The tracker has been updated and the request is marked as <strong>Request Done</strong>.</td></tr>
+                  <tr><td>5</td><td>The requester and CSM have been notified of completion.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 05 Escalation -->
+          <div class="proc-section">
+            <div class="proc-section-label">05 — Escalation</div>
+            <div class="proc-section-title">When things get stuck</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>Scenario</th><th>Escalation Path</th><th>Expected Outcome</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Request stalled with no response from Platform Ops</td>
+                    <td class="td-muted">Requester → CSM → Platform Ops Lead</td>
+                    <td class="td-muted">Status update within 2 business days</td>
+                  </tr>
+                  <tr>
+                    <td>Scope or feasibility unclear after submission</td>
+                    <td class="td-muted">Platform Ops → Engineering Manager</td>
+                    <td class="td-muted">Joint assessment within 2 business days</td>
+                  </tr>
+                  <tr>
+                    <td>Client quotation approval delayed &gt; 5 business days</td>
+                    <td class="td-muted">CSM → Lead CSM</td>
+                    <td class="td-muted">Follow-up and resolution or cancellation of request</td>
+                  </tr>
+                  <tr>
+                    <td>Fee waiver requested without CTO approval</td>
+                    <td class="td-muted">Platform Ops Lead → CTO</td>
+                    <td class="td-muted">Written approval or denial within agreed timeline before request proceeds</td>
+                  </tr>
+                  <tr>
+                    <td>Scope change requested mid-execution</td>
+                    <td class="td-muted">Platform Ops Tech Lead → Platform Ops Lead</td>
+                    <td class="td-muted">Scope frozen; new items logged as a separate request</td>
+                  </tr>
+                  <tr>
+                    <td>Downtime window not agreed upon in time</td>
+                    <td class="td-muted">CSM → Lead CSM → Platform Ops Lead</td>
+                    <td class="td-muted">Schedule confirmed or request deferred to next available window</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="proc-cta">
+            <div class="proc-cta-text">
+              <h3>Ready to submit a service request?</h3>
+              <p>Have the client's HR URL, payroll code(s), target date, and a clear description of what's needed. The more context you provide, the faster the assessment.</p>
+            </div>
+            <button class="proc-cta-btn" onclick="openForm()">Submit a Request →</button>
+          </div>
+
         </div>
       </div>
     </div>
@@ -728,7 +1080,7 @@ function initApp(email,role) {
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────
-function openForm(){window.open('form.html','_blank');}
+function openForm(){window.open('servicerequestform.html','_blank');}
 function openView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.getElementById('view-'+name).classList.add('on');
@@ -747,6 +1099,7 @@ function switchTab(name){
   openView(name);
   if(name==='tracker'&&!trackerInit){trackerInit=true;USER_EMAIL=userEmail;IS_INTERNAL=isInternal;init_tracker();}
   if(name==='services'){renderServicesView();}
+  if(name==='process'){/* static content, nothing to init */}
   if(name==='analytics'&&!analyticsInit){
     analyticsInit=true;
     var from=new Date();from.setDate(1);
