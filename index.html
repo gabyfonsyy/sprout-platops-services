@@ -255,29 +255,68 @@ tr:hover td{background:var(--bg)}
 .analytics-view-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
 /* ── SERVICES VIEW ── */
-.services-scroll { flex:1; overflow-y:auto; padding:1.75rem; }
-.services-scroll::-webkit-scrollbar { width:4px; }
-.services-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-.sv-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap; }
-.sv-toolbar h2 { font-size:1.25rem; font-weight:600; color:var(--text); }
-.sv-toolbar-right { display:flex; align-items:center; gap:8px; }
-.sv-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1rem; }
+/* ── SERVICES VIEW ── */
+.sv-shell { display:flex; flex:1; overflow:hidden; }
+.sv-sidebar {
+  width:220px; flex-shrink:0;
+  border-right:1px solid var(--border);
+  background:var(--surface);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.sv-sidebar-head {
+  padding:14px 14px 10px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.sv-sidebar-head span { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
+.sv-cat-list { flex:1; overflow-y:auto; padding:8px 0; }
+.sv-cat-list::-webkit-scrollbar { width:3px; }
+.sv-cat-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.sv-cat-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:7px 14px; cursor:pointer;
+  font-size:0.8125rem; color:var(--muted);
+  transition:background 0.1s, color 0.1s;
+  border-left:3px solid transparent;
+}
+.sv-cat-item:hover { background:var(--bg); color:var(--text); }
+.sv-cat-item.active { background:var(--primary-lt); color:var(--primary-dk); font-weight:500; border-left-color:var(--primary); }
+.sv-cat-count {
+  font-size:0.65rem; font-weight:600;
+  background:var(--border); color:var(--muted);
+  border-radius:20px; padding:1px 7px; min-width:20px; text-align:center;
+}
+.sv-cat-item.active .sv-cat-count { background:var(--primary); color:#fff; }
+.sv-main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+.sv-topbar {
+  padding:10px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px; flex-shrink:0; background:var(--surface);
+}
+.sv-search-wrap { flex:1; position:relative; }
+.sv-search-wrap svg { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+.sv-search { width:100%; font-family:'Rubik',sans-serif; font-size:0.8rem; color:var(--text); background:var(--bg); border:1.5px solid var(--border); border-radius:7px; padding:7px 10px 7px 30px; outline:none; transition:border-color 0.15s; }
+.sv-search:focus { border-color:var(--primary); }
+.sv-result-count { font-size:0.75rem; color:var(--muted); white-space:nowrap; }
+.sv-content { flex:1; overflow-y:auto; padding:1.125rem; }
+.sv-content::-webkit-scrollbar { width:4px; }
+.sv-content::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.sv-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:10px; }
 .sv-card {
   background:var(--surface); border:1.5px solid var(--border);
-  border-radius:10px; padding:1.125rem 1.25rem;
-  display:flex; flex-direction:column; gap:8px;
+  border-radius:10px; padding:1rem 1.125rem;
+  display:flex; flex-direction:column; gap:6px;
   transition:border-color 0.15s, box-shadow 0.15s;
 }
 .sv-card:hover { border-color:var(--k300); box-shadow:0 2px 12px rgba(0,0,0,0.06); }
 .sv-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.sv-card-name { font-size:0.9375rem; font-weight:600; color:var(--text); flex:1; }
+.sv-card-name { font-size:0.9rem; font-weight:600; color:var(--text); flex:1; }
 .sv-card-category {
-  font-size:0.63rem; font-weight:600; padding:2px 8px;
-  border-radius:20px; background:var(--primary-lt); color:var(--primary-dk);
-  white-space:nowrap; flex-shrink:0;
+  font-size:0.62rem; font-weight:600; text-transform:uppercase;
+  letter-spacing:0.06em; color:var(--primary-dk);
+  background:var(--primary-lt); border-radius:20px;
+  padding:2px 8px; white-space:nowrap; flex-shrink:0;
 }
-.sv-card-desc { font-size:0.8125rem; color:var(--muted); line-height:1.65; }
-.sv-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+.sv-card-desc { font-size:0.8rem; color:var(--muted); line-height:1.65; flex:1; }
+.sv-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:2px; }
 .sv-card-price { font-size:0.8rem; font-weight:600; color:var(--primary-dk); }
 .sv-card-actions { display:flex; gap:6px; }
 .sv-card-actions button {
@@ -288,8 +327,15 @@ tr:hover td{background:var(--bg)}
 .sv-btn-edit:hover { border-color:var(--primary); color:var(--primary); }
 .sv-btn-del { background:var(--tomato-lt); border:1.5px solid #fbbdbd; color:var(--tomato); }
 .sv-btn-del:hover { background:#ffd0d0; }
-.sv-empty { text-align:center; padding:4rem 2rem; color:var(--muted); font-size:0.875rem; }
+.sv-empty { text-align:center; padding:4rem 2rem; color:var(--muted); font-size:0.875rem; grid-column:1/-1; }
 .sv-empty p { margin-top:8px; }
+@media(max-width:640px){
+  .sv-shell { flex-direction:column; }
+  .sv-sidebar { width:100%; height:auto; border-right:none; border-bottom:1px solid var(--border); }
+  .sv-cat-list { display:flex; flex-direction:row; overflow-x:auto; padding:4px 8px; }
+  .sv-cat-item { white-space:nowrap; border-left:none; border-bottom:2px solid transparent; padding:6px 10px; }
+  .sv-cat-item.active { border-left-color:transparent; border-bottom-color:var(--primary); }
+}
 
 /* ── SERVICE MODAL ── */
 .svc-modal-overlay {
@@ -897,20 +943,38 @@ tr:hover td{background:var(--bg)}
 
     <!-- SERVICES VIEW -->
     <div class="view" id="view-services">
-      <div class="services-scroll">
-        <div class="sv-toolbar">
-          <h2>List of Services</h2>
-          <div class="sv-toolbar-right">
-            <!-- Edit controls — shown to internal users only -->
-            <span id="sv-sync-msg" style="font-size:0.75rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span>
+      <div class="sv-shell">
+        <!-- Category sidebar -->
+        <div class="sv-sidebar">
+          <div class="sv-sidebar-head">
+            <span>Categories</span>
+            <span id="sv-sync-msg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span>
+          </div>
+          <div class="sv-cat-list" id="svCatList">
+            <div class="sv-cat-item active" data-cat="all" onclick="svSetCat(this)">
+              <span>All Services</span>
+              <span class="sv-cat-count" id="sv-count-all">—</span>
+            </div>
+          </div>
+        </div>
+        <!-- Main panel -->
+        <div class="sv-main">
+          <div class="sv-topbar">
+            <div class="sv-search-wrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="sv-search" id="svSearch" placeholder="Search services…" oninput="renderServicesView()"/>
+            </div>
+            <span class="sv-result-count" id="svResultCount"></span>
             <button class="btn btn-primary" id="sv-add-btn" onclick="openServiceModal()" style="display:none">
               <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:4px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Add Service
             </button>
           </div>
-        </div>
-        <div id="sv-grid" class="sv-grid">
-          <div class="sv-empty"><span class="spinner"></span><p>Loading services…</p></div>
+          <div class="sv-content">
+            <div id="sv-grid" class="sv-grid">
+              <div class="sv-empty"><span class="spinner"></span><p>Loading services…</p></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1204,19 +1268,69 @@ async function loadServicesData() {
   }
 }
 
+var svActiveCat = 'all';
+
+function svSetCat(el) {
+  document.querySelectorAll('.sv-cat-item').forEach(function(i){ i.classList.remove('active'); });
+  el.classList.add('active');
+  svActiveCat = el.dataset.cat;
+  // clear search when switching category
+  var s = document.getElementById('svSearch');
+  if (s) s.value = '';
+  renderServicesView();
+}
+
 function renderServicesView() {
   var grid = document.getElementById('sv-grid');
   if (!grid) return;
+
+  // Build category sidebar
+  var catList = document.getElementById('svCatList');
+  if (catList) {
+    var cats = {};
+    servicesList.forEach(function(svc) {
+      var c = svc.category || 'Uncategorized';
+      cats[c] = (cats[c]||0) + 1;
+    });
+    // Rebuild sidebar preserving active state
+    var allItem = '<div class="sv-cat-item' + (svActiveCat==='all'?' active':'') + '" data-cat="all" onclick="svSetCat(this)"><span>All Services</span><span class="sv-cat-count">' + servicesList.length + '</span></div>';
+    var catItems = Object.keys(cats).sort().map(function(c) {
+      var active = svActiveCat === c ? ' active' : '';
+      return '<div class="sv-cat-item' + active + '" data-cat="' + esc(c) + '" onclick="svSetCat(this)"><span>' + esc(c) + '</span><span class="sv-cat-count">' + cats[c] + '</span></div>';
+    }).join('');
+    catList.innerHTML = allItem + catItems;
+  }
+
   if (!servicesList.length) {
     grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isAdmin ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
     return;
   }
-  grid.innerHTML = servicesList.map(function(svc) {
+
+  // Filter by category + search
+  var q = ((document.getElementById('svSearch')||{}).value||'').toLowerCase().trim();
+  var filtered = servicesList.filter(function(svc) {
+    var catMatch = svActiveCat === 'all' || (svc.category||'Uncategorized') === svActiveCat;
+    var searchMatch = !q || (svc.name||'').toLowerCase().includes(q) || (svc.description||'').toLowerCase().includes(q) || (svc.category||'').toLowerCase().includes(q);
+    return catMatch && searchMatch;
+  });
+
+  // Update result count
+  var countEl = document.getElementById('svResultCount');
+  if (countEl) {
+    countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
+  }
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(function(svc) {
     var actionsHtml = '';
     if (isAdmin) {
       actionsHtml = '<div class="sv-card-actions">'
-        + '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g,"\\'") + '\')">Edit</button>'
-        + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g,"\\'") + '\')">Delete</button>'
+        + '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g,"\'") + '\')">Edit</button>'
+        + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g,"\'") + '\')">Delete</button>'
         + '</div>';
     }
     var priceHtml = svc.price ? '<span class="sv-card-price">' + esc(svc.price) + '</span>' : '<span></span>';
