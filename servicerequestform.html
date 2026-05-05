@@ -575,6 +575,168 @@
     transition: color 0.15s;
   }
   .view-services-btn:hover { color: var(--green); }
+  /* ── PROCESS DRAWER ── */
+  .proc-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 8000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 10px 18px 10px 14px;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(27,67,50,0.35);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .proc-fab:hover { background: var(--green-mid); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(27,67,50,0.4); }
+  .proc-fab svg { flex-shrink: 0; }
+
+  .proc-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 8100;
+    transition: opacity 0.25s;
+    opacity: 0;
+  }
+  .proc-drawer-overlay.open { display: block; }
+  .proc-drawer-overlay.visible { opacity: 1; }
+
+  .proc-drawer {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 560px;
+    max-width: 96vw;
+    background: var(--white);
+    z-index: 8200;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 40px rgba(0,0,0,0.14);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .proc-drawer.open { transform: translateX(0); }
+
+  .proc-drawer-header {
+    background: var(--green);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .proc-drawer-header h3 { font-size: 1rem; font-weight: 600; color: #fff; }
+  .proc-drawer-header p  { font-size: 0.75rem; color: rgba(255,255,255,0.65); margin-top: 2px; }
+  .proc-drawer-close {
+    background: rgba(255,255,255,0.12);
+    border: none; border-radius: 6px;
+    color: #fff; cursor: pointer;
+    padding: 6px; line-height: 1;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+  .proc-drawer-close:hover { background: rgba(255,255,255,0.22); }
+
+  .proc-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+  }
+  .proc-drawer-body::-webkit-scrollbar { width: 4px; }
+  .proc-drawer-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* reuse proc-* classes from index — redeclare lightweight versions here */
+  .proc-drawer-body .pd-section { margin-bottom: 2rem; }
+  .pd-section-label {
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px;
+  }
+  .pd-section-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.875rem; }
+
+  .pd-overview {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.125rem;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    line-height: 1.75;
+  }
+  .pd-overview p { margin-bottom: 0.6rem; }
+  .pd-overview p:last-child { margin-bottom: 0; }
+
+  /* lifecycle stepper inside drawer */
+  .pd-stepper {
+    display: flex; align-items: flex-start; gap: 0;
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.25rem 1rem 1rem;
+    overflow-x: auto; margin-bottom: 0.875rem;
+  }
+  .pd-stepper::-webkit-scrollbar { height: 3px; }
+  .pd-stepper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .pd-step {
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1; min-width: 80px; position: relative;
+  }
+  .pd-step:not(:last-child)::after {
+    content: ''; position: absolute; top: 16px; left: 50%;
+    width: 100%; height: 2px; background: var(--green-light); z-index: 0;
+  }
+  .pd-step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green-light); border: 2px solid var(--green-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; color: var(--green);
+    z-index: 1; flex-shrink: 0;
+  }
+  .pd-step-label {
+    font-size: 0.6rem; font-weight: 600; text-align: center;
+    color: var(--ink); margin-top: 8px; line-height: 1.4; padding: 0 3px;
+  }
+  .pd-step-sub {
+    font-size: 0.55rem; color: var(--ink-muted); text-align: center;
+    margin-top: 2px; padding: 0 3px; line-height: 1.3;
+  }
+
+  .pd-step-notes { display: grid; gap: 7px; }
+  .pd-step-note {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: 7px; padding: 0.75rem 0.875rem;
+  }
+  .pd-step-note-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--green-light); color: var(--green);
+    font-size: 0.65rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .pd-step-note-body strong { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .pd-step-note-body span  { font-size: 0.76rem; color: var(--ink-muted); line-height: 1.65; }
+
+  .pd-table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .pd-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .pd-table th {
+    background: var(--bg-alt); text-align: left;
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--ink-muted);
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  .pd-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--ink); vertical-align: top; line-height: 1.55; }
+  .pd-table tr:last-child td { border-bottom: none; }
+  .pd-table td:first-child { font-weight: 500; }
+  .pd-table .td-m { color: var(--ink-muted); font-size: 0.73rem; }
+
+  @media(max-width:540px) {
+    .proc-fab { bottom: 18px; right: 16px; padding: 9px 14px 9px 12px; font-size: 0.75rem; }
+  }
 
 </style>
 </head>
@@ -1271,6 +1433,189 @@ function resetForm() {
   wrap.classList.remove('signed', 'invalid-sig');
   sigNote.textContent = '';
 }
+
+// ── PROCESS DRAWER ─────────────────────────────────────────
+function openProcDrawer() {
+  var overlay = document.getElementById('procOverlay');
+  var drawer  = document.getElementById('procDrawer');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(function() {
+    overlay.classList.add('visible');
+    drawer.classList.add('open');
+  });
+}
+function closeProcDrawer() {
+  var overlay = document.getElementById('procOverlay');
+  var drawer  = document.getElementById('procDrawer');
+  overlay.classList.remove('visible');
+  drawer.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(function() { overlay.classList.remove('open'); }, 300);
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeProcDrawer();
+});
 </script>
+
+<!-- ── PROCESS GUIDE FAB ── -->
+<button class="proc-fab" onclick="openProcDrawer()" aria-label="View process guide">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+  Process Guide
+</button>
+
+<!-- ── PROCESS DRAWER ── -->
+<div class="proc-drawer-overlay" id="procOverlay" onclick="closeProcDrawer()"></div>
+<div class="proc-drawer" id="procDrawer">
+  <div class="proc-drawer-header">
+    <div>
+      <h3>Process Guide</h3>
+      <p>Platform Operations · Service Request Lifecycle</p>
+    </div>
+    <button class="proc-drawer-close" onclick="closeProcDrawer()" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="proc-drawer-body">
+
+    <!-- 01 Overview -->
+    <div class="pd-section">
+      <div class="pd-section-label">01 — Overview</div>
+      <div class="pd-section-title">What qualifies as a Platform Operations service request?</div>
+      <div class="pd-overview">
+        <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies.</p>
+        <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
+      </div>
+    </div>
+
+    <!-- 02 Lifecycle -->
+    <div class="pd-section">
+      <div class="pd-section-label">02 — Request Lifecycle</div>
+      <div class="pd-section-title">From submission to completion</div>
+      <div class="pd-stepper">
+        <div class="pd-step">
+          <div class="pd-step-num">1</div>
+          <div class="pd-step-label">Quotation<br>Request</div>
+          <div class="pd-step-sub">You submit this form</div>
+        </div>
+        <div class="pd-step">
+          <div class="pd-step-num">2</div>
+          <div class="pd-step-label">Assessment &amp;<br>Coordination</div>
+          <div class="pd-step-sub">Ops reviews &amp; estimates</div>
+        </div>
+        <div class="pd-step">
+          <div class="pd-step-num">3</div>
+          <div class="pd-step-label">Scheduling</div>
+          <div class="pd-step-sub">If downtime required</div>
+        </div>
+        <div class="pd-step">
+          <div class="pd-step-num">4</div>
+          <div class="pd-step-label">CRF + Signed<br>Work Order</div>
+          <div class="pd-step-sub">Required to proceed</div>
+        </div>
+        <div class="pd-step">
+          <div class="pd-step-num">5</div>
+          <div class="pd-step-label">Activity<br>Execution</div>
+          <div class="pd-step-sub">Work is carried out</div>
+        </div>
+      </div>
+      <div class="pd-step-notes">
+        <div class="pd-step-note">
+          <div class="pd-step-note-num">1</div>
+          <div class="pd-step-note-body">
+            <strong>Quotation Request</strong>
+            <span>You submit this form with client details, service needed, target date, and constraints. Submitting does not guarantee approval — it opens the request for review.</span>
+          </div>
+        </div>
+        <div class="pd-step-note">
+          <div class="pd-step-note-num">2</div>
+          <div class="pd-step-note-body">
+            <strong>Assessment &amp; Coordination</strong>
+            <span>Platform Ops assesses feasibility, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span>
+          </div>
+        </div>
+        <div class="pd-step-note">
+          <div class="pd-step-note-num">3</div>
+          <div class="pd-step-note-body">
+            <strong>Scheduling <span style="font-weight:400;color:var(--ink-muted)">(if downtime required)</span></strong>
+            <span>For Change HR URL, Rename Database, and similar activities — a confirmed maintenance window must be agreed before a CRF is raised.</span>
+          </div>
+        </div>
+        <div class="pd-step-note">
+          <div class="pd-step-note-num">4</div>
+          <div class="pd-step-note-body">
+            <strong>CRF + Signed Work Order</strong>
+            <span>Must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without these.</span>
+          </div>
+        </div>
+        <div class="pd-step-note">
+          <div class="pd-step-note-num">5</div>
+          <div class="pd-step-note-body">
+            <strong>Activity Execution</strong>
+            <span>Work is executed and results validated. The requester and CSM are notified upon completion and the tracker is updated.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 Guardrails -->
+    <div class="pd-section">
+      <div class="pd-section-label">03 — Scope &amp; Quality Safeguards</div>
+      <div class="pd-section-title">Guardrails that apply to all requests</div>
+      <div class="pd-table-wrap">
+        <table class="pd-table">
+          <thead><tr><th>Guardrail</th><th>What It Means</th></tr></thead>
+          <tbody>
+            <tr><td>All requests through this portal</td><td class="td-m">No side-channel requests via Slack, email, or verbal handoffs are tracked or prioritized.</td></tr>
+            <tr><td>Assessment before execution</td><td class="td-m">No work begins without a completed review of scope, cost, and timeline.</td></tr>
+            <tr><td>Signed Work Order required</td><td class="td-m">Must be received at least 2 business days before the target date.</td></tr>
+            <tr><td>All services are subject to fees</td><td class="td-m">Fee waivers require written CTO approval before the request can proceed.</td></tr>
+            <tr><td>No unapproved scope changes</td><td class="td-m">New requirements mid-execution are treated as a separate request.</td></tr>
+            <tr><td>Downtime must be confirmed</td><td class="td-m">No CRF is raised until a maintenance window is confirmed with the client.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 04 Exit Criteria -->
+    <div class="pd-section">
+      <div class="pd-section-label">04 — Exit Criteria</div>
+      <div class="pd-section-title">When is a request considered complete?</div>
+      <div class="pd-table-wrap">
+        <table class="pd-table">
+          <thead><tr><th>#</th><th>Condition</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
+            <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
+            <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
+            <tr><td>4</td><td>Tracker updated and request marked as <strong>Request Done</strong>.</td></tr>
+            <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 05 Escalation -->
+    <div class="pd-section">
+      <div class="pd-section-label">05 — Escalation</div>
+      <div class="pd-section-title">When things get stuck</div>
+      <div class="pd-table-wrap">
+        <table class="pd-table">
+          <thead><tr><th>Scenario</th><th>Escalation Path</th></tr></thead>
+          <tbody>
+            <tr><td>Request stalled with no response</td><td class="td-m">Requester → CSM → Platform Ops Lead</td></tr>
+            <tr><td>Scope or feasibility unclear</td><td class="td-m">Platform Ops → Engineering Manager</td></tr>
+            <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-m">CSM → Lead CSM</td></tr>
+            <tr><td>Fee waiver without CTO approval</td><td class="td-m">Platform Ops Lead → CTO</td></tr>
+            <tr><td>Scope change mid-execution</td><td class="td-m">Platform Ops Tech Lead → Platform Ops Lead</td></tr>
+            <tr><td>Downtime window not agreed in time</td><td class="td-m">CSM → Lead CSM → Platform Ops Lead</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end drawer body -->
+</div><!-- end drawer -->
+
 </body>
 </html>
