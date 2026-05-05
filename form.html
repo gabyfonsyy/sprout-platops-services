@@ -273,6 +273,33 @@
     margin-bottom: 1.5rem;
   }
 
+  .fee-policy {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: #fffbf0;
+    border: 1px solid #e8d49a;
+    border-left: 3px solid #c9a227;
+    border-radius: 0 6px 6px 0;
+    padding: 0.875rem 1rem;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .fee-policy-icon {
+    color: #c9a227;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .fee-policy-title {
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+    font-size: 0.8125rem;
+  }
+  .fee-policy strong { color: var(--ink); font-weight: 600; }
+
   .form-actions { display: flex; justify-content: flex-end; gap: 10px; }
 
   .btn-reset {
@@ -548,6 +575,96 @@
     transition: color 0.15s;
   }
   .view-services-btn:hover { color: var(--green); }
+
+  /* ── LIFECYCLE GUIDE ── */
+  .lifecycle-guide {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.125rem 1.25rem 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .lifecycle-guide-title {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    margin-bottom: 1rem;
+  }
+  .lifecycle-steps {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .lifecycle-steps::-webkit-scrollbar { height: 3px; }
+  .lifecycle-steps::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .lc-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 90px;
+    position: relative;
+  }
+  .lc-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--green-light);
+    z-index: 0;
+  }
+  .lc-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--green-muted);
+    z-index: 1; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .lc-step.active .lc-dot {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .lc-step.active .lc-dot::after {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .lc-label {
+    font-size: 0.6rem;
+    font-weight: 500;
+    text-align: center;
+    color: var(--ink-muted);
+    margin-top: 7px;
+    line-height: 1.35;
+    padding: 0 3px;
+  }
+  .lc-step.active .lc-label { color: var(--green); font-weight: 600; }
+  .lc-note {
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    line-height: 1.6;
+  }
+  .lc-note strong { color: var(--ink); font-weight: 500; }
+
+  /* success screen lifecycle */
+  .success-lifecycle { margin-top: 1.5rem; }
+  .success-lifecycle .lifecycle-guide { margin-bottom: 0; text-align: left; }
+  .success-lifecycle .lc-step.active .lc-dot {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
+  }
 </style>
 </head>
 <body>
@@ -563,6 +680,39 @@
 <main>
   <div class="notice">
     Submitting this form does not guarantee approval or scheduling. Our team will review your request and reach out with a cost estimate and next steps before any work begins.
+  </div>
+
+  <!-- ── PROCESS GUIDE ── -->
+  <div class="lifecycle-guide">
+    <div class="lifecycle-guide-title">How this works — request lifecycle</div>
+    <div class="lifecycle-steps">
+      <div class="lc-step active">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Quotation<br>Request</div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Assessment &amp;<br>Coordination</div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Scheduling<br><span style="font-size:0.55rem;opacity:0.75">(if downtime needed)</span></div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">CRF + Signed<br>Work Order</div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Activity<br>Execution</div>
+      </div>
+    </div>
+    <div class="lc-note">
+      <strong>You are here: Step 1.</strong> After submitting, Platform Ops will assess the request, provide a cost estimate, and coordinate next steps with you.
+      For services requiring downtime (e.g. Change HR URL, Rename Database), a confirmed schedule is required before a CRF is raised.
+      A <strong>signed Work Order</strong> attached to the CRF must be provided at least <strong>2 business days</strong> before the target activity date.
+      For Data Migration, an Account Creation Form is also required.
+    </div>
   </div>
 
   <form id="inquiryForm" novalidate>
@@ -828,6 +978,17 @@
       </div>
     </div>
 
+    <div class="fee-policy">
+      <div class="fee-policy-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      </div>
+      <div>
+        <div class="fee-policy-title">Note on service fees</div>
+        All Platform Operations backend services are subject to applicable service fees as part of our standard engagement policy.
+        If a fee waiver is being requested for this engagement, written approval from the <strong>Chief Technology Officer (CTO)</strong> is required prior to scheduling and execution.
+      </div>
+    </div>
+
     <div class="disclaimer">
       By submitting this form, you acknowledge that this is an initial inquiry only. No work will begin until scope, cost, and timeline have been agreed upon and a signed work order has been received.
     </div>
@@ -847,6 +1008,42 @@
     </div>
     <h2>Inquiry submitted</h2>
     <p>Thank you. Your request has been logged and a Jira ticket will be created shortly. Our team will reach out to discuss scope and cost.</p>
+
+    <!-- Lifecycle stepper on success -->
+    <div class="success-lifecycle">
+      <div class="lifecycle-guide">
+        <div class="lifecycle-guide-title">What happens next</div>
+        <div class="lifecycle-steps">
+          <div class="lc-step" style="--dot-bg:#1B4332">
+            <div class="lc-dot" style="background:var(--green);border-color:var(--green)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="lc-label" style="color:var(--green);font-weight:600">Quotation<br>Request ✓</div>
+          </div>
+          <div class="lc-step active">
+            <div class="lc-dot"></div>
+            <div class="lc-label">Assessment &amp;<br>Coordination</div>
+          </div>
+          <div class="lc-step">
+            <div class="lc-dot"></div>
+            <div class="lc-label">Scheduling<br><span style="font-size:0.55rem;opacity:0.75">(if downtime needed)</span></div>
+          </div>
+          <div class="lc-step">
+            <div class="lc-dot"></div>
+            <div class="lc-label">CRF + Signed<br>Work Order</div>
+          </div>
+          <div class="lc-step">
+            <div class="lc-dot"></div>
+            <div class="lc-label">Activity<br>Execution</div>
+          </div>
+        </div>
+        <div class="lc-note">
+          <strong>Next: Step 2 — Assessment &amp; Coordination.</strong> Platform Ops will review your request and reach out with a cost estimate. Please watch for follow-up from your CSM.
+          Remember: a <strong>signed Work Order attached to the CRF</strong> must be submitted at least <strong>2 business days</strong> before the target activity date to proceed.
+        </div>
+      </div>
+    </div>
+
     <button class="btn-reset" onclick="resetForm()">Submit another request</button>
   </div>
 </main>
@@ -893,8 +1090,14 @@ function getServiceNames() {
 
 // Fetch fresh services from GAS and update localStorage + tiles
 function fetchServicesFromGAS() {
-  fetch(SHEET_URL + '?action=getServices')
-    .then(function(r) { return r.json(); })
+  fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' })
+    .then(function(r) {
+      var ct = r.headers.get('content-type') || '';
+      if (!ct.includes('application/json') && !ct.includes('text/plain')) {
+        throw new Error('Non-JSON response — GAS may need redeployment');
+      }
+      return r.json();
+    })
     .then(function(d) {
       var svcs = d.services || [];
       if (!svcs.length) return;
@@ -907,7 +1110,8 @@ function fetchServicesFromGAS() {
       try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
       renderServiceTiles();
     })
-    .catch(function() {
+    .catch(function(err) {
+      console.warn('fetchServicesFromGAS:', err);
       // Silently fail — hardcoded defaults already rendered
     });
 }
