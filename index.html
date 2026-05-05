@@ -803,8 +803,8 @@ function renderServicesView() {
     var actionsHtml = '';
     if (isInternal) {
       actionsHtml = '<div class="sv-card-actions">'
-        + '<button class="sv-btn-edit" onclick="openServiceModal(' + JSON.stringify(svc.id) + ')">Edit</button>'
-        + '<button class="sv-btn-del" onclick="deleteService(' + JSON.stringify(svc.id) + ')">Delete</button>'
+        + '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g,"\\'") + '\')">Edit</button>'
+        + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g,"\\'") + '\')">Delete</button>'
         + '</div>';
     }
     var priceHtml = svc.price ? '<span class="sv-card-price">' + esc(svc.price) + '</span>' : '<span></span>';
