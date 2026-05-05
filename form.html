@@ -491,6 +491,63 @@
     header { padding: 1.5rem; }
     main { padding: 1.5rem 1rem 3rem; }
   }
+
+  /* ── SERVICES PREVIEW MODAL ── */
+  .svc-preview-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 9000;
+    align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  .svc-preview-overlay.open { display: flex; }
+  .svc-preview-panel {
+    background: var(--white); border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    width: 100%; max-width: 620px; max-height: 86vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .svc-preview-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .svc-preview-header h3 { font-size: 1rem; font-weight: 500; color: var(--ink); }
+  .svc-preview-close {
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-muted); padding: 4px; border-radius: 4px;
+    line-height: 1; transition: color 0.15s;
+  }
+  .svc-preview-close:hover { color: var(--ink); }
+  .svc-preview-body {
+    flex: 1; overflow-y: auto; padding: 1.25rem;
+  }
+  .svc-preview-body::-webkit-scrollbar { width: 4px; }
+  .svc-preview-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .svc-preview-list { display: flex; flex-direction: column; gap: 10px; }
+  .svc-preview-item {
+    border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 14px;
+  }
+  .svc-preview-item-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .svc-preview-item-cat {
+    display: inline-block; font-size: 0.63rem; font-weight: 600;
+    color: var(--green); background: var(--green-light); border-radius: 20px;
+    padding: 1px 8px; margin-bottom: 6px;
+  }
+  .svc-preview-item-desc { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
+  .svc-preview-item-price { font-size: 0.8rem; font-weight: 600; color: var(--green); margin-top: 6px; }
+  .svc-preview-empty { text-align: center; padding: 2.5rem 1rem; color: var(--ink-muted); font-size: 0.875rem; }
+
+  /* view services link row */
+  .view-services-row {
+    display: flex; justify-content: flex-end; margin-bottom: 6px;
+  }
+  .view-services-btn {
+    font-family: var(--sans); font-size: 0.75rem; font-weight: 500;
+    color: var(--green-mid); background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; padding: 0;
+    text-decoration: underline; text-underline-offset: 2px;
+    transition: color 0.15s;
+  }
+  .view-services-btn:hover { color: var(--green); }
 </style>
 </head>
 <body>
@@ -577,33 +634,15 @@
 
       <div class="field" id="f-service">
         <label>Service type <span class="req">*</span></label>
-        <div class="field-hint">Select the category that best matches your request.</div>
-        <div class="service-grid">
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-migration" value="Data Migration"/>
-            <label for="svc-migration">Data Migration</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-extraction" value="Data Extraction"/>
-            <label for="svc-extraction">Data Extraction</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-hrurl" value="Change HR URL"/>
-            <label for="svc-hrurl">Change HR URL</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-rename" value="Rename Database"/>
-            <label for="svc-rename">Rename Database</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-backup" value="Database Backup"/>
-            <label for="svc-backup">Database Backup</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-others" value="Others"/>
-            <label for="svc-others">Others</label>
-          </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="field-hint" style="margin-bottom:0">Select the category that best matches your request.</div>
+          <button type="button" class="view-services-btn" onclick="openServicesPreview()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            View services
+          </button>
         </div>
+        <!-- Tiles are rendered dynamically from localStorage (synced by index.html) -->
+        <div class="service-grid" id="serviceGrid"></div>
         <div class="others-field" id="othersField">
           <input type="text" id="othersSpecify" name="othersSpecify" placeholder="Please specify..."/>
         </div>
@@ -812,8 +851,144 @@
   </div>
 </main>
 
+<!-- SERVICES PREVIEW MODAL -->
+<div class="svc-preview-overlay" id="svcPreviewOverlay">
+  <div class="svc-preview-panel">
+    <div class="svc-preview-header">
+      <h3>Available Services</h3>
+      <button class="svc-preview-close" onclick="closeServicesPreview()" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="svc-preview-body">
+      <div class="svc-preview-list" id="svcPreviewList"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
+
+// ── NOTICES that require acknowledgement ────────────────────────────────────
+const NOTICE_SERVICES = ['Data Migration', 'Change HR URL', 'Rename Database'];
+
+// ── DYNAMIC SERVICE TILES ────────────────────────────────────────────────────
+// Reads service names from localStorage (written by index.html).
+// Falls back to hardcoded defaults if nothing has been synced yet.
+const DEFAULT_SERVICES = [
+  'Data Migration', 'Data Extraction', 'Change HR URL',
+  'Rename Database', 'Database Backup', 'Others'
+];
+
+function getServiceNames() {
+  try {
+    var raw = localStorage.getItem('platops_service_names');
+    if (raw) {
+      var names = JSON.parse(raw);
+      if (Array.isArray(names) && names.length) return names;
+    }
+  } catch(e) {}
+  return DEFAULT_SERVICES;
+}
+
+// Fetch fresh services from GAS and update localStorage + tiles
+function fetchServicesFromGAS() {
+  fetch(SHEET_URL + '?action=getServices')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var svcs = d.services || [];
+      if (!svcs.length) return;
+      // Write full objects for preview modal
+      try { localStorage.setItem('platops_services_cache', JSON.stringify(svcs)); } catch(e) {}
+      // Write name list for tile rendering
+      var names = svcs.map(function(s) { return s.name; });
+      // Ensure Others is always available
+      if (!names.some(function(n){ return n.toLowerCase() === 'others'; })) names.push('Others');
+      try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
+      renderServiceTiles();
+    })
+    .catch(function() {
+      // Silently fail — hardcoded defaults already rendered
+    });
+}
+
+function renderServiceTiles() {
+  var grid = document.getElementById('serviceGrid');
+  if (!grid) return;
+  var names = getServiceNames();
+  // Always ensure "Others" is last
+  var others = names.filter(function(n){ return n.toLowerCase() === 'others'; });
+  var rest   = names.filter(function(n){ return n.toLowerCase() !== 'others'; });
+  var ordered = rest.concat(others.length ? others : ['Others']);
+
+  grid.innerHTML = ordered.map(function(name, idx) {
+    var id = 'svc-dyn-' + idx;
+    return '<div class="service-option">'
+      + '<input type="radio" name="serviceType" id="' + id + '" value="' + name.replace(/"/g,'&quot;') + '"/>'
+      + '<label for="' + id + '">' + name + '</label>'
+      + '</div>';
+  }).join('');
+
+  // Re-attach change listeners on fresh tiles
+  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      var val = this.value;
+      if (val === 'Others') {
+        document.getElementById('othersField').classList.add('visible');
+      } else {
+        document.getElementById('othersField').classList.remove('visible');
+        document.getElementById('othersSpecify').value = '';
+      }
+      showNoticeFor(val);
+    });
+  });
+}
+
+// ── SERVICES PREVIEW MODAL ────────────────────────────────────────────────────
+function openServicesPreview() {
+  var overlay = document.getElementById('svcPreviewOverlay');
+  var list    = document.getElementById('svcPreviewList');
+  if (!overlay || !list) return;
+
+  // Load full service objects from localStorage
+  var services = [];
+  try {
+    var raw = localStorage.getItem('platops_services_cache');
+    if (raw) services = JSON.parse(raw);
+  } catch(e) {}
+
+  if (!services.length) {
+    // Fall back to just names
+    var names = getServiceNames();
+    list.innerHTML = names.map(function(n) {
+      return '<div class="svc-preview-item"><div class="svc-preview-item-name">' + n + '</div></div>';
+    }).join('');
+  } else {
+    list.innerHTML = services.map(function(svc) {
+      var catHtml  = svc.category    ? '<span class="svc-preview-item-cat">'  + svc.category    + '</span>' : '';
+      var descHtml = svc.description ? '<p class="svc-preview-item-desc">'    + svc.description + '</p>'    : '';
+      var priceHtml= svc.price       ? '<p class="svc-preview-item-price">'   + svc.price       + '</p>'    : '';
+      return '<div class="svc-preview-item">'
+        + '<div class="svc-preview-item-name">' + svc.name + '</div>'
+        + catHtml + descHtml + priceHtml
+        + '</div>';
+    }).join('');
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeServicesPreview() {
+  var overlay = document.getElementById('svcPreviewOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+document.getElementById('svcPreviewOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeServicesPreview();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeServicesPreview();
+});
 
 /* ── Proper casing ── */
 function toProperCase(str) {
@@ -829,6 +1004,10 @@ function toProperCase(str) {
 
 /* ── Pre-fill today's date ── */
 document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
+
+/* ── Render service tiles dynamically on load ── */
+renderServiceTiles();     // immediate render from cache / defaults
+fetchServicesFromGAS();   // async refresh from GAS, re-renders tiles when done
 
 /* ── Signature canvas ── */
 const canvas = document.getElementById('sigCanvas');
@@ -923,17 +1102,6 @@ function showNoticeFor(value) {
   }
 }
 
-document.querySelectorAll('input[name="serviceType"]').forEach(r => {
-  r.addEventListener('change', function() {
-    if (this.value === 'Others') {
-      document.getElementById('othersField').classList.add('visible');
-    } else {
-      document.getElementById('othersField').classList.remove('visible');
-      document.getElementById('othersSpecify').value = '';
-    }
-    showNoticeFor(this.value);
-  });
-});
 
 /* ── Validation helper ── */
 function validateField(id, test) {
@@ -1043,7 +1211,8 @@ function resetForm() {
   ['service-error','desc-error','ack-error','sig-error'].forEach(id => document.getElementById(id).style.display = 'none');
   hideAllNotices();
   document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-  document.getElementById('urg-med').checked = true;
+  // Re-render service tiles (in case list was updated since page load)
+  renderServiceTiles();
   document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
   const ratio = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
