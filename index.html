@@ -27,7 +27,7 @@
 }
 html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text)}
 
-/* ── GATE ── */
+/* ── EMAIL PROMPT ── */
 .gate{position:fixed;inset:0;background:var(--k800);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;transition:opacity 0.4s}
 .gate.out{opacity:0;pointer-events:none}
 .gate-card{background:var(--surface);border-radius:14px;padding:2.75rem 2.25rem;width:100%;max-width:400px;text-align:center}
@@ -39,7 +39,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .gate-field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(33,122,61,0.12)}
 .gate-field input.err{border-color:var(--tomato)}
 .gate-field input.shake{animation:shake 0.4s}
-.gate-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:2px;line-height:1}
 .gate-error{font-size:0.75rem;color:var(--tomato);min-height:18px;margin-bottom:8px}
 .gate-btn{width:100%;font-family:'Rubik',sans-serif;font-size:0.875rem;font-weight:500;color:#fff;background:var(--primary);border:none;border-radius:8px;padding:0.75rem;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .gate-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none}
@@ -530,28 +529,19 @@ tr:hover td{background:var(--bg)}
 </head>
 <body>
 
-<!-- GATE -->
+<!-- EMAIL PROMPT -->
 <div class="gate" id="gate">
   <div class="gate-card">
     <img src="logo.svg" alt="Sprout Solutions" class="gate-logo"/>
     <h1>Service Request Portal</h1>
     <p class="gate-sub">Platform Operations · Sprout Solutions</p>
     <div class="gate-field">
-      <input type="email" id="gEmail" placeholder="Email address" autocomplete="email"
-             onkeydown="if(event.key==='Enter')document.getElementById('gPass').focus()"/>
-    </div>
-    <div class="gate-field">
-      <input type="password" id="gPass" placeholder="Passphrase"
+      <input type="email" id="gEmail" placeholder="Enter your Sprout email address" autocomplete="email"
              onkeydown="if(event.key==='Enter')login()"/>
-      <button class="gate-eye" onclick="togglePw()" title="Show/hide">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-        </svg>
-      </button>
     </div>
     <div class="gate-error" id="gErr"></div>
     <button class="gate-btn" id="gBtn" onclick="login()"><span class="gate-spinner" id="gSpinner"></span><span id="gBtnText">Continue</span></button>
-    <p class="gate-hint">Restricted access. Contact Platform Operations<br>if you need credentials.</p>
+    <p class="gate-hint">Your email is used to personalize your tracker view.<br>No password required.</p>
   </div>
 </div>
 
@@ -568,7 +558,7 @@ tr:hover td{background:var(--bg)}
     </div>
     <div class="sh-right">
       <span class="sh-user" id="shUser"></span>
-      <button class="sh-logout" onclick="logout()">Sign out</button>
+      <button class="sh-logout" onclick="logout()" title="Change email">Change</button>
     </div>
   </div>
 
@@ -1016,25 +1006,18 @@ tr:hover td{background:var(--bg)}
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
 var GAS_URL     = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
-var PASSPHRASE  = 'Sprout2026!!';
 var SESSION_KEY = 'platops_v2';
 
-var userEmail='', userRole='client', isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false;
+var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false;
 
-// ── GATE ───────────────────────────────────────────────────
+// ── EMAIL PROMPT ───────────────────────────────────────────
 async function login() {
-  const emailEl=document.getElementById('gEmail'), passEl=document.getElementById('gPass');
+  const emailEl=document.getElementById('gEmail');
   const errEl=document.getElementById('gErr'), btn=document.getElementById('gBtn');
-  const email=emailEl.value.trim().toLowerCase(), pass=passEl.value;
+  const email=emailEl.value.trim().toLowerCase();
   if (!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errEl.textContent='Please enter a valid email address.';
     emailEl.classList.add('err','shake'); setTimeout(()=>emailEl.classList.remove('shake'),400); return;
-  }
-  if (pass!==PASSPHRASE) {
-    errEl.textContent='Incorrect passphrase. Please try again.';
-    passEl.classList.add('err','shake'); passEl.value='';
-    setTimeout(()=>passEl.classList.remove('shake'),400);
-    setTimeout(()=>errEl.textContent='',3000); return;
   }
   btn.classList.add('loading'); errEl.textContent='';
   var role='client';
@@ -1042,37 +1025,39 @@ async function login() {
     var cached=sessionStorage.getItem('role_'+email);
     if (cached) { role=cached; } else {
       var ctrl=new AbortController();
-      var to=setTimeout(()=>{ctrl.abort();role=email.endsWith('@sprout.ph')?'internal':'client';},9000);
+      var to=setTimeout(()=>{ctrl.abort();role='client';},9000);
       var res=await fetch(GAS_URL+'?action=checkAccess&email='+encodeURIComponent(email),{signal:ctrl.signal});
       clearTimeout(to); var d=await res.json(); role=d.role||'client';
       sessionStorage.setItem('role_'+email,role);
     }
-  } catch(e) { role=email.endsWith('@sprout.ph')?'internal':'client'; }
+  } catch(e) { role='client'; }
   btn.classList.remove('loading');
   sessionStorage.setItem(SESSION_KEY,JSON.stringify({email,role,ts:Date.now()}));
   document.getElementById('gate').classList.add('out');
   setTimeout(()=>{document.getElementById('gate').style.display='none';},400);
   initApp(email,role);
 }
-function togglePw(){var e=document.getElementById('gPass');e.type=e.type==='password'?'text':'password';}
 function logout(){sessionStorage.removeItem(SESSION_KEY);location.reload();}
 
 // ── APP INIT ───────────────────────────────────────────────
 function initApp(email,role) {
-  userEmail=email; userRole=role||'client'; isInternal=userRole==='internal'||userRole==='admin';
+  userEmail=email; userRole=role||'client';
+  isAdmin    = userRole==='admin';
+  isLead     = userRole==='lead';
+  isInternal = isAdmin || isLead; // both see all tracker requests
   document.getElementById('shUser').textContent=email;
   document.getElementById('app').classList.add('on');
-  if (isInternal) {
+  // Analytics + Quotation Builder + manage services → admin only
+  if (isAdmin) {
     document.getElementById('tab-analytics').style.display='flex';
     document.getElementById('tab-quotation').style.display='flex';
     document.getElementById('sv-add-btn').style.display='flex';
   }
   if (!isInternal) document.getElementById('trackerCardDesc').textContent='View your submitted service requests and their current status.';
-
-  // Pre-warm tracker cache
+  // Pre-warm tracker cache — pass role so GAS filters correctly
   var cacheKey='tracker_cache_'+email;
   if (!sessionStorage.getItem(cacheKey)) {
-    fetch(GAS_URL+'?action=list&email='+encodeURIComponent(email)).then(r=>r.json())
+    fetch(GAS_URL+'?action=list&email='+encodeURIComponent(email)+'&role='+encodeURIComponent(userRole)).then(r=>r.json())
       .then(d=>sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}))).catch(()=>{});
   }
   // Pre-warm services cache
@@ -1097,7 +1082,7 @@ function switchTab(name){
     return;
   }
   openView(name);
-  if(name==='tracker'&&!trackerInit){trackerInit=true;USER_EMAIL=userEmail;IS_INTERNAL=isInternal;init_tracker();}
+  if(name==='tracker'&&!trackerInit){trackerInit=true;USER_EMAIL=userEmail;USER_ROLE=userRole;IS_INTERNAL=isInternal;init_tracker();}
   if(name==='services'){renderServicesView();}
   if(name==='process'){/* static content, nothing to init */}
   if(name==='analytics'&&!analyticsInit){
@@ -1149,12 +1134,12 @@ function renderServicesView() {
   var grid = document.getElementById('sv-grid');
   if (!grid) return;
   if (!servicesList.length) {
-    grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isInternal ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
+    grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isAdmin ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
     return;
   }
   grid.innerHTML = servicesList.map(function(svc) {
     var actionsHtml = '';
-    if (isInternal) {
+    if (isAdmin) {
       actionsHtml = '<div class="sv-card-actions">'
         + '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g,"\\'") + '\')">Edit</button>'
         + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g,"\\'") + '\')">Delete</button>'
@@ -1303,7 +1288,7 @@ document.addEventListener('keydown', function(e){
 });
 
 // ── TRACKER GLOBALS ────────────────────────────────────────
-var USER_EMAIL='', IS_INTERNAL=false;
+var USER_EMAIL='', USER_ROLE='client', IS_INTERNAL=false;
 var LIFECYCLE=['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
 var all=[], activeF='all', activeSC='all', activeKey=null, initialized=false;
 
@@ -1315,9 +1300,10 @@ async function init_tracker(){
 async function loadList(){
   const cacheKey='tracker_cache_'+USER_EMAIL;
   const cached=sessionStorage.getItem(cacheKey);
+  const roleParam='&role='+encodeURIComponent(USER_ROLE);
   if(cached){
     try{const{data}=JSON.parse(cached);all=data.submissions||[];render();}catch(e){console.error('loadList cache error:',e);}
-    fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL)).then(r=>r.json())
+    fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL)+roleParam).then(r=>r.json())
       .then(d=>{sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}));all=d.submissions||[];render();}).catch(()=>{});
     return;
   }
@@ -1325,7 +1311,7 @@ async function loadList(){
   try{
     const ctrl=new AbortController();
     const to=setTimeout(()=>ctrl.abort(),15000);
-    const res=await fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL),{signal:ctrl.signal});
+    const res=await fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL)+roleParam,{signal:ctrl.signal});
     clearTimeout(to); const d=await res.json();
     sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}));
     all=d.submissions||[]; render();
@@ -1516,7 +1502,7 @@ function fmtMonth(ym){if(!ym)return'';const[y,m]=ym.split('-');const names=['Jan
 
 // ── OPERATIONAL DETAILS CARD ───────────────────────────────────────────────
 function renderOpCard(s){
-  if(!IS_INTERNAL)return'';
+  if(!IS_INTERNAL || !isAdmin)return'';
   const cost=s&&s.serviceCost!=null?s.serviceCost:'';
   const adate=s&&s.activityDate?s.activityDate.substring(0,10):'';
   const cstat=s&&s.costStatus?s.costStatus:'Pending';
