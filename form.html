@@ -86,9 +86,7 @@
     margin-bottom: 2rem;
   }
 
-  .section {
-    margin-bottom: 2rem;
-  }
+  .section { margin-bottom: 2rem; }
 
   .section-heading {
     display: flex;
@@ -119,9 +117,7 @@
     background: var(--border);
   }
 
-  .field {
-    margin-bottom: 1.125rem;
-  }
+  .field { margin-bottom: 1.125rem; }
 
   label {
     display: block;
@@ -131,11 +127,7 @@
     margin-bottom: 5px;
   }
 
-  label .req {
-    color: var(--red);
-    margin-left: 3px;
-    font-size: 0.75rem;
-  }
+  label .req { color: var(--red); margin-left: 3px; font-size: 0.75rem; }
 
   label .opt {
     font-size: 0.6875rem;
@@ -180,8 +172,7 @@
     box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
   }
 
-  input::placeholder,
-  textarea::placeholder { color: #B0B0A0; }
+  input::placeholder, textarea::placeholder { color: #B0B0A0; }
 
   textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
@@ -205,15 +196,10 @@
     gap: 8px;
   }
 
-  .service-option {
-    position: relative;
-  }
+  .service-option { position: relative; }
 
   .service-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+    position: absolute; opacity: 0; width: 0; height: 0;
   }
 
   .service-option label {
@@ -242,26 +228,14 @@
     box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
   }
 
-  .service-option label:hover {
-    border-color: var(--green-muted);
-    color: var(--green);
-  }
+  .service-option label:hover { border-color: var(--green-muted); color: var(--green); }
 
-  .urgency-row {
-    display: flex;
-    gap: 8px;
-  }
+  .urgency-row { display: flex; gap: 8px; }
 
-  .urgency-option {
-    position: relative;
-    flex: 1;
-  }
+  .urgency-option { position: relative; flex: 1; }
 
   .urgency-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+    position: absolute; opacity: 0; width: 0; height: 0;
   }
 
   .urgency-option label {
@@ -279,26 +253,13 @@
     font-weight: 400;
   }
 
-  .urgency-option input[type="radio"]:checked + label {
-    font-weight: 500;
-  }
+  .urgency-option input[type="radio"]:checked + label { font-weight: 500; }
 
-  #urg-low:checked ~ .urgency-option label[for="urg-low"],
-  .urgency-option:has(#urg-low:checked) label {
-    border-color: #2D6A4F; background: #D8F3DC; color: #1B4332;
-  }
-  .urgency-option:has(#urg-med:checked) label {
-    border-color: #B7791F; background: #FEFCBF; color: #744210;
-  }
-  .urgency-option:has(#urg-high:checked) label {
-    border-color: #C53030; background: #FFF5F5; color: #742A2A;
-  }
+  .urgency-option:has(#urg-low:checked) label  { border-color: #2D6A4F; background: #D8F3DC; color: #1B4332; }
+  .urgency-option:has(#urg-med:checked) label  { border-color: #B7791F; background: #FEFCBF; color: #744210; }
+  .urgency-option:has(#urg-high:checked) label { border-color: #C53030; background: #FFF5F5; color: #742A2A; }
 
-  .others-field {
-    display: none;
-    margin-top: 8px;
-  }
-
+  .others-field { display: none; margin-top: 8px; }
   .others-field.visible { display: block; }
 
   .disclaimer {
@@ -312,11 +273,34 @@
     margin-bottom: 1.5rem;
   }
 
-  .form-actions {
+  .fee-policy {
     display: flex;
-    justify-content: flex-end;
     gap: 10px;
+    align-items: flex-start;
+    background: #fffbf0;
+    border: 1px solid #e8d49a;
+    border-left: 3px solid #c9a227;
+    border-radius: 0 6px 6px 0;
+    padding: 0.875rem 1rem;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
   }
+  .fee-policy-icon {
+    color: #c9a227;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .fee-policy-title {
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+    font-size: 0.8125rem;
+  }
+  .fee-policy strong { color: var(--ink); font-weight: 600; }
+
+  .form-actions { display: flex; justify-content: flex-end; gap: 10px; }
 
   .btn-reset {
     font-family: var(--sans);
@@ -348,29 +332,16 @@
 
   .btn-submit:hover { background: var(--green-mid); }
   .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  .btn-submit:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 3rem 1.5rem;
-  }
-
+  .success-screen { display: none; text-align: center; padding: 3rem 1.5rem; }
   .success-screen.visible { display: block; }
 
   .success-icon {
-    width: 56px;
-    height: 56px;
+    width: 56px; height: 56px;
     background: var(--green-light);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     margin: 0 auto 1.25rem;
   }
 
@@ -392,18 +363,11 @@
     margin: 0 auto 1.5rem;
   }
 
-  .error-msg {
-    font-size: 0.75rem;
-    color: var(--red);
-    margin-top: 4px;
-    display: none;
-  }
+  .error-msg { font-size: 0.75rem; color: var(--red); margin-top: 4px; display: none; }
 
   .field.invalid input,
   .field.invalid textarea,
-  .field.invalid select {
-    border-color: var(--red);
-  }
+  .field.invalid select { border-color: var(--red); }
 
   .field.invalid .error-msg { display: block; }
 
@@ -432,10 +396,7 @@
 
   .migration-notice-header svg { flex-shrink: 0; }
 
-  .migration-notice-body {
-    background: var(--white);
-    padding: 1rem 1.125rem;
-  }
+  .migration-notice-body { background: var(--white); padding: 1rem 1.125rem; }
 
   .mn-block {
     margin-bottom: 1rem;
@@ -445,12 +406,7 @@
 
   .mn-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
 
-  .mn-block h4 {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--green);
-    margin-bottom: 5px;
-  }
+  .mn-block h4 { font-size: 0.8rem; font-weight: 500; color: var(--green); margin-bottom: 5px; }
 
   .mn-block p, .mn-block li {
     font-size: 0.7875rem;
@@ -458,22 +414,11 @@
     line-height: 1.65;
   }
 
-  .mn-block ol {
-    padding-left: 1.25rem;
-    margin-top: 4px;
-  }
-
+  .mn-block ol { padding-left: 1.25rem; margin-top: 4px; }
   .mn-block ol li { margin-bottom: 6px; }
-
   .mn-block a { color: var(--green-mid); text-decoration: underline; }
 
-  .mn-legal {
-    font-size: 0.7375rem;
-    color: var(--ink-muted);
-    line-height: 1.65;
-    margin-top: 4px;
-  }
-
+  .mn-legal { font-size: 0.7375rem; color: var(--ink-muted); line-height: 1.65; margin-top: 4px; }
   .mn-legal + .mn-legal { margin-top: 6px; }
 
   .acknowledgement-row {
@@ -491,8 +436,7 @@
 
   .acknowledgement-row input[type="checkbox"] {
     margin-top: 2px;
-    width: 15px;
-    height: 15px;
+    width: 15px; height: 15px;
     accent-color: var(--green);
     flex-shrink: 0;
     cursor: pointer;
@@ -526,11 +470,8 @@
   #sigCanvas { display: block; width: 100%; height: 160px; touch-action: none; }
 
   .sig-placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
     pointer-events: none;
     font-size: 0.8125rem;
     color: #C0C0B4;
@@ -542,9 +483,7 @@
 
   .sig-baseline {
     position: absolute;
-    bottom: 36px;
-    left: 24px;
-    right: 24px;
+    bottom: 36px; left: 24px; right: 24px;
     height: 1px;
     background: var(--border);
     pointer-events: none;
@@ -573,25 +512,158 @@
 
   .btn-clear-sig:hover { border-color: var(--ink-muted); color: var(--ink); }
 
-  .sig-typed-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .sig-or {
-    font-size: 0.75rem;
-    color: var(--ink-muted);
-    white-space: nowrap;
-    padding: 0 4px;
-  }
-
   @media (max-width: 520px) {
     .two-col { grid-template-columns: 1fr; }
     .service-grid { grid-template-columns: repeat(2, 1fr); }
     header { padding: 1.5rem; }
     main { padding: 1.5rem 1rem 3rem; }
+  }
+
+  /* ── SERVICES PREVIEW MODAL ── */
+  .svc-preview-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 9000;
+    align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  .svc-preview-overlay.open { display: flex; }
+  .svc-preview-panel {
+    background: var(--white); border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    width: 100%; max-width: 620px; max-height: 86vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .svc-preview-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .svc-preview-header h3 { font-size: 1rem; font-weight: 500; color: var(--ink); }
+  .svc-preview-close {
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-muted); padding: 4px; border-radius: 4px;
+    line-height: 1; transition: color 0.15s;
+  }
+  .svc-preview-close:hover { color: var(--ink); }
+  .svc-preview-body {
+    flex: 1; overflow-y: auto; padding: 1.25rem;
+  }
+  .svc-preview-body::-webkit-scrollbar { width: 4px; }
+  .svc-preview-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .svc-preview-list { display: flex; flex-direction: column; gap: 10px; }
+  .svc-preview-item {
+    border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 14px;
+  }
+  .svc-preview-item-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .svc-preview-item-cat {
+    display: inline-block; font-size: 0.63rem; font-weight: 600;
+    color: var(--green); background: var(--green-light); border-radius: 20px;
+    padding: 1px 8px; margin-bottom: 6px;
+  }
+  .svc-preview-item-desc { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
+  .svc-preview-item-price { font-size: 0.8rem; font-weight: 600; color: var(--green); margin-top: 6px; }
+  .svc-preview-empty { text-align: center; padding: 2.5rem 1rem; color: var(--ink-muted); font-size: 0.875rem; }
+
+  /* view services link row */
+  .view-services-row {
+    display: flex; justify-content: flex-end; margin-bottom: 6px;
+  }
+  .view-services-btn {
+    font-family: var(--sans); font-size: 0.75rem; font-weight: 500;
+    color: var(--green-mid); background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; padding: 0;
+    text-decoration: underline; text-underline-offset: 2px;
+    transition: color 0.15s;
+  }
+  .view-services-btn:hover { color: var(--green); }
+
+  /* ── LIFECYCLE GUIDE ── */
+  .lifecycle-guide {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.125rem 1.25rem 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .lifecycle-guide-title {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    margin-bottom: 1rem;
+  }
+  .lifecycle-steps {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .lifecycle-steps::-webkit-scrollbar { height: 3px; }
+  .lifecycle-steps::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .lc-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 90px;
+    position: relative;
+  }
+  .lc-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--green-light);
+    z-index: 0;
+  }
+  .lc-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--green-muted);
+    z-index: 1; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .lc-step.active .lc-dot {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .lc-step.active .lc-dot::after {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .lc-label {
+    font-size: 0.6rem;
+    font-weight: 500;
+    text-align: center;
+    color: var(--ink-muted);
+    margin-top: 7px;
+    line-height: 1.35;
+    padding: 0 3px;
+  }
+  .lc-step.active .lc-label { color: var(--green); font-weight: 600; }
+  .lc-note {
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    line-height: 1.6;
+  }
+  .lc-note strong { color: var(--ink); font-weight: 500; }
+
+  /* success screen lifecycle */
+  .success-lifecycle { margin-top: 1.5rem; }
+  .success-lifecycle .lifecycle-guide { margin-bottom: 0; text-align: left; }
+  .success-lifecycle .lc-step.active .lc-dot {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
   }
 </style>
 </head>
@@ -610,8 +682,42 @@
     Submitting this form does not guarantee approval or scheduling. Our team will review your request and reach out with a cost estimate and next steps before any work begins.
   </div>
 
+  <!-- ── PROCESS GUIDE ── -->
+  <div class="lifecycle-guide">
+    <div class="lifecycle-guide-title">How this works — request lifecycle</div>
+    <div class="lifecycle-steps">
+      <div class="lc-step active">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Quotation<br>Request</div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Assessment &amp;<br>Coordination</div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Scheduling<br><span style="font-size:0.55rem;opacity:0.75">(if downtime needed)</span></div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">CRF + Signed<br>Work Order</div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-dot"></div>
+        <div class="lc-label">Activity<br>Execution</div>
+      </div>
+    </div>
+    <div class="lc-note">
+      <strong>You are here: Step 1.</strong> After submitting, Platform Ops will assess the request, provide a cost estimate, and coordinate next steps with you.
+      For services requiring downtime (e.g. Change HR URL, Rename Database), a confirmed schedule is required before a CRF is raised.
+      A <strong>signed Work Order</strong> attached to the CRF must be provided at least <strong>2 business days</strong> before the target activity date.
+      For Data Migration, an Account Creation Form is also required.
+    </div>
+  </div>
+
   <form id="inquiryForm" novalidate>
 
+    <!-- ── Section 01: Requestor Information ── -->
     <div class="section">
       <div class="section-heading">
         <span class="section-number">01</span>
@@ -651,16 +757,24 @@
         </div>
       </div>
 
+      <!-- CHANGED: MRR is now required; Headcount is a new required field -->
       <div class="two-col">
         <div class="field" id="f-mrr">
-          <label for="accountMrr">Account MRR <span class="opt">optional</span></label>
+          <label for="accountMrr">Account MRR <span class="req">*</span></label>
           <div class="field-hint">Monthly Recurring Revenue of the client account.</div>
           <input type="text" id="accountMrr" name="accountMrr" placeholder="e.g. ₱ 25,000"/>
+          <div class="error-msg">Please enter the account MRR.</div>
         </div>
-        <div></div>
+        <div class="field" id="f-headcount">
+          <label for="accountHeadcount">Account headcount <span class="req">*</span></label>
+          <div class="field-hint">Total number of active employees in the account.</div>
+          <input type="text" id="accountHeadcount" name="accountHeadcount" placeholder="e.g. 150"/>
+          <div class="error-msg">Please enter the account headcount.</div>
+        </div>
       </div>
     </div>
 
+    <!-- ── Section 02: Request Details ── -->
     <div class="section">
       <div class="section-heading">
         <span class="section-number">02</span>
@@ -670,38 +784,21 @@
 
       <div class="field" id="f-service">
         <label>Service type <span class="req">*</span></label>
-        <div class="field-hint">Select the category that best matches your request.</div>
-        <div class="service-grid">
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-migration" value="Data Migration"/>
-            <label for="svc-migration">Data Migration</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-extraction" value="Data Extraction"/>
-            <label for="svc-extraction">Data Extraction</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-hrurl" value="Change HR URL"/>
-            <label for="svc-hrurl">Change HR URL</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-rename" value="Rename Database"/>
-            <label for="svc-rename">Rename Database</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-backup" value="Database Backup"/>
-            <label for="svc-backup">Database Backup</label>
-          </div>
-          <div class="service-option">
-            <input type="radio" name="serviceType" id="svc-others" value="Others"/>
-            <label for="svc-others">Others</label>
-          </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="field-hint" style="margin-bottom:0">Select the category that best matches your request.</div>
+          <button type="button" class="view-services-btn" onclick="openServicesPreview()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            View services
+          </button>
         </div>
+        <!-- Tiles are rendered dynamically from localStorage (synced by index.html) -->
+        <div class="service-grid" id="serviceGrid"></div>
         <div class="others-field" id="othersField">
           <input type="text" id="othersSpecify" name="othersSpecify" placeholder="Please specify..."/>
         </div>
         <div class="error-msg" id="service-error" style="display:none">Please select a service type.</div>
 
+        <!-- Data Migration Notice -->
         <div class="migration-notice" id="migrationNotice">
           <div class="migration-notice-header">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.2"/><path d="M8 5v3.5M8 11v.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -733,6 +830,7 @@
           </div>
         </div>
 
+        <!-- Change HR URL Notice -->
         <div class="migration-notice" id="hrUrlNotice">
           <div class="migration-notice-header">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.2"/><path d="M8 5v3.5M8 11v.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -746,6 +844,7 @@
           </div>
         </div>
 
+        <!-- Rename Database Notice -->
         <div class="migration-notice" id="renameNotice">
           <div class="migration-notice-header">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.2"/><path d="M8 5v3.5M8 11v.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -782,12 +881,13 @@
 
       <div class="field">
         <label for="description">Description of the request <span class="req">*</span></label>
-        <div class="field-hint" id="f-desc">Provide context: what needs to be done, affected modules, source/target details, etc.</div>
+        <div class="field-hint">Provide context: what needs to be done, affected modules, source/target details, etc.</div>
         <textarea id="description" name="description" placeholder="Describe the request in as much detail as possible..."></textarea>
         <div class="error-msg" id="desc-error" style="display:none">Please describe the request.</div>
       </div>
     </div>
 
+    <!-- ── Section 03: Timeline & Urgency ── -->
     <div class="section">
       <div class="section-heading">
         <span class="section-number">03</span>
@@ -826,6 +926,7 @@
       </div>
     </div>
 
+    <!-- ── Section 04: Additional Notes ── -->
     <div class="section">
       <div class="section-heading">
         <span class="section-number">04</span>
@@ -838,6 +939,7 @@
       </div>
     </div>
 
+    <!-- ── Section 05: Signature ── -->
     <div class="section sig-section">
       <div class="section-heading">
         <span class="section-number">05</span>
@@ -876,6 +978,17 @@
       </div>
     </div>
 
+    <div class="fee-policy">
+      <div class="fee-policy-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      </div>
+      <div>
+        <div class="fee-policy-title">Note on service fees</div>
+        All Platform Operations backend services are subject to applicable service fees as part of our standard engagement policy.
+        If a fee waiver is being requested for this engagement, written approval from the <strong>Chief Technology Officer (CTO)</strong> is required prior to scheduling and execution.
+      </div>
+    </div>
+
     <div class="disclaimer">
       By submitting this form, you acknowledge that this is an initial inquiry only. No work will begin until scope, cost, and timeline have been agreed upon and a signed work order has been received.
     </div>
@@ -895,12 +1008,191 @@
     </div>
     <h2>Inquiry submitted</h2>
     <p>Thank you. Your request has been logged and a Jira ticket will be created shortly. Our team will reach out to discuss scope and cost.</p>
+
+    <!-- Lifecycle stepper on success -->
+    <div class="success-lifecycle">
+      <div class="lifecycle-guide">
+        <div class="lifecycle-guide-title">What happens next</div>
+        <div class="lifecycle-steps">
+          <div class="lc-step" style="--dot-bg:#1B4332">
+            <div class="lc-dot" style="background:var(--green);border-color:var(--green)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="lc-label" style="color:var(--green);font-weight:600">Quotation<br>Request ✓</div>
+          </div>
+          <div class="lc-step active">
+            <div class="lc-dot"></div>
+            <div class="lc-label">Assessment &amp;<br>Coordination</div>
+          </div>
+          <div class="lc-step">
+            <div class="lc-dot"></div>
+            <div class="lc-label">Scheduling<br><span style="font-size:0.55rem;opacity:0.75">(if downtime needed)</span></div>
+          </div>
+          <div class="lc-step">
+            <div class="lc-dot"></div>
+            <div class="lc-label">CRF + Signed<br>Work Order</div>
+          </div>
+          <div class="lc-step">
+            <div class="lc-dot"></div>
+            <div class="lc-label">Activity<br>Execution</div>
+          </div>
+        </div>
+        <div class="lc-note">
+          <strong>Next: Step 2 — Assessment &amp; Coordination.</strong> Platform Ops will review your request and reach out with a cost estimate. Please watch for follow-up from your CSM.
+          Remember: a <strong>signed Work Order attached to the CRF</strong> must be submitted at least <strong>2 business days</strong> before the target activity date to proceed.
+        </div>
+      </div>
+    </div>
+
     <button class="btn-reset" onclick="resetForm()">Submit another request</button>
   </div>
 </main>
 
+<!-- SERVICES PREVIEW MODAL -->
+<div class="svc-preview-overlay" id="svcPreviewOverlay">
+  <div class="svc-preview-panel">
+    <div class="svc-preview-header">
+      <h3>Available Services</h3>
+      <button class="svc-preview-close" onclick="closeServicesPreview()" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="svc-preview-body">
+      <div class="svc-preview-list" id="svcPreviewList"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
+
+// ── NOTICES that require acknowledgement ────────────────────────────────────
+const NOTICE_SERVICES = ['Data Migration', 'Change HR URL', 'Rename Database'];
+
+// ── DYNAMIC SERVICE TILES ────────────────────────────────────────────────────
+// Reads service names from localStorage (written by index.html).
+// Falls back to hardcoded defaults if nothing has been synced yet.
+const DEFAULT_SERVICES = [
+  'Data Migration', 'Data Extraction', 'Change HR URL',
+  'Rename Database', 'Database Backup', 'Others'
+];
+
+function getServiceNames() {
+  try {
+    var raw = localStorage.getItem('platops_service_names');
+    if (raw) {
+      var names = JSON.parse(raw);
+      if (Array.isArray(names) && names.length) return names;
+    }
+  } catch(e) {}
+  return DEFAULT_SERVICES;
+}
+
+// Fetch fresh services from GAS and update localStorage + tiles
+function fetchServicesFromGAS() {
+  fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' })
+    .then(function(r) {
+      var ct = r.headers.get('content-type') || '';
+      if (!ct.includes('application/json') && !ct.includes('text/plain')) {
+        throw new Error('Non-JSON response — GAS may need redeployment');
+      }
+      return r.json();
+    })
+    .then(function(d) {
+      var svcs = d.services || [];
+      if (!svcs.length) return;
+      // Write full objects for preview modal
+      try { localStorage.setItem('platops_services_cache', JSON.stringify(svcs)); } catch(e) {}
+      // Write name list for tile rendering
+      var names = svcs.map(function(s) { return s.name; });
+      // Ensure Others is always available
+      if (!names.some(function(n){ return n.toLowerCase() === 'others'; })) names.push('Others');
+      try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
+      renderServiceTiles();
+    })
+    .catch(function(err) {
+      console.warn('fetchServicesFromGAS:', err);
+      // Silently fail — hardcoded defaults already rendered
+    });
+}
+
+function renderServiceTiles() {
+  var grid = document.getElementById('serviceGrid');
+  if (!grid) return;
+  var names = getServiceNames();
+  // Always ensure "Others" is last
+  var others = names.filter(function(n){ return n.toLowerCase() === 'others'; });
+  var rest   = names.filter(function(n){ return n.toLowerCase() !== 'others'; });
+  var ordered = rest.concat(others.length ? others : ['Others']);
+
+  grid.innerHTML = ordered.map(function(name, idx) {
+    var id = 'svc-dyn-' + idx;
+    return '<div class="service-option">'
+      + '<input type="radio" name="serviceType" id="' + id + '" value="' + name.replace(/"/g,'&quot;') + '"/>'
+      + '<label for="' + id + '">' + name + '</label>'
+      + '</div>';
+  }).join('');
+
+  // Re-attach change listeners on fresh tiles
+  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      var val = this.value;
+      if (val === 'Others') {
+        document.getElementById('othersField').classList.add('visible');
+      } else {
+        document.getElementById('othersField').classList.remove('visible');
+        document.getElementById('othersSpecify').value = '';
+      }
+      showNoticeFor(val);
+    });
+  });
+}
+
+// ── SERVICES PREVIEW MODAL ────────────────────────────────────────────────────
+function openServicesPreview() {
+  var overlay = document.getElementById('svcPreviewOverlay');
+  var list    = document.getElementById('svcPreviewList');
+  if (!overlay || !list) return;
+
+  // Load full service objects from localStorage
+  var services = [];
+  try {
+    var raw = localStorage.getItem('platops_services_cache');
+    if (raw) services = JSON.parse(raw);
+  } catch(e) {}
+
+  if (!services.length) {
+    // Fall back to just names
+    var names = getServiceNames();
+    list.innerHTML = names.map(function(n) {
+      return '<div class="svc-preview-item"><div class="svc-preview-item-name">' + n + '</div></div>';
+    }).join('');
+  } else {
+    list.innerHTML = services.map(function(svc) {
+      var catHtml  = svc.category    ? '<span class="svc-preview-item-cat">'  + svc.category    + '</span>' : '';
+      var descHtml = svc.description ? '<p class="svc-preview-item-desc">'    + svc.description + '</p>'    : '';
+      var priceHtml= svc.price       ? '<p class="svc-preview-item-price">'   + svc.price       + '</p>'    : '';
+      return '<div class="svc-preview-item">'
+        + '<div class="svc-preview-item-name">' + svc.name + '</div>'
+        + catHtml + descHtml + priceHtml
+        + '</div>';
+    }).join('');
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeServicesPreview() {
+  var overlay = document.getElementById('svcPreviewOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+document.getElementById('svcPreviewOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeServicesPreview();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeServicesPreview();
+});
 
 /* ── Proper casing ── */
 function toProperCase(str) {
@@ -916,6 +1208,10 @@ function toProperCase(str) {
 
 /* ── Pre-fill today's date ── */
 document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
+
+/* ── Render service tiles dynamically on load ── */
+renderServiceTiles();     // immediate render from cache / defaults
+fetchServicesFromGAS();   // async refresh from GAS, re-renders tiles when done
 
 /* ── Signature canvas ── */
 const canvas = document.getElementById('sigCanvas');
@@ -1010,17 +1306,6 @@ function showNoticeFor(value) {
   }
 }
 
-document.querySelectorAll('input[name="serviceType"]').forEach(r => {
-  r.addEventListener('change', function() {
-    if (this.value === 'Others') {
-      document.getElementById('othersField').classList.add('visible');
-    } else {
-      document.getElementById('othersField').classList.remove('visible');
-      document.getElementById('othersSpecify').value = '';
-    }
-    showNoticeFor(this.value);
-  });
-});
 
 /* ── Validation helper ── */
 function validateField(id, test) {
@@ -1036,15 +1321,19 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
   e.preventDefault();
   let valid = true;
 
-  valid = validateField('requestorName', document.getElementById('requestorName').value.trim() !== '') && valid;
+  valid = validateField('requestorName',    document.getElementById('requestorName').value.trim() !== '')    && valid;
   const email = document.getElementById('requestorEmail').value.trim();
-  valid = validateField('requestorEmail', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && valid;
-  valid = validateField('clientName', document.getElementById('clientName').value.trim() !== '') && valid;
-  valid = validateField('csm', document.getElementById('csm').value.trim() !== '') && valid;
+  valid = validateField('requestorEmail',   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))                        && valid;
+  valid = validateField('clientName',       document.getElementById('clientName').value.trim() !== '')        && valid;
+  valid = validateField('csm',              document.getElementById('csm').value.trim() !== '')               && valid;
   const csmEmail = document.getElementById('csmEmail').value.trim();
-  valid = validateField('csmEmail', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(csmEmail)) && valid;
-  valid = validateField('hrUrl', document.getElementById('hrUrl').value.trim() !== '') && valid;
-  valid = validateField('payrollCodes', document.getElementById('payrollCodes').value.trim() !== '') && valid;
+  valid = validateField('csmEmail',         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(csmEmail))                     && valid;
+  // CHANGED: MRR now required
+  valid = validateField('accountMrr',       document.getElementById('accountMrr').value.trim() !== '')       && valid;
+  // NEW: Headcount required
+  valid = validateField('accountHeadcount', document.getElementById('accountHeadcount').value.trim() !== '') && valid;
+  valid = validateField('hrUrl',            document.getElementById('hrUrl').value.trim() !== '')             && valid;
+  valid = validateField('payrollCodes',     document.getElementById('payrollCodes').value.trim() !== '')      && valid;
 
   const serviceSelected = document.querySelector('input[name="serviceType"]:checked');
   const serviceErr = document.getElementById('service-error');
@@ -1063,7 +1352,7 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
   if (!hasSig) { sigErr.style.display = 'block'; wrap.classList.add('invalid-sig'); valid = false; }
   else { sigErr.style.display = 'none'; wrap.classList.remove('invalid-sig'); }
   valid = validateField('sigName', document.getElementById('sigName').value.trim() !== '') && valid;
-  valid = validateField('sigDate', document.getElementById('sigDate').value !== '') && valid;
+  valid = validateField('sigDate', document.getElementById('sigDate').value !== '')         && valid;
 
   if (!valid) return;
 
@@ -1076,24 +1365,26 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     : serviceSelected.value;
 
   const payload = {
-    timestamp: new Date().toISOString(),
-    requestorName: document.getElementById('requestorName').value.trim(),
-    requestorEmail: document.getElementById('requestorEmail').value.trim(),
-    clientName: document.getElementById('clientName').value.trim(),
-    csm: document.getElementById('csm').value.trim(),
-    csmEmail: document.getElementById('csmEmail').value.trim(),
+    timestamp:             new Date().toISOString(),
+    requestorName:         document.getElementById('requestorName').value.trim(),
+    requestorEmail:        document.getElementById('requestorEmail').value.trim(),
+    clientName:            document.getElementById('clientName').value.trim(),
+    csm:                   document.getElementById('csm').value.trim(),
+    csmEmail:              document.getElementById('csmEmail').value.trim(),
+    accountMrr:            document.getElementById('accountMrr').value.trim(),
+    accountHeadcount:      document.getElementById('accountHeadcount').value.trim(), // NEW
     serviceType,
-    hrUrl: document.getElementById('hrUrl').value.trim(),
-    payrollCodes: document.getElementById('payrollCodes').value.trim(),
-    description: desc,
-    targetDate: document.getElementById('targetDate').value,
-    urgency: document.querySelector('input[name="urgency"]:checked')?.value || 'Medium',
-    constraints: document.getElementById('constraints').value.trim(),
-    notes: document.getElementById('notes').value.trim(),
+    hrUrl:                 document.getElementById('hrUrl').value.trim(),
+    payrollCodes:          document.getElementById('payrollCodes').value.trim(),
+    description:           desc,
+    targetDate:            document.getElementById('targetDate').value,
+    urgency:               document.querySelector('input[name="urgency"]:checked')?.value || 'Medium',
+    constraints:           document.getElementById('constraints').value.trim(),
+    notes:                 document.getElementById('notes').value.trim(),
     migrationAcknowledged: ['Data Migration','Change HR URL','Rename Database'].includes(serviceSelected.value) ? 'Yes' : '',
-    signatureName: document.getElementById('sigName').value.trim(),
-    signatureDate: document.getElementById('sigDate').value,
-    signatureImage: canvas.toDataURL('image/png'),
+    signatureName:         document.getElementById('sigName').value.trim(),
+    signatureDate:         document.getElementById('sigDate').value,
+    signatureImage:        canvas.toDataURL('image/png'),
   };
 
   try {
@@ -1124,7 +1415,8 @@ function resetForm() {
   ['service-error','desc-error','ack-error','sig-error'].forEach(id => document.getElementById(id).style.display = 'none');
   hideAllNotices();
   document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-  document.getElementById('urg-med').checked = true;
+  // Re-render service tiles (in case list was updated since page load)
+  renderServiceTiles();
   document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
   const ratio = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
