@@ -6,6 +6,7 @@
 <title>Service Request Portal · Platform Operations</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -27,26 +28,25 @@
 }
 html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text)}
 
-/* ── EMAIL PROMPT ── */
+/* ── GATE ── */
 .gate{position:fixed;inset:0;background:var(--k800);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;transition:opacity 0.4s}
 .gate.out{opacity:0;pointer-events:none}
 .gate-card{background:var(--surface);border-radius:14px;padding:2.75rem 2.25rem;width:100%;max-width:400px;text-align:center}
 .gate-logo{height:44px;width:auto;display:block;margin:0 auto 1.5rem}
 .gate-card h1{font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:4px}
-.gate-sub{font-size:0.72rem;color:var(--muted);margin-bottom:2.25rem;letter-spacing:0.05em;text-transform:uppercase}
-.gate-field{margin-bottom:10px;position:relative}
-.gate-field input{width:100%;font-family:'Rubik',sans-serif;font-size:0.875rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.15s,box-shadow 0.15s}
-.gate-field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(33,122,61,0.12)}
-.gate-field input.err{border-color:var(--tomato)}
-.gate-field input.shake{animation:shake 0.4s}
-.gate-error{font-size:0.75rem;color:var(--tomato);min-height:18px;margin-bottom:8px}
-.gate-btn{width:100%;font-family:'Rubik',sans-serif;font-size:0.875rem;font-weight:500;color:#fff;background:var(--primary);border:none;border-radius:8px;padding:0.75rem;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
-.gate-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none}
-.gate-btn.loading .gate-spinner{display:block}
-.gate-btn.loading{opacity:0.8;pointer-events:none}
-.gate-btn:hover{background:var(--primary-dk)}
+.gate-sub{font-size:0.72rem;color:var(--muted);margin-bottom:2rem;letter-spacing:0.05em;text-transform:uppercase}
+.gate-divider{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.gate-divider-line{flex:1;height:1px;background:var(--border)}
+.gate-divider-text{font-size:0.7rem;color:var(--muted);white-space:nowrap}
+.gate-google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Rubik',sans-serif;font-size:0.9rem;font-weight:500;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:0.75rem 1rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s}
+.gate-google-btn:hover{border-color:var(--primary);box-shadow:0 0 0 3px rgba(33,122,61,0.08)}
+.gate-google-btn:disabled{opacity:0.6;cursor:not-allowed}
+.gate-google-btn svg{flex-shrink:0}
+.gate-error{font-size:0.75rem;color:var(--tomato);min-height:18px;margin-top:10px}
 .gate-hint{font-size:0.7rem;color:var(--muted);margin-top:14px;line-height:1.6}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.gate-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:1rem 0}
+.gate-loading-spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite}
+.gate-loading p{font-size:0.8rem;color:var(--muted)}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── SHELL ── */
@@ -529,19 +529,29 @@ tr:hover td{background:var(--bg)}
 </head>
 <body>
 
-<!-- EMAIL PROMPT -->
+<!-- GATE -->
 <div class="gate" id="gate">
   <div class="gate-card">
     <img src="logo.svg" alt="Sprout Solutions" class="gate-logo"/>
     <h1>Service Request Portal</h1>
-    <p class="gate-sub">Platform Operations · Sprout Solutions</p>
-    <div class="gate-field">
-      <input type="email" id="gEmail" placeholder="Enter your Sprout email address" autocomplete="email"
-             onkeydown="if(event.key==='Enter')login()"/>
+    <p class="gate-sub">Platform Operations · Aurora Ops</p>
+    <div class="gate-divider">
+      <div class="gate-divider-line"></div>
+      <div class="gate-divider-text">Sign in with your Sprout account</div>
+      <div class="gate-divider-line"></div>
     </div>
+    <button class="gate-google-btn" id="gGoogleBtn" onclick="startGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        <path fill="none" d="M0 0h48v48H0z"/>
+      </svg>
+      Sign in with Google
+    </button>
     <div class="gate-error" id="gErr"></div>
-    <button class="gate-btn" id="gBtn" onclick="login()"><span class="gate-spinner" id="gSpinner"></span><span id="gBtnText">Continue</span></button>
-    <p class="gate-hint">Your email is used to personalize your tracker view.<br>No password required.</p>
+    <p class="gate-hint">Access is restricted to <strong>@sprout.ph</strong> accounts.<br>Your role is assigned automatically.</p>
   </div>
 </div>
 
@@ -558,7 +568,7 @@ tr:hover td{background:var(--bg)}
     </div>
     <div class="sh-right">
       <span class="sh-user" id="shUser"></span>
-      <button class="sh-logout" onclick="logout()" title="Change email">Change</button>
+      <button class="sh-logout" onclick="logout()" title="Sign out">Sign out</button>
     </div>
   </div>
 
@@ -1010,34 +1020,98 @@ var SESSION_KEY = 'platops_v2';
 
 var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false;
 
-// ── EMAIL PROMPT ───────────────────────────────────────────
-async function login() {
-  const emailEl=document.getElementById('gEmail');
-  const errEl=document.getElementById('gErr'), btn=document.getElementById('gBtn');
-  const email=emailEl.value.trim().toLowerCase();
-  if (!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errEl.textContent='Please enter a valid email address.';
-    emailEl.classList.add('err','shake'); setTimeout(()=>emailEl.classList.remove('shake'),400); return;
-  }
-  btn.classList.add('loading'); errEl.textContent='';
-  var role='client';
-  try {
-    var cached=sessionStorage.getItem('role_'+email);
-    if (cached) { role=cached; } else {
-      var ctrl=new AbortController();
-      var to=setTimeout(()=>{ctrl.abort();role='client';},9000);
-      var res=await fetch(GAS_URL+'?action=checkAccess&email='+encodeURIComponent(email),{signal:ctrl.signal});
-      clearTimeout(to); var d=await res.json(); role=d.role||'client';
-      sessionStorage.setItem('role_'+email,role);
+// ── GOOGLE SIGN-IN ─────────────────────────────────────────
+var GOOGLE_CLIENT_ID = '32164233896-7us7hgll8adt8hooclcmk4ugrab12rp5.apps.googleusercontent.com';
+var ALLOWED_DOMAIN   = 'sprout.ph';
+
+function startGoogleLogin() {
+  document.getElementById('gErr').textContent = '';
+  document.getElementById('gGoogleBtn').disabled = true;
+  google.accounts.id.initialize({
+    client_id:          GOOGLE_CLIENT_ID,
+    callback:           handleGoogleCredential,
+    auto_select:        false,
+    cancel_on_tap_outside: true,
+  });
+  google.accounts.id.prompt(function(notification) {
+    // If One Tap is suppressed (e.g. browser blocks it), fall back to popup
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      showGooglePopup();
     }
-  } catch(e) { role='client'; }
-  btn.classList.remove('loading');
-  sessionStorage.setItem(SESSION_KEY,JSON.stringify({email,role,ts:Date.now()}));
-  document.getElementById('gate').classList.add('out');
-  setTimeout(()=>{document.getElementById('gate').style.display='none';},400);
-  initApp(email,role);
+  });
 }
-function logout(){sessionStorage.removeItem(SESSION_KEY);location.reload();}
+
+function showGooglePopup() {
+  // Render a hidden button and programmatically click it to trigger popup flow
+  var container = document.createElement('div');
+  container.style.display = 'none';
+  document.body.appendChild(container);
+  google.accounts.id.renderButton(container, {
+    type: 'standard', theme: 'outline', size: 'large',
+  });
+  var btn = container.querySelector('div[role="button"]');
+  if (btn) btn.click();
+  setTimeout(function() { document.body.removeChild(container); }, 1000);
+}
+
+async function handleGoogleCredential(response) {
+  var errEl = document.getElementById('gErr');
+  var btn   = document.getElementById('gGoogleBtn');
+  try {
+    // Decode JWT payload (no verification needed client-side — GAS can verify if needed)
+    var payload = JSON.parse(atob(response.credential.split('.')[1]));
+    var email   = (payload.email || '').toLowerCase();
+    var hd      = payload.hd || '';   // hosted domain from Google
+
+    // Enforce @sprout.ph domain
+    if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
+      errEl.textContent = 'Access restricted to @sprout.ph accounts. Please sign in with your Sprout email.';
+      btn.disabled = false;
+      google.accounts.id.disableAutoSelect();
+      return;
+    }
+
+    // Show loading state
+    btn.disabled = true;
+    btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
+
+    // Check role against Access sheet
+    var role = 'client';
+    try {
+      var cached = sessionStorage.getItem('role_' + email);
+      if (cached) {
+        role = cached;
+      } else {
+        var ctrl = new AbortController();
+        var to   = setTimeout(function() { ctrl.abort(); }, 9000);
+        var res  = await fetch(GAS_URL + '?action=checkAccess&email=' + encodeURIComponent(email), { signal: ctrl.signal });
+        clearTimeout(to);
+        var d = await res.json();
+        role = d.role || 'client';
+        sessionStorage.setItem('role_' + email, role);
+      }
+    } catch(e) { role = 'client'; }
+
+    // Persist session
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, role, ts: Date.now() }));
+
+    // Dismiss gate
+    document.getElementById('gate').classList.add('out');
+    setTimeout(function() { document.getElementById('gate').style.display = 'none'; }, 400);
+    initApp(email, role);
+
+  } catch(e) {
+    errEl.textContent = 'Sign-in failed. Please try again.';
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Sign in with Google';
+  }
+}
+
+function logout() {
+  google.accounts.id.disableAutoSelect();
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
 
 // ── APP INIT ───────────────────────────────────────────────
 function initApp(email,role) {
