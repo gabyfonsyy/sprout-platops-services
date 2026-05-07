@@ -86,8 +86,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .lcard-icon svg{width:22px;height:22px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .lcard h3{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:6px}
 .lcard p{font-size:0.8rem;color:var(--muted);line-height:1.6}
-/* Submit card spans full width on its own row when it's 1-of-3 */
-.cards.three { grid-template-columns: 1fr 1fr 1fr; }
 
 /* ── ANALYTICS STRIP (tracker inline) ── */
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
@@ -115,7 +113,11 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sb-search input:focus{border-color:var(--primary)}
 .sb-refresh{font-family:'Rubik',sans-serif;font-size:0.75rem;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:6px 9px;cursor:pointer;flex-shrink:0;transition:all 0.15s}
 .sb-refresh:hover{border-color:var(--k300)}
-.sb-filters{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── TRACKER CATEGORY FILTER ── */
+.sb-cat-section{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-cat-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.sb-cat-pills{display:flex;gap:5px;flex-wrap:wrap}
 .pill{font-size:0.67rem;padding:3px 9px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all 0.12s;white-space:nowrap;font-family:'Rubik',sans-serif}
 .pill:hover{border-color:var(--k300)}
 .pill.on{background:var(--primary-lt);border-color:var(--primary);color:var(--primary-dk);font-weight:500}
@@ -255,321 +257,150 @@ tr:hover td{background:var(--bg)}
 .analytics-view-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
 /* ── SERVICES VIEW ── */
-.sv-shell { display:flex; flex:1; overflow:hidden; }
-.sv-sidebar {
-  width:220px; flex-shrink:0;
-  border-right:1px solid var(--border);
-  background:var(--surface);
-  display:flex; flex-direction:column; overflow:hidden;
+.sv-shell{display:flex;flex:1;overflow:hidden}
+.sv-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
+.sv-sidebar-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sv-sidebar-head span{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
+.sv-cat-list{flex:1;overflow-y:auto;padding:8px 0}
+.sv-cat-list::-webkit-scrollbar{width:3px}
+.sv-cat-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sv-cat-item{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;cursor:pointer;font-size:0.8125rem;color:var(--muted);transition:background 0.1s,color 0.1s;border-left:3px solid transparent}
+.sv-cat-item:hover{background:var(--bg);color:var(--text)}
+.sv-cat-item.active{background:var(--primary-lt);color:var(--primary-dk);font-weight:500;border-left-color:var(--primary)}
+.sv-cat-count{font-size:0.65rem;font-weight:600;background:var(--border);color:var(--muted);border-radius:20px;padding:1px 7px;min-width:20px;text-align:center}
+.sv-cat-item.active .sv-cat-count{background:var(--primary);color:#fff}
+.sv-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.sv-topbar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--surface)}
+.sv-search-wrap{flex:1;position:relative}
+.sv-search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.sv-search{width:100%;font-family:'Rubik',sans-serif;font-size:0.8rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px 7px 30px;outline:none;transition:border-color 0.15s}
+.sv-search:focus{border-color:var(--primary)}
+.sv-result-count{font-size:0.75rem;color:var(--muted);white-space:nowrap}
+.sv-content{flex:1;overflow-y:auto;padding:1.125rem}
+.sv-content::-webkit-scrollbar{width:4px}
+.sv-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.sv-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.125rem;display:flex;flex-direction:column;gap:6px;transition:border-color 0.15s,box-shadow 0.15s}
+.sv-card:hover{border-color:var(--k300);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
+.sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+.sv-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;flex:1}
+
+/* ── SERVICE CARD META (teams + cost) ── */
+.sv-card-meta{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+.sv-card-meta-row{display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--muted)}
+.sv-card-meta-row svg{flex-shrink:0;opacity:0.6}
+
+.sv-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px}
+.sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
+.sv-card-actions{display:flex;gap:6px}
+.sv-card-actions button{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
+.sv-btn-edit{background:var(--bg);border:1.5px solid var(--border);color:var(--muted)}
+.sv-btn-edit:hover{border-color:var(--primary);color:var(--primary)}
+.sv-btn-del{background:var(--tomato-lt);border:1.5px solid #fbbdbd;color:var(--tomato)}
+.sv-btn-del:hover{background:#ffd0d0}
+
+/* Submit a Request button on service card */
+.sv-btn-submit{
+  font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;
+  padding:5px 12px;border-radius:6px;cursor:pointer;
+  background:var(--primary);border:none;color:#fff;
+  transition:background 0.15s;white-space:nowrap;
 }
-.sv-sidebar-head {
-  padding:14px 14px 10px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+.sv-btn-submit:hover{background:var(--primary-dk)}
+
+.sv-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.875rem;grid-column:1/-1}
+.sv-empty p{margin-top:8px}
+
+/* ── FORM IFRAME VIEW ── */
+.form-iframe-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.form-iframe-loader{
+  position:absolute;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;z-index:10;transition:opacity 0.35s
 }
-.sv-sidebar-head span { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
-.sv-cat-list { flex:1; overflow-y:auto; padding:8px 0; }
-.sv-cat-list::-webkit-scrollbar { width:3px; }
-.sv-cat-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-.sv-cat-item {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:7px 14px; cursor:pointer;
-  font-size:0.8125rem; color:var(--muted);
-  transition:background 0.1s, color 0.1s;
-  border-left:3px solid transparent;
+.form-iframe-loader.hidden{opacity:0;pointer-events:none}
+.form-iframe-loader p{font-size:0.8rem;color:var(--muted)}
+.form-iframe-fallback{
+  position:absolute;bottom:16px;right:20px;z-index:5;
+  font-size:0.72rem;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:4px 12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
 }
-.sv-cat-item:hover { background:var(--bg); color:var(--text); }
-.sv-cat-item.active { background:var(--primary-lt); color:var(--primary-dk); font-weight:500; border-left-color:var(--primary); }
-.sv-cat-count {
-  font-size:0.65rem; font-weight:600;
-  background:var(--border); color:var(--muted);
-  border-radius:20px; padding:1px 7px; min-width:20px; text-align:center;
-}
-.sv-cat-item.active .sv-cat-count { background:var(--primary); color:#fff; }
-.sv-main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-.sv-topbar {
-  padding:10px 14px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; gap:10px; flex-shrink:0; background:var(--surface);
-}
-.sv-search-wrap { flex:1; position:relative; }
-.sv-search-wrap svg { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
-.sv-search { width:100%; font-family:'Rubik',sans-serif; font-size:0.8rem; color:var(--text); background:var(--bg); border:1.5px solid var(--border); border-radius:7px; padding:7px 10px 7px 30px; outline:none; transition:border-color 0.15s; }
-.sv-search:focus { border-color:var(--primary); }
-.sv-result-count { font-size:0.75rem; color:var(--muted); white-space:nowrap; }
-.sv-content { flex:1; overflow-y:auto; padding:1.125rem; }
-.sv-content::-webkit-scrollbar { width:4px; }
-.sv-content::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-.sv-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:10px; }
-.sv-card {
-  background:var(--surface); border:1.5px solid var(--border);
-  border-radius:10px; padding:1rem 1.125rem;
-  display:flex; flex-direction:column; gap:6px;
-  transition:border-color 0.15s, box-shadow 0.15s;
-}
-.sv-card:hover { border-color:var(--k300); box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-.sv-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.sv-card-name { font-size:0.9rem; font-weight:600; color:var(--text); flex:1; }
-.sv-card-category {
-  font-size:0.62rem; font-weight:600; text-transform:uppercase;
-  letter-spacing:0.06em; color:var(--primary-dk);
-  background:var(--primary-lt); border-radius:20px;
-  padding:2px 8px; white-space:nowrap; flex-shrink:0;
-}
-.sv-card-desc { font-size:0.8rem; color:var(--muted); line-height:1.65; flex:1; }
-.sv-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:2px; }
-.sv-card-price { font-size:0.8rem; font-weight:600; color:var(--primary-dk); }
-.sv-card-actions { display:flex; gap:6px; }
-.sv-card-actions button {
-  font-family:'Rubik',sans-serif; font-size:0.72rem; font-weight:500;
-  padding:4px 10px; border-radius:6px; cursor:pointer; transition:all 0.15s;
-}
-.sv-btn-edit { background:var(--bg); border:1.5px solid var(--border); color:var(--muted); }
-.sv-btn-edit:hover { border-color:var(--primary); color:var(--primary); }
-.sv-btn-del { background:var(--tomato-lt); border:1.5px solid #fbbdbd; color:var(--tomato); }
-.sv-btn-del:hover { background:#ffd0d0; }
-.sv-empty { text-align:center; padding:4rem 2rem; color:var(--muted); font-size:0.875rem; grid-column:1/-1; }
-.sv-empty p { margin-top:8px; }
-@media(max-width:640px){
-  .sv-shell { flex-direction:column; }
-  .sv-sidebar { width:100%; height:auto; border-right:none; border-bottom:1px solid var(--border); }
-  .sv-cat-list { display:flex; flex-direction:row; overflow-x:auto; padding:4px 8px; }
-  .sv-cat-item { white-space:nowrap; border-left:none; border-bottom:2px solid transparent; padding:6px 10px; }
-  .sv-cat-item.active { border-left-color:transparent; border-bottom-color:var(--primary); }
-}
+.form-iframe-fallback a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
 
 /* ── SERVICE MODAL ── */
-.svc-modal-overlay {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.45); z-index:999;
-  align-items:center; justify-content:center; padding:1.5rem;
-}
-.svc-modal-overlay.open { display:flex; }
-.svc-modal {
-  background:var(--surface); border-radius:12px;
-  box-shadow:0 8px 40px rgba(0,0,0,0.18);
-  padding:28px; width:100%; max-width:520px;
-  max-height:90vh; overflow-y:auto;
-}
-.svc-modal h3 { font-size:1rem; font-weight:600; margin-bottom:1.25rem; }
-.svc-form-group { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
-.svc-form-group label { font-size:0.75rem; font-weight:500; color:var(--muted); }
-.svc-form-group input,
-.svc-form-group textarea,
-.svc-form-group select {
-  font-family:'Rubik',sans-serif; font-size:0.875rem; color:var(--text);
-  background:var(--bg); border:1.5px solid var(--border); border-radius:7px;
-  padding:8px 10px; outline:none; transition:border-color 0.15s;
-  width:100%;
-}
-.svc-form-group input:focus,
-.svc-form-group textarea:focus,
-.svc-form-group select:focus { border-color:var(--primary); }
-.svc-form-group textarea { resize:vertical; min-height:80px; line-height:1.6; }
-.svc-modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; }
-.svc-modal-actions .btn-cancel {
-  font-family:'Rubik',sans-serif; font-size:0.8125rem; font-weight:500;
-  padding:7px 16px; border-radius:7px; cursor:pointer;
-  background:transparent; border:1.5px solid var(--border); color:var(--muted);
-  transition:all 0.15s;
-}
-.svc-modal-actions .btn-cancel:hover { border-color:var(--muted); color:var(--text); }
-.svc-modal-actions .btn-save {
-  font-family:'Rubik',sans-serif; font-size:0.8125rem; font-weight:500;
-  padding:7px 20px; border-radius:7px; cursor:pointer;
-  background:var(--primary); border:none; color:#fff; transition:background 0.15s;
-}
-.svc-modal-actions .btn-save:hover { background:var(--primary-dk); }
-.svc-modal-actions .btn-save:disabled { opacity:0.6; cursor:not-allowed; }
+.svc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;padding:1.5rem}
+.svc-modal-overlay.open{display:flex}
+.svc-modal{background:var(--surface);border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.18);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.svc-modal h3{font-size:1rem;font-weight:600;margin-bottom:1.25rem}
+.svc-form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.svc-form-group label{font-size:0.75rem;font-weight:500;color:var(--muted)}
+.svc-form-group input,.svc-form-group textarea,.svc-form-group select{font-family:'Rubik',sans-serif;font-size:0.875rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;outline:none;transition:border-color 0.15s;width:100%}
+.svc-form-group input:focus,.svc-form-group textarea:focus,.svc-form-group select:focus{border-color:var(--primary)}
+.svc-form-group textarea{resize:vertical;min-height:80px;line-height:1.6}
+.svc-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.svc-modal-actions .btn-cancel{font-family:'Rubik',sans-serif;font-size:0.8125rem;font-weight:500;padding:7px 16px;border-radius:7px;cursor:pointer;background:transparent;border:1.5px solid var(--border);color:var(--muted);transition:all 0.15s}
+.svc-modal-actions .btn-cancel:hover{border-color:var(--muted);color:var(--text)}
+.svc-modal-actions .btn-save{font-family:'Rubik',sans-serif;font-size:0.8125rem;font-weight:500;padding:7px 20px;border-radius:7px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s}
+.svc-modal-actions .btn-save:hover{background:var(--primary-dk)}
+.svc-modal-actions .btn-save:disabled{opacity:0.6;cursor:not-allowed}
 
-/* ── SERVICES PREVIEW MODAL (in form) ── */
-.svc-preview-overlay {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.45); z-index:9000;
-  align-items:center; justify-content:center; padding:1.5rem;
-}
-.svc-preview-overlay.open { display:flex; }
-.svc-preview-panel {
-  background:var(--surface); border-radius:12px;
-  box-shadow:0 8px 40px rgba(0,0,0,0.18);
-  width:100%; max-width:640px; max-height:86vh;
-  display:flex; flex-direction:column; overflow:hidden;
-}
-.svc-preview-header {
-  padding:16px 20px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-}
-.svc-preview-header h3 { font-size:1rem; font-weight:600; }
-.svc-preview-close {
-  background:none; border:none; cursor:pointer;
-  color:var(--muted); padding:4px; border-radius:4px; transition:color 0.15s;
-}
-.svc-preview-close:hover { color:var(--text); }
-.svc-preview-body { flex:1; overflow-y:auto; padding:1.25rem; }
-.svc-preview-body::-webkit-scrollbar { width:4px; }
-.svc-preview-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-.svc-preview-list { display:flex; flex-direction:column; gap:10px; }
-.svc-preview-item {
-  border:1.5px solid var(--border); border-radius:8px;
-  padding:12px 14px;
-}
-.svc-preview-item-name { font-size:0.9rem; font-weight:600; color:var(--text); margin-bottom:4px; }
-.svc-preview-item-cat { font-size:0.63rem; font-weight:600; color:var(--primary-dk); background:var(--primary-lt); border-radius:20px; padding:1px 8px; display:inline-block; margin-bottom:6px; }
-.svc-preview-item-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; }
-.svc-preview-item-price { font-size:0.8rem; font-weight:600; color:var(--primary-dk); margin-top:6px; }
-
-/* ── STATUS TOAST ── */
-.toast {
-  position:fixed; bottom:20px; right:28px;
-  background:var(--k800); color:#fff;
-  padding:10px 16px; border-radius:8px;
-  font-family:'Rubik',sans-serif; font-size:13px; font-weight:500;
-  box-shadow:0 6px 32px rgba(0,0,0,.15);
-  transform:translateY(80px); opacity:0;
-  transition:all .3s ease; z-index:9999;
-  display:flex; align-items:center; gap:8px;
-}
-.toast.show { transform:translateY(0); opacity:1; }
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:28px;background:var(--k800);color:#fff;padding:10px 16px;border-radius:8px;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;box-shadow:0 6px 32px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:9999;display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateY(0);opacity:1}
 
 /* ── PROCESS VIEW ── */
-.process-scroll { flex:1; overflow-y:auto; padding:0; }
-.process-scroll::-webkit-scrollbar { width:4px; }
-.process-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-.process-hero {
-  background:var(--k800);
-  padding:3rem 2.5rem 2.5rem;
-  color:#fff;
-}
-.process-hero-inner { max-width:760px; margin:0 auto; }
-.process-hero h2 { font-size:1.625rem; font-weight:600; margin-bottom:8px; }
-.process-hero p { font-size:0.9rem; color:var(--k300); line-height:1.75; max-width:600px; }
-.process-body { max-width:800px; margin:0 auto; padding:2rem 2.5rem 4rem; }
-.proc-section { margin-bottom:2.5rem; }
-.proc-section-label {
-  font-size:0.65rem; font-weight:700; letter-spacing:0.1em;
-  text-transform:uppercase; color:var(--muted);
-  margin-bottom:0.5rem;
-}
-.proc-section-title {
-  font-size:1.125rem; font-weight:600; color:var(--text);
-  margin-bottom:1rem;
-}
-.proc-overview-card {
-  background:var(--surface); border:1.5px solid var(--border);
-  border-radius:10px; padding:1.25rem 1.5rem;
-  font-size:0.875rem; color:var(--text); line-height:1.8;
-}
-.proc-overview-card p { margin-bottom:0.75rem; }
-.proc-overview-card p:last-child { margin-bottom:0; }
-
-/* lifecycle stepper */
-.proc-lifecycle {
-  display:flex; align-items:flex-start; gap:0;
-  background:var(--surface); border:1.5px solid var(--border);
-  border-radius:10px; padding:1.75rem 1.5rem 1.5rem;
-  overflow-x:auto;
-}
-.proc-lifecycle::-webkit-scrollbar { height:3px; }
-.proc-lifecycle::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-.proc-step {
-  display:flex; flex-direction:column; align-items:center;
-  flex:1; min-width:100px; position:relative;
-}
-.proc-step:not(:last-child)::after {
-  content:''; position:absolute; top:19px; left:50%;
-  width:100%; height:2px; background:var(--k100); z-index:0;
-}
-.proc-step-num {
-  width:38px; height:38px; border-radius:50%;
-  background:var(--primary-lt); border:2px solid var(--k300);
-  display:flex; align-items:center; justify-content:center;
-  font-size:0.8rem; font-weight:700; color:var(--primary-dk);
-  z-index:1; flex-shrink:0; transition:all 0.2s;
-}
-.proc-step-label {
-  font-size:0.675rem; font-weight:600; text-align:center;
-  color:var(--text); margin-top:10px; line-height:1.4;
-  padding:0 4px;
-}
-.proc-step-sub {
-  font-size:0.6rem; color:var(--muted); text-align:center;
-  margin-top:3px; padding:0 4px; line-height:1.4;
-}
-.proc-step-notes {
-  display:grid; gap:8px; margin-top:1.25rem;
-}
-.proc-step-note {
-  background:var(--surface); border:1.5px solid var(--border);
-  border-radius:8px; padding:1rem 1.125rem;
-  display:flex; gap:12px; align-items:flex-start;
-}
-.proc-step-note-num {
-  width:26px; height:26px; border-radius:50%;
-  background:var(--primary-lt); color:var(--primary-dk);
-  font-size:0.72rem; font-weight:700;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; margin-top:1px;
-}
-.proc-step-note-body strong {
-  display:block; font-size:0.8125rem; font-weight:600;
-  color:var(--text); margin-bottom:3px;
-}
-.proc-step-note-body span {
-  font-size:0.8rem; color:var(--muted); line-height:1.65;
-}
-
-/* guardrails / exit / escalation tables */
-.proc-table-wrap {
-  background:var(--surface); border:1.5px solid var(--border);
-  border-radius:10px; overflow:hidden;
-}
-.proc-table { width:100%; border-collapse:collapse; font-size:0.8125rem; }
-.proc-table th {
-  background:var(--bg); text-align:left;
-  font-size:0.63rem; font-weight:700; text-transform:uppercase;
-  letter-spacing:0.07em; color:var(--muted);
-  padding:10px 14px; border-bottom:1px solid var(--border);
-}
-.proc-table td {
-  padding:11px 14px; border-bottom:1px solid var(--border);
-  color:var(--text); vertical-align:top; line-height:1.6;
-}
-.proc-table tr:last-child td { border-bottom:none; }
-.proc-table tr:hover td { background:var(--bg); }
-.proc-table td:first-child { font-weight:500; white-space:nowrap; }
-.proc-table .td-muted { color:var(--muted); font-size:0.78rem; }
-.proc-tag {
-  display:inline-flex; align-items:center; gap:4px;
-  font-size:0.65rem; font-weight:600; padding:2px 8px;
-  border-radius:20px; white-space:nowrap;
-}
-.proc-tag-amber { background:var(--mango-lt); color:#7a4800; }
-.proc-tag-red   { background:var(--tomato-lt); color:#7a1010; }
-.proc-tag-blue  { background:var(--blueberry-lt); color:#1c3a9e; }
-
-/* CTA at bottom of process */
-.proc-cta {
-  background:var(--k800); border-radius:12px;
-  padding:2rem 2rem; display:flex;
-  align-items:center; justify-content:space-between;
-  gap:1.5rem; flex-wrap:wrap; margin-top:1rem;
-}
-.proc-cta-text h3 { font-size:1rem; font-weight:600; color:#fff; margin-bottom:4px; }
-.proc-cta-text p  { font-size:0.8125rem; color:var(--k300); line-height:1.6; }
-.proc-cta-btn {
-  font-family:'Rubik',sans-serif; font-size:0.875rem; font-weight:600;
-  padding:10px 24px; border-radius:8px; cursor:pointer;
-  background:#fff; color:var(--k800); border:none;
-  transition:opacity 0.15s; white-space:nowrap; flex-shrink:0;
-}
-.proc-cta-btn:hover { opacity:0.9; }
-
+.process-scroll{flex:1;overflow-y:auto;padding:0}
+.process-scroll::-webkit-scrollbar{width:4px}
+.process-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.process-hero{background:var(--k800);padding:3rem 2.5rem 2.5rem;color:#fff}
+.process-hero-inner{max-width:760px;margin:0 auto}
+.process-hero h2{font-size:1.625rem;font-weight:600;margin-bottom:8px}
+.process-hero p{font-size:0.9rem;color:var(--k300);line-height:1.75;max-width:600px}
+.process-body{max-width:800px;margin:0 auto;padding:2rem 2.5rem 4rem}
+.proc-section{margin-bottom:2.5rem}
+.proc-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+.proc-section-title{font-size:1.125rem;font-weight:600;color:var(--text);margin-bottom:1rem}
+.proc-overview-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;font-size:0.875rem;color:var(--text);line-height:1.8}
+.proc-overview-card p{margin-bottom:0.75rem}
+.proc-overview-card p:last-child{margin-bottom:0}
+.proc-lifecycle{display:flex;align-items:flex-start;gap:0;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.75rem 1.5rem 1.5rem;overflow-x:auto}
+.proc-lifecycle::-webkit-scrollbar{height:3px}
+.proc-lifecycle::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.proc-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:100px;position:relative}
+.proc-step:not(:last-child)::after{content:'';position:absolute;top:19px;left:50%;width:100%;height:2px;background:var(--k100);z-index:0}
+.proc-step-num{width:38px;height:38px;border-radius:50%;background:var(--primary-lt);border:2px solid var(--k300);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--primary-dk);z-index:1;flex-shrink:0;transition:all 0.2s}
+.proc-step-label{font-size:0.675rem;font-weight:600;text-align:center;color:var(--text);margin-top:10px;line-height:1.4;padding:0 4px}
+.proc-step-sub{font-size:0.6rem;color:var(--muted);text-align:center;margin-top:3px;padding:0 4px;line-height:1.4}
+.proc-step-notes{display:grid;gap:8px;margin-top:1.25rem}
+.proc-step-note{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:1rem 1.125rem;display:flex;gap:12px;align-items:flex-start}
+.proc-step-note-num{width:26px;height:26px;border-radius:50%;background:var(--primary-lt);color:var(--primary-dk);font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.proc-step-note-body strong{display:block;font-size:0.8125rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.proc-step-note-body span{font-size:0.8rem;color:var(--muted);line-height:1.65}
+.proc-table-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.proc-table{width:100%;border-collapse:collapse;font-size:0.8125rem}
+.proc-table th{background:var(--bg);text-align:left;font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border)}
+.proc-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6}
+.proc-table tr:last-child td{border-bottom:none}
+.proc-table tr:hover td{background:var(--bg)}
+.proc-table td:first-child{font-weight:500;white-space:nowrap}
+.proc-table .td-muted{color:var(--muted);font-size:0.78rem}
+.proc-cta{background:var(--k800);border-radius:12px;padding:2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;margin-top:1rem}
+.proc-cta-text h3{font-size:1rem;font-weight:600;color:#fff;margin-bottom:4px}
+.proc-cta-text p{font-size:0.8125rem;color:var(--k300);line-height:1.6}
+.proc-cta-btn{font-family:'Rubik',sans-serif;font-size:0.875rem;font-weight:600;padding:10px 24px;border-radius:8px;cursor:pointer;background:#fff;color:var(--k800);border:none;transition:opacity 0.15s;white-space:nowrap;flex-shrink:0}
+.proc-cta-btn:hover{opacity:0.9}
 @media(max-width:640px){
-  .process-hero { padding:2rem 1.25rem 1.75rem; }
-  .process-body { padding:1.5rem 1.25rem 3rem; }
-  .proc-lifecycle { padding:1.25rem 1rem 1rem; }
-  .proc-step { min-width:80px; }
-  .proc-cta { flex-direction:column; text-align:center; }
+  .process-hero{padding:2rem 1.25rem 1.75rem}
+  .process-body{padding:1.5rem 1.25rem 3rem}
+  .proc-lifecycle{padding:1.25rem 1rem 1rem}
+  .proc-step{min-width:80px}
+  .proc-cta{flex-direction:column;text-align:center}
 }
-
 </style>
 </head>
 <body>
@@ -666,7 +497,7 @@ tr:hover td{background:var(--bg)}
             <h3>List of Services</h3>
             <p>Browse all available Platform Operations services and what they cover.</p>
           </div>
-          <div class="lcard" onclick="openForm()">
+          <div class="lcard" onclick="switchTab('form')">
             <div class="lcard-icon">
               <svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg>
             </div>
@@ -693,90 +524,34 @@ tr:hover td{background:var(--bg)}
             <p>This portal covers paid backend services for active clients: data migrations, database operations, configuration changes, and other work not covered by standard BAU. All requests go through a structured review, costing, and approval process before any work begins.</p>
           </div>
         </div>
-
         <div class="process-body">
-
           <div class="proc-section">
             <div class="proc-section-label">01 — Overview</div>
             <div class="proc-section-title">What qualifies as a Platform Operations service request?</div>
             <div class="proc-overview-card">
-              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies. This includes data migrations, data extractions, HR URL changes, database renames, database backups, and similar activities.</p>
-              <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. For requests where a fee waiver is sought, written approval from the Chief Technology Officer (CTO) is required before the request can be scheduled.</p>
+              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies.</p>
+              <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
               <p>If you are unsure whether your request falls under this portal, reach out to the Platform Operations team before submitting.</p>
             </div>
           </div>
-
           <div class="proc-section">
             <div class="proc-section-label">02 — Request Lifecycle</div>
             <div class="proc-section-title">From submission to completion</div>
-
             <div class="proc-lifecycle" style="margin-bottom:1rem">
-              <div class="proc-step">
-                <div class="proc-step-num">1</div>
-                <div class="proc-step-label">Quotation<br>Request</div>
-                <div class="proc-step-sub">You submit this form</div>
-              </div>
-              <div class="proc-step">
-                <div class="proc-step-num">2</div>
-                <div class="proc-step-label">Assessment &amp;<br>Coordination</div>
-                <div class="proc-step-sub">Ops reviews &amp; estimates</div>
-              </div>
-              <div class="proc-step">
-                <div class="proc-step-num">3</div>
-                <div class="proc-step-label">Scheduling</div>
-                <div class="proc-step-sub">If downtime is required</div>
-              </div>
-              <div class="proc-step">
-                <div class="proc-step-num">4</div>
-                <div class="proc-step-label">CRF + Signed<br>Work Order</div>
-                <div class="proc-step-sub">Required to proceed</div>
-              </div>
-              <div class="proc-step">
-                <div class="proc-step-num">5</div>
-                <div class="proc-step-label">Activity<br>Execution</div>
-                <div class="proc-step-sub">Work is carried out</div>
-              </div>
+              <div class="proc-step"><div class="proc-step-num">1</div><div class="proc-step-label">Quotation<br>Request</div><div class="proc-step-sub">You submit this form</div></div>
+              <div class="proc-step"><div class="proc-step-num">2</div><div class="proc-step-label">Assessment &amp;<br>Coordination</div><div class="proc-step-sub">Ops reviews &amp; estimates</div></div>
+              <div class="proc-step"><div class="proc-step-num">3</div><div class="proc-step-label">Scheduling</div><div class="proc-step-sub">If downtime is required</div></div>
+              <div class="proc-step"><div class="proc-step-num">4</div><div class="proc-step-label">CRF + Signed<br>Work Order</div><div class="proc-step-sub">Required to proceed</div></div>
+              <div class="proc-step"><div class="proc-step-num">5</div><div class="proc-step-label">Activity<br>Execution</div><div class="proc-step-sub">Work is carried out</div></div>
             </div>
-
             <div class="proc-step-notes">
-              <div class="proc-step-note">
-                <div class="proc-step-note-num">1</div>
-                <div class="proc-step-note-body">
-                  <strong>Quotation Request</strong>
-                  <span>You submit a request through this portal with client details, the service needed, target date, and any known constraints. Submitting does not guarantee approval or scheduling — it opens the request for review.</span>
-                </div>
-              </div>
-              <div class="proc-step-note">
-                <div class="proc-step-note-num">2</div>
-                <div class="proc-step-note-body">
-                  <strong>Assessment &amp; Coordination</strong>
-                  <span>Platform Ops assesses the request for feasibility and complexity, prepares a cost estimate, and coordinates next steps with the CSM. Additional information may be requested at this stage.</span>
-                </div>
-              </div>
-              <div class="proc-step-note">
-                <div class="proc-step-note-num">3</div>
-                <div class="proc-step-note-body">
-                  <strong>Scheduling <span style="font-weight:400;color:var(--muted)">(if downtime is required)</span></strong>
-                  <span>For services that involve system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed upon with the client before a CRF is raised. No downtime activity proceeds without a locked schedule.</span>
-                </div>
-              </div>
-              <div class="proc-step-note">
-                <div class="proc-step-note-num">4</div>
-                <div class="proc-step-note-body">
-                  <strong>CRF + Signed Work Order</strong>
-                  <span>A Change Request Form (CRF) with a signed Work Order must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration requests, an Account Creation Form is also required. No work begins without these documents.</span>
-                </div>
-              </div>
-              <div class="proc-step-note">
-                <div class="proc-step-note-num">5</div>
-                <div class="proc-step-note-body">
-                  <strong>Activity Execution</strong>
-                  <span>The service is executed by the assigned Platform Ops team member. Results are validated and the request is updated in the tracker. The requester and CSM are notified upon completion.</span>
-                </div>
-              </div>
+              <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>Quotation Request</strong><span>Submit through this portal with client details, service needed, target date, and known constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>Assessment &amp; Coordination</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>Scheduling <span style="font-weight:400;color:var(--muted)">(if downtime is required)</span></strong><span>For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>CRF + Signed Work Order</strong><span>Must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without these documents.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">5</div><div class="proc-step-note-body"><strong>Activity Execution</strong><span>The service is executed by the assigned Platform Ops team member. Results are validated and the request is updated in the tracker. The requester and CSM are notified upon completion.</span></div></div>
             </div>
           </div>
-
           <div class="proc-section">
             <div class="proc-section-label">03 — Scope &amp; Quality Safeguards</div>
             <div class="proc-section-title">Guardrails that apply to all requests</div>
@@ -784,41 +559,16 @@ tr:hover td{background:var(--bg)}
               <table class="proc-table">
                 <thead><tr><th>Guardrail</th><th>What It Means</th><th>Action</th></tr></thead>
                 <tbody>
-                  <tr>
-                    <td>All requests through this portal</td>
-                    <td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs are tracked or prioritized.</td>
-                    <td class="td-muted">Redirect requester to submit via this form.</td>
-                  </tr>
-                  <tr>
-                    <td>Assessment before execution</td>
-                    <td class="td-muted">No work begins without a completed review that determines scope, cost, and timeline.</td>
-                    <td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td>
-                  </tr>
-                  <tr>
-                    <td>Signed Work Order required</td>
-                    <td class="td-muted">A signed Work Order attached to the CRF must be received at least 2 business days before the target date.</td>
-                    <td class="td-muted">CSM follows up with client if documents are pending.</td>
-                  </tr>
-                  <tr>
-                    <td>All services are subject to fees</td>
-                    <td class="td-muted">Platform Operations backend services are billable engagements. Fee waivers are not granted by default.</td>
-                    <td class="td-muted">Written CTO approval is required for any fee waiver before the request can proceed.</td>
-                  </tr>
-                  <tr>
-                    <td>No unapproved scope changes</td>
-                    <td class="td-muted">Any new requirement identified mid-execution is treated as a separate request, not absorbed into the current one.</td>
-                    <td class="td-muted">Log a new request. Re-assess and re-estimate.</td>
-                  </tr>
-                  <tr>
-                    <td>Downtime must be confirmed</td>
-                    <td class="td-muted">For activities requiring a maintenance window, no CRF is raised until a schedule is confirmed with the client.</td>
-                    <td class="td-muted">Platform Ops coordinates with the CSM to lock the window before proceeding.</td>
-                  </tr>
+                  <tr><td>All requests through this portal</td><td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs.</td><td class="td-muted">Redirect requester to submit via this form.</td></tr>
+                  <tr><td>Assessment before execution</td><td class="td-muted">No work begins without completed review of scope, cost, and timeline.</td><td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td></tr>
+                  <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
+                  <tr><td>All services subject to fees</td><td class="td-muted">Fee waivers are not granted by default.</td><td class="td-muted">Written CTO approval required for any waiver.</td></tr>
+                  <tr><td>No unapproved scope changes</td><td class="td-muted">New requirements mid-execution are treated as a separate request.</td><td class="td-muted">Log a new request. Re-assess and re-estimate.</td></tr>
+                  <tr><td>Downtime must be confirmed</td><td class="td-muted">No CRF raised until schedule is confirmed with client.</td><td class="td-muted">Platform Ops coordinates with CSM to lock window.</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
-
           <div class="proc-section">
             <div class="proc-section-label">04 — Exit Criteria</div>
             <div class="proc-section-title">When is a request considered complete?</div>
@@ -826,16 +576,15 @@ tr:hover td{background:var(--bg)}
               <table class="proc-table">
                 <thead><tr><th>#</th><th>Condition</th></tr></thead>
                 <tbody>
-                  <tr><td>1</td><td>The activity has been executed successfully in the target client environment.</td></tr>
-                  <tr><td>2</td><td>Output or results have been validated by the requester or CSM.</td></tr>
-                  <tr><td>3</td><td>The service fee has been settled or a waiver has been formally approved by the CTO.</td></tr>
-                  <tr><td>4</td><td>The tracker has been updated and the request is marked as <strong>Request Done</strong>.</td></tr>
-                  <tr><td>5</td><td>The requester and CSM have been notified of completion.</td></tr>
+                  <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
+                  <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
+                  <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
+                  <tr><td>4</td><td>Tracker updated and request marked as <strong>Request Done</strong>.</td></tr>
+                  <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
-
           <div class="proc-section">
             <div class="proc-section-label">05 — Escalation</div>
             <div class="proc-section-title">When things get stuck</div>
@@ -843,49 +592,41 @@ tr:hover td{background:var(--bg)}
               <table class="proc-table">
                 <thead><tr><th>Scenario</th><th>Escalation Path</th><th>Expected Outcome</th></tr></thead>
                 <tbody>
-                  <tr>
-                    <td>Request stalled with no response from Platform Ops</td>
-                    <td class="td-muted">CSM → Platform Ops Lead</td>
-                    <td class="td-muted">Status update within 2 business days</td>
-                  </tr>
-                  <tr>
-                    <td>Scope or feasibility unclear after submission</td>
-                    <td class="td-muted">Platform Ops → Engineering Manager</td>
-                    <td class="td-muted">Joint assessment within 2 business days</td>
-                  </tr>
-                  <tr>
-                    <td>Client quotation approval delayed &gt; 5 business days</td>
-                    <td class="td-muted">CSM → Lead CSM</td>
-                    <td class="td-muted">Follow-up and resolution or cancellation of request</td>
-                  </tr>
-                  <tr>
-                    <td>Fee waiver requested without CTO approval</td>
-                    <td class="td-muted">CSM → CTO</td>
-                    <td class="td-muted">Written approval or denial within agreed timeline before request proceeds</td>
-                  </tr>
-                  <tr>
-                    <td>Scope change requested mid-execution</td>
-                    <td class="td-muted">Platform Ops Tech Lead → Platform Ops Lead</td>
-                    <td class="td-muted">Scope frozen; new items logged as a separate request</td>
-                  </tr>
-                  <tr>
-                    <td>Downtime window not agreed upon in time</td>
-                    <td class="td-muted">CSM → Lead CSM → Platform Ops Lead</td>
-                    <td class="td-muted">Schedule confirmed or request deferred to next available window</td>
-                  </tr>
+                  <tr><td>Request stalled with no response</td><td class="td-muted">CSM → Platform Ops Lead</td><td class="td-muted">Status update within 2 business days</td></tr>
+                  <tr><td>Scope or feasibility unclear</td><td class="td-muted">Platform Ops → Engineering Manager</td><td class="td-muted">Joint assessment within 2 business days</td></tr>
+                  <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-muted">CSM → Lead CSM</td><td class="td-muted">Resolution or cancellation of request</td></tr>
+                  <tr><td>Fee waiver without CTO approval</td><td class="td-muted">CSM → CTO</td><td class="td-muted">Written approval or denial before request proceeds</td></tr>
+                  <tr><td>Scope change mid-execution</td><td class="td-muted">Platform Ops Tech Lead → Platform Ops Lead</td><td class="td-muted">Scope frozen; new items logged separately</td></tr>
+                  <tr><td>Downtime window not agreed in time</td><td class="td-muted">CSM → Lead CSM → Platform Ops Lead</td><td class="td-muted">Schedule confirmed or request deferred</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
-
           <div class="proc-cta">
             <div class="proc-cta-text">
               <h3>Ready to submit a service request?</h3>
-              <p>Have the client's HR URL, payroll code(s), target date, and a clear description of what's needed. The more context you provide, the faster the assessment.</p>
+              <p>Have the client's HR URL, payroll code(s), target date, and a clear description of what's needed.</p>
             </div>
-            <button class="proc-cta-btn" onclick="openForm()">Submit a Request →</button>
+            <button class="proc-cta-btn" onclick="switchTab('form')">Submit a Request →</button>
           </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- FORM VIEW (iframe — same approach as Quotation Builder) -->
+    <div class="view" id="view-form">
+      <div class="form-iframe-wrap">
+        <div class="form-iframe-loader" id="formLoader">
+          <span class="spinner"></span>
+          <p>Loading request form…</p>
+        </div>
+        <iframe id="form-iframe"
+          style="flex:1;border:none;width:100%;height:100%"
+          title="Service Request Form">
+        </iframe>
+        <div class="form-iframe-fallback">
+          Having trouble?
+          <a href="servicerequestform.html" target="_blank">Open in new tab ↗</a>
         </div>
       </div>
     </div>
@@ -910,14 +651,12 @@ tr:hover td{background:var(--bg)}
             <input type="text" id="srch" placeholder="Search client, ticket, email…" oninput="render()"/>
             <button class="sb-refresh" onclick="refresh()" title="Refresh">↻</button>
           </div>
-          <div class="sb-filters" id="filters">
-            <span class="pill on" data-f="all" onclick="setF(this)">All</span>
-            <span class="pill" data-f="For Quotation" onclick="setF(this)">For Quotation</span>
-            <span class="pill" data-f="Ongoing Review" onclick="setF(this)">Ongoing Review</span>
-            <span class="pill" data-f="Quotation Provided" onclick="setF(this)">Quotation Provided</span>
-            <span class="pill" data-f="For Execution / Schedule" onclick="setF(this)">For Execution</span>
-            <span class="pill" data-f="Ongoing Execution / Activity" onclick="setF(this)">Ongoing Activity</span>
-            <span class="pill" data-f="Request Done" onclick="setF(this)">Done</span>
+          <!-- CHANGED: Category-based filter replaces status pills -->
+          <div class="sb-cat-section">
+            <div class="sb-cat-label">Filter by category</div>
+            <div class="sb-cat-pills" id="catPills">
+              <span class="pill on" data-cat="all" onclick="setCatF(this)">All</span>
+            </div>
           </div>
           <div class="sb-list" id="sbList"><div class="empty-sb"><span class="spinner"></span></div></div>
         </div>
@@ -952,7 +691,7 @@ tr:hover td{background:var(--bg)}
               <input type="text" class="sv-search" id="svSearch" placeholder="Search services…" oninput="renderServicesView()"/>
             </div>
             <span class="sv-result-count" id="svResultCount"></span>
-            <button class="btn btn-primary" id="sv-add-btn" onclick="openServiceModal()" style="display:none">
+            <button class="btn btn-primary" id="sv-add-btn" onclick="openServiceModal()" style="display:none;font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:6px 14px;border-radius:7px;cursor:pointer;background:var(--primary);color:#fff;border:none">
               <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:4px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Add Service
             </button>
@@ -1030,7 +769,7 @@ tr:hover td{background:var(--bg)}
   </div>
 </div>
 
-<!-- SERVICE EDIT MODAL (internal) -->
+<!-- SERVICE EDIT MODAL -->
 <div class="svc-modal-overlay" id="svcModal">
   <div class="svc-modal">
     <h3 id="svcModalTitle">Add Service</h3>
@@ -1045,11 +784,17 @@ tr:hover td{background:var(--bg)}
     </div>
     <div class="svc-form-group">
       <label>Description / Overview</label>
-      <textarea id="svcDesc" rows="4" placeholder="What does this service involve? What's included?"></textarea>
+      <textarea id="svcDesc" rows="3" placeholder="What does this service involve? What's included?"></textarea>
     </div>
+    <!-- CHANGED: Estimated Cost Range replaces Starting Price -->
     <div class="svc-form-group">
-      <label>Starting Price <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-      <input type="text" id="svcPrice" placeholder="e.g. Starts at ₱5,000 or Quoted per request"/>
+      <label>Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/>
+    </div>
+    <!-- NEW: Teams Involved -->
+    <div class="svc-form-group">
+      <label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/>
     </div>
     <div class="svc-modal-actions">
       <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
@@ -1068,7 +813,6 @@ tr:hover td{background:var(--bg)}
 // ── CONFIG ─────────────────────────────────────────────────
 var GAS_URL     = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
 var SESSION_KEY = 'platops_v2';
-
 var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false;
 
 // ── GOOGLE SIGN-IN ─────────────────────────────────────────
@@ -1079,15 +823,13 @@ function startGoogleLogin() {
   document.getElementById('gErr').textContent = '';
   document.getElementById('gGoogleBtn').disabled = true;
   google.accounts.id.initialize({
-    client_id:          GOOGLE_CLIENT_ID,
-    callback:           handleGoogleCredential,
-    auto_select:        false,
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential,
+    auto_select: false,
     cancel_on_tap_outside: true,
   });
   google.accounts.id.prompt(function(notification) {
-    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-      showGooglePopup();
-    }
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) showGooglePopup();
   });
 }
 
@@ -1095,9 +837,7 @@ function showGooglePopup() {
   var container = document.createElement('div');
   container.style.display = 'none';
   document.body.appendChild(container);
-  google.accounts.id.renderButton(container, {
-    type: 'standard', theme: 'outline', size: 'large',
-  });
+  google.accounts.id.renderButton(container, { type:'standard', theme:'outline', size:'large' });
   var btn = container.querySelector('div[role="button"]');
   if (btn) btn.click();
   setTimeout(function() { document.body.removeChild(container); }, 1000);
@@ -1107,30 +847,17 @@ async function handleGoogleCredential(response) {
   var errEl = document.getElementById('gErr');
   var btn   = document.getElementById('gGoogleBtn');
   try {
-    // ── FIX: decode Base64url-encoded JWT payload safely ──────────────────
-    // Google JWTs use Base64url (- and _ instead of + and /). Standard
-    // atob() only handles Base64, so we normalise before decoding.
-    var b64 = response.credential.split('.')[1]
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+    var b64 = response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
     var payload = JSON.parse(atob(b64));
-    // ─────────────────────────────────────────────────────────────────────
-
     var email = (payload.email || '').toLowerCase();
-
-    // Enforce @sprout.ph domain
     if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
-      errEl.textContent = 'Access restricted to @sprout.ph accounts. Please sign in with your Sprout email.';
+      errEl.textContent = 'Access restricted to @sprout.ph accounts.';
       btn.disabled = false;
       google.accounts.id.disableAutoSelect();
       return;
     }
-
-    // Show loading state
     btn.disabled = true;
     btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
-
-    // Check role against Access sheet
     var role = 'client';
     try {
       var cached = sessionStorage.getItem('role_' + email);
@@ -1138,23 +865,18 @@ async function handleGoogleCredential(response) {
         role = cached;
       } else {
         var ctrl = new AbortController();
-        var to   = setTimeout(function() { ctrl.abort(); }, 9000);
-        var res  = await fetch(GAS_URL + '?action=checkAccess&email=' + encodeURIComponent(email), { signal: ctrl.signal });
+        var to = setTimeout(function() { ctrl.abort(); }, 9000);
+        var res = await fetch(GAS_URL + '?action=checkAccess&email=' + encodeURIComponent(email), { signal: ctrl.signal });
         clearTimeout(to);
         var d = await res.json();
         role = d.role || 'client';
         sessionStorage.setItem('role_' + email, role);
       }
     } catch(e) { role = 'client'; }
-
-    // Persist session
     sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, role, ts: Date.now() }));
-
-    // Dismiss gate
     document.getElementById('gate').classList.add('out');
     setTimeout(function() { document.getElementById('gate').style.display = 'none'; }, 400);
     initApp(email, role);
-
   } catch(e) {
     errEl.textContent = 'Sign-in failed. Please try again.';
     btn.disabled = false;
@@ -1169,76 +891,110 @@ function logout() {
 }
 
 // ── APP INIT ───────────────────────────────────────────────
-function initApp(email,role) {
-  userEmail=email; userRole=role||'client';
-  isAdmin    = userRole==='admin';
-  isLead     = userRole==='lead';
+function initApp(email, role) {
+  userEmail = email; userRole = role || 'client';
+  isAdmin    = userRole === 'admin';
+  isLead     = userRole === 'lead';
   isInternal = isAdmin || isLead;
-  document.getElementById('shUser').textContent=email;
+  document.getElementById('shUser').textContent = email;
   document.getElementById('app').classList.add('on');
   if (isAdmin) {
-    document.getElementById('tab-analytics').style.display='flex';
-    document.getElementById('tab-quotation').style.display='flex';
-    document.getElementById('sv-add-btn').style.display='flex';
+    document.getElementById('tab-analytics').style.display = 'flex';
+    document.getElementById('tab-quotation').style.display = 'flex';
+    document.getElementById('sv-add-btn').style.display = 'flex';
   }
-  if (!isInternal) document.getElementById('trackerCardDesc').textContent='View your submitted service requests and their current status.';
-  var cacheKey='tracker_cache_'+email;
+  if (!isInternal) document.getElementById('trackerCardDesc').textContent = 'View your submitted service requests and their current status.';
+  var cacheKey = 'tracker_cache_' + email;
   if (!sessionStorage.getItem(cacheKey)) {
-    fetch(GAS_URL+'?action=list&email='+encodeURIComponent(email)+'&role='+encodeURIComponent(userRole)).then(r=>r.json())
-      .then(d=>sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}))).catch(()=>{});
+    fetch(GAS_URL + '?action=list&email=' + encodeURIComponent(email) + '&role=' + encodeURIComponent(userRole))
+      .then(r => r.json())
+      .then(d => sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() })))
+      .catch(() => {});
   }
   loadServicesData();
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────
-function openForm(){window.open('servicerequestform.html','_blank');}
-function openView(name){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  document.getElementById('view-'+name).classList.add('on');
-  document.getElementById('tabBar').style.display='flex';
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  var tab=document.getElementById('tab-'+name); if(tab)tab.classList.add('active');
+var formIframeLoaded = false;
+
+function openView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('view-' + name).classList.add('on');
+  document.getElementById('tabBar').style.display = 'flex';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  var tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
 }
-function switchTab(name){
-  if(name==='form'){openForm();return;}
-  if(name==='quotation'){
+
+function switchTab(name) {
+  if (name === 'quotation') {
     openView('quotation');
-    var iframe=document.getElementById('quotation-iframe');
-    if(iframe&&!iframe.dataset.loaded){iframe.src='quotation.html';iframe.dataset.loaded='1';}
+    var iframe = document.getElementById('quotation-iframe');
+    if (iframe && !iframe.dataset.loaded) { iframe.src = 'quotation.html'; iframe.dataset.loaded = '1'; }
+    return;
+  }
+  if (name === 'form') {
+    openView('form');
+    // Load iframe on first visit, show loader until ready
+    var iframe = document.getElementById('form-iframe');
+    if (!formIframeLoaded) {
+      formIframeLoaded = true;
+      var loader = document.getElementById('formLoader');
+      iframe.onload = function() {
+        loader.classList.add('hidden');
+      };
+      iframe.src = 'servicerequestform.html';
+    }
     return;
   }
   openView(name);
-  if(name==='tracker'&&!trackerInit){trackerInit=true;USER_EMAIL=userEmail;USER_ROLE=userRole;IS_INTERNAL=isInternal;init_tracker();}
-  if(name==='services'){renderServicesView();}
-  if(name==='analytics'&&!analyticsInit){
-    analyticsInit=true;
-    var from=new Date();from.setDate(1);
-    var fromStr=from.toISOString().split('T')[0];
-    var toStr=new Date().toISOString().split('T')[0];
-    document.getElementById('an-fromDate').value=fromStr;
-    document.getElementById('an-toDate').value=toStr;
-    load_analytics(fromStr,toStr);
+  if (name === 'tracker' && !trackerInit) { trackerInit = true; USER_EMAIL = userEmail; USER_ROLE = userRole; IS_INTERNAL = isInternal; init_tracker(); }
+  if (name === 'services') { renderServicesView(); }
+  if (name === 'analytics' && !analyticsInit) {
+    analyticsInit = true;
+    var from = new Date(); from.setDate(1);
+    document.getElementById('an-fromDate').value = from.toISOString().split('T')[0];
+    document.getElementById('an-toDate').value = new Date().toISOString().split('T')[0];
+    load_analytics(document.getElementById('an-fromDate').value, document.getElementById('an-toDate').value);
   }
 }
-var saved=sessionStorage.getItem(SESSION_KEY);
-if(saved){try{var s=JSON.parse(saved);document.getElementById('gate').style.display='none';initApp(s.email,s.role);}catch(e){sessionStorage.removeItem(SESSION_KEY);}}
+
+// Open form with a pre-selected service type via URL param
+function openFormWithService(serviceName) {
+  openView('form');
+  var iframe = document.getElementById('form-iframe');
+  var loader = document.getElementById('formLoader');
+  loader.classList.remove('hidden');
+  formIframeLoaded = true;
+  iframe.onload = function() { loader.classList.add('hidden'); };
+  iframe.src = 'servicerequestform.html?service=' + encodeURIComponent(serviceName);
+}
+
+var saved = sessionStorage.getItem(SESSION_KEY);
+if (saved) {
+  try {
+    var s = JSON.parse(saved);
+    document.getElementById('gate').style.display = 'none';
+    initApp(s.email, s.role);
+  } catch(e) { sessionStorage.removeItem(SESSION_KEY); }
+}
 
 // ═══════════════════════════════════════════════════════════
-// ── SERVICES MODULE ─────────────────────────────────────────
+// ── SERVICES MODULE ────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
 var SVC_LS_KEY = 'platops_services_cache';
 var servicesList = [];
 
 function lsReadServices() {
-  try { return JSON.parse(localStorage.getItem(SVC_LS_KEY)||'[]'); } catch(e){ return []; }
+  try { return JSON.parse(localStorage.getItem(SVC_LS_KEY) || '[]'); } catch(e) { return []; }
 }
 function lsWriteServices(arr) {
-  try { localStorage.setItem(SVC_LS_KEY, JSON.stringify(arr)); } catch(e){}
+  try { localStorage.setItem(SVC_LS_KEY, JSON.stringify(arr)); } catch(e) {}
 }
 
 async function loadServicesData() {
   var cached = lsReadServices();
-  if (cached.length) { servicesList = cached; }
+  if (cached.length) { servicesList = cached; renderCatPills(); }
   try {
     var res = await fetch(GAS_URL + '?action=getServices');
     var d   = await res.json();
@@ -1246,6 +1002,7 @@ async function loadServicesData() {
       servicesList = d.services;
       lsWriteServices(servicesList);
       renderServicesView();
+      renderCatPills(); // refresh tracker pills after fresh load
     }
   } catch(e) {
     console.warn('Services fetch failed, using cache:', e);
@@ -1255,7 +1012,7 @@ async function loadServicesData() {
 var svActiveCat = 'all';
 
 function svSetCat(el) {
-  document.querySelectorAll('.sv-cat-item').forEach(function(i){ i.classList.remove('active'); });
+  document.querySelectorAll('.sv-cat-item').forEach(function(i) { i.classList.remove('active'); });
   el.classList.add('active');
   svActiveCat = el.dataset.cat;
   var s = document.getElementById('svSearch');
@@ -1267,14 +1024,15 @@ function renderServicesView() {
   var grid = document.getElementById('sv-grid');
   if (!grid) return;
 
+  // Rebuild category sidebar
   var catList = document.getElementById('svCatList');
   if (catList) {
     var cats = {};
     servicesList.forEach(function(svc) {
       var c = svc.category || 'Uncategorized';
-      cats[c] = (cats[c]||0) + 1;
+      cats[c] = (cats[c] || 0) + 1;
     });
-    var allItem = '<div class="sv-cat-item' + (svActiveCat==='all'?' active':'') + '" data-cat="all" onclick="svSetCat(this)"><span>All Services</span><span class="sv-cat-count">' + servicesList.length + '</span></div>';
+    var allItem = '<div class="sv-cat-item' + (svActiveCat === 'all' ? ' active' : '') + '" data-cat="all" onclick="svSetCat(this)"><span>All Services</span><span class="sv-cat-count">' + servicesList.length + '</span></div>';
     var catItems = Object.keys(cats).sort().map(function(c) {
       var active = svActiveCat === c ? ' active' : '';
       return '<div class="sv-cat-item' + active + '" data-cat="' + esc(c) + '" onclick="svSetCat(this)"><span>' + esc(c) + '</span><span class="sv-cat-count">' + cats[c] + '</span></div>';
@@ -1283,21 +1041,19 @@ function renderServicesView() {
   }
 
   if (!servicesList.length) {
-    grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isAdmin ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
+    grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isAdmin ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
     return;
   }
 
-  var q = ((document.getElementById('svSearch')||{}).value||'').toLowerCase().trim();
+  var q = ((document.getElementById('svSearch') || {}).value || '').toLowerCase().trim();
   var filtered = servicesList.filter(function(svc) {
-    var catMatch = svActiveCat === 'all' || (svc.category||'Uncategorized') === svActiveCat;
-    var searchMatch = !q || (svc.name||'').toLowerCase().includes(q) || (svc.description||'').toLowerCase().includes(q) || (svc.category||'').toLowerCase().includes(q);
+    var catMatch = svActiveCat === 'all' || (svc.category || 'Uncategorized') === svActiveCat;
+    var searchMatch = !q || (svc.name || '').toLowerCase().includes(q) || (svc.description || '').toLowerCase().includes(q) || (svc.category || '').toLowerCase().includes(q);
     return catMatch && searchMatch;
   });
 
   var countEl = document.getElementById('svResultCount');
-  if (countEl) {
-    countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
-  }
+  if (countEl) countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
 
   if (!filtered.length) {
     grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>';
@@ -1305,21 +1061,40 @@ function renderServicesView() {
   }
 
   grid.innerHTML = filtered.map(function(svc) {
-    var actionsHtml = '';
+    // Admin edit/delete actions
+    var adminActions = '';
     if (isAdmin) {
-      actionsHtml = '<div class="sv-card-actions">'
-        + '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g,"\'") + '\')">Edit</button>'
-        + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g,"\'") + '\')">Delete</button>'
+      adminActions = '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')">Edit</button>'
+        + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
+    }
+
+    // Meta row: teams involved
+    var metaHtml = '';
+    if (svc.teams) {
+      metaHtml += '<div class="sv-card-meta-row">'
+        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+        + esc(svc.teams)
         + '</div>';
     }
+    if (metaHtml) metaHtml = '<div class="sv-card-meta">' + metaHtml + '</div>';
+
+    // Price display
     var priceHtml = svc.price ? '<span class="sv-card-price">' + esc(svc.price) + '</span>' : '<span></span>';
+
+    // Submit a Request button (always visible)
+    var submitBtn = '<button class="sv-btn-submit" onclick="openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request</button>';
+
     return '<div class="sv-card">'
       + '<div class="sv-card-header">'
       + '<span class="sv-card-name">' + esc(svc.name) + '</span>'
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
       + '</div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
-      + '<div class="sv-card-footer">' + priceHtml + actionsHtml + '</div>'
+      + metaHtml
+      + '<div class="sv-card-footer">'
+      + priceHtml
+      + '<div class="sv-card-actions">' + adminActions + submitBtn + '</div>'
+      + '</div>'
       + '</div>';
   }).join('');
 }
@@ -1334,18 +1109,20 @@ function openServiceModal(id) {
   document.getElementById('svcCategory').value = '';
   document.getElementById('svcDesc').value     = '';
   document.getElementById('svcPrice').value    = '';
+  document.getElementById('svcTeams').value    = '';
 
   if (id) {
-    var svc = servicesList.find(function(s){ return s.id === id; });
+    var svc = servicesList.find(function(s) { return s.id === id; });
     if (svc) {
-      document.getElementById('svcName').value     = svc.name || '';
-      document.getElementById('svcCategory').value = svc.category || '';
+      document.getElementById('svcName').value     = svc.name        || '';
+      document.getElementById('svcCategory').value = svc.category    || '';
       document.getElementById('svcDesc').value     = svc.description || '';
-      document.getElementById('svcPrice').value    = svc.price || '';
+      document.getElementById('svcPrice').value    = svc.price       || '';
+      document.getElementById('svcTeams').value    = svc.teams       || '';
     }
   }
   document.getElementById('svcModal').classList.add('open');
-  setTimeout(function(){ document.getElementById('svcName').focus(); }, 100);
+  setTimeout(function() { document.getElementById('svcName').focus(); }, 100);
 }
 
 function closeSvcModal() {
@@ -1358,8 +1135,9 @@ async function saveService() {
   var category = document.getElementById('svcCategory').value.trim();
   var desc     = document.getElementById('svcDesc').value.trim();
   var price    = document.getElementById('svcPrice').value.trim();
+  var teams    = document.getElementById('svcTeams').value.trim();
 
-  if (!name) { document.getElementById('svcName').focus(); return; }
+  if (!name)     { document.getElementById('svcName').focus(); return; }
   if (!category) { document.getElementById('svcCategory').focus(); return; }
 
   var btn = document.getElementById('svcSaveBtn');
@@ -1371,19 +1149,21 @@ async function saveService() {
     category:    category,
     description: desc,
     price:       price,
+    teams:       teams,
     sortOrder:   editingServiceId
-      ? (servicesList.find(function(s){ return s.id===editingServiceId; })||{}).sortOrder || 0
+      ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0
       : servicesList.length + 1,
   };
 
   if (editingServiceId) {
-    var idx = servicesList.findIndex(function(s){ return s.id === editingServiceId; });
+    var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; });
     if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc);
   } else {
     servicesList.push(svc);
   }
   lsWriteServices(servicesList);
   renderServicesView();
+  renderCatPills();
   syncServiceNamesToForm();
 
   try {
@@ -1402,11 +1182,11 @@ async function saveService() {
 
 async function deleteService(id) {
   if (!confirm('Delete this service?')) return;
-  servicesList = servicesList.filter(function(s){ return s.id !== id; });
+  servicesList = servicesList.filter(function(s) { return s.id !== id; });
   lsWriteServices(servicesList);
   renderServicesView();
+  renderCatPills();
   syncServiceNamesToForm();
-
   try {
     await fetch(GAS_URL, {
       method: 'POST', mode: 'no-cors',
@@ -1414,21 +1194,20 @@ async function deleteService(id) {
       body: JSON.stringify({ action: 'deleteService', id: id })
     });
   } catch(e) { console.warn('Service delete sync failed:', e); }
-
   showToast('Service deleted.');
   showSyncMsg();
 }
 
 function syncServiceNamesToForm() {
-  var names = servicesList.map(function(s){ return s.name; });
-  try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e){}
+  var names = servicesList.map(function(s) { return s.name; });
+  try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
 }
 
 function showSyncMsg() {
   var el = document.getElementById('sv-sync-msg');
   if (!el) return;
   el.style.display = 'inline';
-  setTimeout(function(){ el.style.display='none'; }, 3000);
+  setTimeout(function() { el.style.display = 'none'; }, 3000);
 }
 
 // ── TOAST ────────────────────────────────────────────────────
@@ -1436,276 +1215,407 @@ function showToast(msg) {
   var t = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
   t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-document.getElementById('svcModal').addEventListener('click', function(e){
+document.getElementById('svcModal').addEventListener('click', function(e) {
   if (e.target === this) closeSvcModal();
 });
-document.addEventListener('keydown', function(e){
-  if (e.key==='Escape') closeSvcModal();
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSvcModal();
 });
 
-// ── TRACKER GLOBALS ────────────────────────────────────────
-var USER_EMAIL='', USER_ROLE='client', IS_INTERNAL=false;
-var LIFECYCLE=['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
-var all=[], activeF='all', activeSC='all', activeKey=null, initialized=false;
+// ═══════════════════════════════════════════════════════════
+// ── TRACKER GLOBALS ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
+var LIFECYCLE = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
+var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
 
-async function init_tracker(){
-  if(initialized)return; initialized=true;
-  if(IS_INTERNAL){document.getElementById('analytics').classList.add('on');loadAnalytics();}
+// ── CATEGORY PILLS (Tracker sidebar) ──────────────────────
+// Derives unique categories from servicesList and renders pills.
+function renderCatPills() {
+  var container = document.getElementById('catPills');
+  if (!container) return;
+
+  var cats = {};
+  servicesList.forEach(function(svc) {
+    var c = svc.category || 'Uncategorized';
+    cats[c] = true;
+  });
+  var catKeys = Object.keys(cats).sort();
+
+  var html = '<span class="pill' + (activeCat === 'all' ? ' on' : '') + '" data-cat="all" onclick="setCatF(this)">All</span>';
+  catKeys.forEach(function(c) {
+    html += '<span class="pill' + (activeCat === c ? ' on' : '') + '" data-cat="' + esc(c) + '" onclick="setCatF(this)">' + esc(c) + '</span>';
+  });
+  container.innerHTML = html;
+}
+
+// Filter tracker list by category: a submission matches if its serviceType
+// belongs to any service in the selected category.
+function getServiceNamesForCat(cat) {
+  if (cat === 'all') return null; // null = show all
+  return servicesList
+    .filter(function(svc) { return (svc.category || 'Uncategorized') === cat; })
+    .map(function(svc) { return svc.name.toLowerCase(); });
+}
+
+function setCatF(el) {
+  document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  activeCat = el.dataset.cat;
+  // Reset analytics SC highlight
+  activeSC = 'all';
+  document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
+  render();
+}
+
+function scFilter(el) {
+  document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
+  el.classList.add('active');
+  activeSC = el.dataset.lc;
+  // Clear category filter when filtering by lifecycle stage
+  activeCat = 'all';
+  document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  var allPill = document.querySelector('#catPills .pill[data-cat="all"]');
+  if (allPill) allPill.classList.add('on');
+  render();
+}
+
+function matches(s) {
+  // Category filter
+  if (activeCat !== 'all') {
+    var names = getServiceNamesForCat(activeCat);
+    var sType = (s.serviceType || '').toLowerCase();
+    // Match if the service type starts with or equals any service name in category
+    var catMatch = names && names.some(function(n) { return sType === n || sType.startsWith(n); });
+    if (!catMatch) return false;
+  }
+  // Lifecycle filter (from analytics strip)
+  if (activeSC !== 'all' && (s.lifecycle || '') !== activeSC) return false;
+  // Text search
+  var q = document.getElementById('srch').value.toLowerCase();
+  if (!q) return true;
+  return [s.clientName, s.requesterName, s.requesterEmail, s.jiraKey, s.serviceType, s.hrUrl, s.csmName]
+    .some(function(v) { return (v || '').toLowerCase().includes(q); });
+}
+
+async function init_tracker() {
+  if (initialized) return; initialized = true;
+  if (IS_INTERNAL) { document.getElementById('analytics').classList.add('on'); loadAnalytics(); }
+  renderCatPills(); // populate from servicesList (already loaded)
   await loadList();
 }
-async function loadList(){
-  const cacheKey='tracker_cache_'+USER_EMAIL;
-  const cached=sessionStorage.getItem(cacheKey);
-  const roleParam='&role='+encodeURIComponent(USER_ROLE);
-  if(cached){
-    try{const{data}=JSON.parse(cached);all=data.submissions||[];render();}catch(e){console.error('loadList cache error:',e);}
-    fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL)+roleParam).then(r=>r.json())
-      .then(d=>{sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}));all=d.submissions||[];render();}).catch(()=>{});
+
+async function loadList() {
+  var cacheKey = 'tracker_cache_' + USER_EMAIL;
+  var cached = sessionStorage.getItem(cacheKey);
+  var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
+  if (cached) {
+    try { var cd = JSON.parse(cached); all = cd.data.submissions || []; render(); } catch(e) {}
+    fetch(GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam)
+      .then(r => r.json())
+      .then(d => { sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() })); all = d.submissions || []; render(); })
+      .catch(() => {});
     return;
   }
-  document.getElementById('sbList').innerHTML='<div class="empty-sb"><span class="spinner"></span></div>';
-  try{
-    const ctrl=new AbortController();
-    const to=setTimeout(()=>ctrl.abort(),15000);
-    const res=await fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL)+roleParam,{signal:ctrl.signal});
-    clearTimeout(to); const d=await res.json();
-    sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}));
-    all=d.submissions||[]; render();
-  }catch(e){document.getElementById('sbList').innerHTML='<div class="empty-sb">Failed to load requests.<br><span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadList()">Retry</span></div>';}
-}
-async function refresh(){sessionStorage.removeItem('tracker_cache_'+USER_EMAIL);all=[];activeKey=null;document.getElementById('detail').innerHTML='<div class="state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Select a request to view details</p></div>';await loadList();if(IS_INTERNAL)loadAnalytics();}
-async function loadAnalytics(){
-  try{
-    const res=await fetch(GAS_URL+'?action=analytics');
-    const data=await res.json();
-    if(!data||data.error)return;
-    const lc=data.lifecycleCounts||{};
-    document.getElementById('sc-total').textContent=data.total!=null?data.total:'—';
-    document.getElementById('sc-fq').textContent=lc['For Quotation']!=null?lc['For Quotation']:'—';
-    document.getElementById('sc-or').textContent=lc['Ongoing Review']!=null?lc['Ongoing Review']:'—';
-    document.getElementById('sc-qp').textContent=lc['Quotation Provided']!=null?lc['Quotation Provided']:'—';
-    document.getElementById('sc-fe').textContent=lc['For Execution / Schedule']!=null?lc['For Execution / Schedule']:'—';
-    document.getElementById('sc-oe').textContent=lc['Ongoing Execution / Activity']!=null?lc['Ongoing Execution / Activity']:'—';
-    document.getElementById('sc-rd').textContent=lc['Request Done']!=null?lc['Request Done']:'—';
-    const meta=document.getElementById('analyticsMeta');
-    const pills=[];
-    if(data.byCost){pills.push(`Paid: <span>${data.byCost['Paid']||0}</span>`);pills.push(`Waived: <span>${data.byCost['Waived']||0}</span>`);pills.push(`Cost TBD: <span>${data.byCost['Pending']||0}</span>`);}
-    if(data.revenueReceived!=null)pills.push(`Revenue received: <span>${fmtPhp(data.revenueReceived)}</span>`);
-    if(data.revenueLost!=null)pills.push(`Revenue lost: <span>${fmtPhp(data.revenueLost)}</span>`);
-    if(data.avgDays!=null)pills.push(`Avg. resolution: <span>${data.avgDays}d</span>`);
-    if(data.monthlyArr&&data.monthlyArr.length){const last=data.monthlyArr[data.monthlyArr.length-1];pills.push(`This month: <span>${last.count} request${last.count!==1?'s':''}</span>`);}
-    if(data.byService){const top=Object.entries(data.byService).sort((a,b)=>b[1]-a[1])[0];if(top)pills.push(`Top service: <span>${top[0]}</span>`);}
-    meta.innerHTML=pills.map(p=>`<div class="meta-pill">${p}</div>`).join('');
-  }catch(e){}
+  document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span></div>';
+  try {
+    var ctrl = new AbortController();
+    var to = setTimeout(() => ctrl.abort(), 15000);
+    var res = await fetch(GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam, { signal: ctrl.signal });
+    clearTimeout(to);
+    var d = await res.json();
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
+    all = d.submissions || []; render();
+  } catch(e) {
+    document.getElementById('sbList').innerHTML = '<div class="empty-sb">Failed to load.<br><span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadList()">Retry</span></div>';
+  }
 }
 
-// ── FILTERS ────────────────────────────────────────────────
-function setF(el){document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');activeF=el.dataset.f;activeSC='all';document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));render();}
-function scFilter(el){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));el.classList.add('active');activeSC=el.dataset.lc;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));const match=document.querySelector('.pill[data-f="'+activeSC+'"]');if(match){match.classList.add('on');activeF=activeSC;}else{document.querySelector('.pill[data-f="all"]').classList.add('on');activeF='all';}render();}
-function matches(s){const lc=s.lifecycle||'';if(activeF!=='all'&&lc!==activeF)return false;const q=document.getElementById('srch').value.toLowerCase();if(!q)return true;return[s.clientName,s.requesterName,s.requesterEmail,s.jiraKey,s.serviceType,s.hrUrl,s.csmName].some(v=>(v||'').toLowerCase().includes(q));}
+async function refresh() {
+  sessionStorage.removeItem('tracker_cache_' + USER_EMAIL);
+  all = []; activeKey = null;
+  document.getElementById('detail').innerHTML = '<div class="state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Select a request to view details</p></div>';
+  await loadList();
+  if (IS_INTERNAL) loadAnalytics();
+}
+
+async function loadAnalytics() {
+  try {
+    var res = await fetch(GAS_URL + '?action=analytics');
+    var data = await res.json();
+    if (!data || data.error) return;
+    var lc = data.lifecycleCounts || {};
+    document.getElementById('sc-total').textContent = data.total != null ? data.total : '—';
+    document.getElementById('sc-fq').textContent = lc['For Quotation'] != null ? lc['For Quotation'] : '—';
+    document.getElementById('sc-or').textContent = lc['Ongoing Review'] != null ? lc['Ongoing Review'] : '—';
+    document.getElementById('sc-qp').textContent = lc['Quotation Provided'] != null ? lc['Quotation Provided'] : '—';
+    document.getElementById('sc-fe').textContent = lc['For Execution / Schedule'] != null ? lc['For Execution / Schedule'] : '—';
+    document.getElementById('sc-oe').textContent = lc['Ongoing Execution / Activity'] != null ? lc['Ongoing Execution / Activity'] : '—';
+    document.getElementById('sc-rd').textContent = lc['Request Done'] != null ? lc['Request Done'] : '—';
+    var meta = document.getElementById('analyticsMeta');
+    var pills = [];
+    if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
+    if (data.revenueReceived != null) pills.push('Revenue received: <span>' + fmtPhp(data.revenueReceived) + '</span>');
+    if (data.revenueLost != null) pills.push('Revenue lost: <span>' + fmtPhp(data.revenueLost) + '</span>');
+    if (data.avgDays != null) pills.push('Avg. resolution: <span>' + data.avgDays + 'd</span>');
+    if (data.monthlyArr && data.monthlyArr.length) { var last = data.monthlyArr[data.monthlyArr.length-1]; pills.push('This month: <span>' + last.count + ' request' + (last.count !== 1 ? 's' : '') + '</span>'); }
+    if (data.byService) { var top = Object.entries(data.byService).sort((a,b) => b[1]-a[1])[0]; if (top) pills.push('Top service: <span>' + top[0] + '</span>'); }
+    meta.innerHTML = pills.map(p => '<div class="meta-pill">' + p + '</div>').join('');
+  } catch(e) {}
+}
 
 // ── RENDER LIST ────────────────────────────────────────────
-function render(){
-  const filtered=all.filter(matches);
-  const list=document.getElementById('sbList');
-  if(!filtered.length){list.innerHTML='<div class="empty-sb">No requests found.</div>';return;}
-  list.innerHTML=filtered.map(s=>{
-    const lc=s.lifecycle||'For Quotation';
-    const bcls=lcBadge(lc);
-    const dateStr=s.timestamp?new Date(s.timestamp).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}):'—';
-    const isOn=s.jiraKey===activeKey?'on':'';
-    return`<div class="rcard ${isOn}" onclick="select('${esc(s.jiraKey)}',this)">
-      <div class="rc-top"><div class="rc-client">${esc(s.clientName)}</div><span class="badge ${bcls}">${esc(lc)}</span></div>
-      <div class="rc-service">${esc(s.serviceType)}</div>
-      <div class="rc-bottom"><span class="rc-date">${dateStr}</span><span class="rc-key">${s.jiraKey||'—'}</span></div>
-    </div>`;
+function render() {
+  var filtered = all.filter(matches);
+  var list = document.getElementById('sbList');
+  if (!filtered.length) { list.innerHTML = '<div class="empty-sb">No requests found.</div>'; return; }
+  list.innerHTML = filtered.map(function(s) {
+    var lc = s.lifecycle || 'For Quotation';
+    var bcls = lcBadge(lc);
+    var dateStr = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
+    var isOn = s.jiraKey === activeKey ? 'on' : '';
+    return '<div class="rcard ' + isOn + '" onclick="select(\'' + esc(s.jiraKey) + '\',this)">'
+      + '<div class="rc-top"><div class="rc-client">' + esc(s.clientName) + '</div><span class="badge ' + bcls + '">' + esc(lc) + '</span></div>'
+      + '<div class="rc-service">' + esc(s.serviceType) + '</div>'
+      + '<div class="rc-bottom"><span class="rc-date">' + dateStr + '</span><span class="rc-key">' + (s.jiraKey || '—') + '</span></div>'
+      + '</div>';
   }).join('');
 }
 
 // ── SELECT & DETAIL ────────────────────────────────────────
-async function select(jiraKey,el){
-  activeKey=jiraKey;
-  document.querySelectorAll('.rcard').forEach(c=>c.classList.remove('on'));
-  if(el)el.classList.add('on');
-  const panel=document.getElementById('detail');
-  panel.innerHTML='<div class="state"><span class="spinner"></span></div>';
-  const s=all.find(x=>x.jiraKey===jiraKey);
-  if(!jiraKey||jiraKey==='ERROR'){renderDetail(s,null);return;}
-  try{const res=await fetch(GAS_URL+'?action=detail&key='+encodeURIComponent(jiraKey));const detail=await res.json();renderDetail(s,detail);}
-  catch(e){renderDetail(s,null);}
+async function select(jiraKey, el) {
+  activeKey = jiraKey;
+  document.querySelectorAll('.rcard').forEach(c => c.classList.remove('on'));
+  if (el) el.classList.add('on');
+  var panel = document.getElementById('detail');
+  panel.innerHTML = '<div class="state"><span class="spinner"></span></div>';
+  var s = all.find(x => x.jiraKey === jiraKey);
+  if (!jiraKey || jiraKey === 'ERROR') { renderDetail(s, null); return; }
+  try {
+    var res = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
+    var detail = await res.json();
+    renderDetail(s, detail);
+  } catch(e) { renderDetail(s, null); }
 }
-function renderDetail(s,d){
-  const panel=document.getElementById('detail');
-  const psrv=d&&d.psrv?d.psrv:null;
-  const linked=d&&d.linkedTickets?d.linkedTickets:[];
-  const lc=s?s.lifecycle:'—';
-  const bcls=lcBadge(lc);
-  let costHtml='';
-  if(s&&s.costStatus){const cc=s.costStatus==='Paid'?'cost-paid':s.costStatus==='Waived'?'cost-waived':'cost-pending';costHtml=`<span class="cost-badge ${cc}">${s.costStatus}</span>`;}
-  let html=`<div class="dh"><h2>${esc(s?s.clientName:(psrv?psrv.summary:'—'))}</h2>
-    <div class="dh-meta"><span class="badge ${bcls}">${esc(lc)}</span>${costHtml}
-      ${psrv?`<a href="${psrv.url}" target="_blank">${psrv.key} ↗</a>`:''}
-      ${s?`<span>·</span><span>${esc(s.serviceType)}</span>`:''}
-      ${s&&s.urgency?`<span>·</span><span>${esc(s.urgency)} urgency</span>`:''}
-    </div></div>`;
-  html+=renderOpCard(s);
-  html+=`<div class="dsec"><div class="dsh"><h3>Request lifecycle</h3></div><div class="dsb"><div class="stepper">${renderStepper(lc)}</div></div></div>`;
-  if(s){
-    html+=`<div class="dsec"><div class="dsh"><h3>Request information</h3></div><div class="dsb"><div class="igrid">
-      <div class="iitem full"><label>Client / Company</label><span>${esc(s.clientName)}</span></div>
-      <div class="iitem"><label>Requester Name</label><span>${esc(s.requesterName)}</span></div>
-      <div class="iitem"><label>Requester Email</label><span>${esc(s.requesterEmail)}</span></div>
-      <div class="iitem"><label>CSM</label><span>${esc(s.csmName)}</span></div>
-      <div class="iitem"><label>CSM Email</label><span>${esc(s.csmEmail||'—')}</span></div>
-      <div class="iitem"><label>HR URL</label><span>${esc(s.hrUrl)}</span></div>
-      <div class="iitem"><label>Payroll Codes</label><span>${esc(s.payrollCodes||'—')}</span></div>
-      <div class="iitem"><label>Target Date</label><span>${esc(s.targetDate||'—')}</span></div>
-      <div class="iitem"><label>Urgency</label><span>${esc(s.urgency||'—')}</span></div>
-      ${s.timestamp?`<div class="iitem"><label>Submitted</label><span>${new Date(s.timestamp).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span></div>`:''}
-      ${s.description?`<div class="iitem full"><label>Description</label><span>${esc(s.description)}</span></div>`:''}
-      ${s.constraints?`<div class="iitem full"><label>Constraints / Blackout Dates</label><span>${esc(s.constraints)}</span></div>`:''}
-      ${s.notes?`<div class="iitem full"><label>Additional Notes</label><span>${esc(s.notes)}</span></div>`:''}
-    </div></div></div>`;
+
+function renderDetail(s, d) {
+  var panel = document.getElementById('detail');
+  var psrv = d && d.psrv ? d.psrv : null;
+  var linked = d && d.linkedTickets ? d.linkedTickets : [];
+  var lc = s ? s.lifecycle : '—';
+  var bcls = lcBadge(lc);
+  var costHtml = '';
+  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
+  var html = '<div class="dh"><h2>' + esc(s ? s.clientName : (psrv ? psrv.summary : '—')) + '</h2>'
+    + '<div class="dh-meta"><span class="badge ' + bcls + '">' + esc(lc) + '</span>' + costHtml
+    + (psrv ? '<a href="' + psrv.url + '" target="_blank">' + psrv.key + ' ↗</a>' : '')
+    + (s ? '<span>·</span><span>' + esc(s.serviceType) + '</span>' : '')
+    + (s && s.urgency ? '<span>·</span><span>' + esc(s.urgency) + ' urgency</span>' : '')
+    + '</div></div>';
+  html += renderOpCard(s);
+  html += '<div class="dsec"><div class="dsh"><h3>Request lifecycle</h3></div><div class="dsb"><div class="stepper">' + renderStepper(lc) + '</div></div></div>';
+  if (s) {
+    html += '<div class="dsec"><div class="dsh"><h3>Request information</h3></div><div class="dsb"><div class="igrid">'
+      + '<div class="iitem full"><label>Client / Company</label><span>' + esc(s.clientName) + '</span></div>'
+      + '<div class="iitem"><label>Requester Name</label><span>' + esc(s.requesterName) + '</span></div>'
+      + '<div class="iitem"><label>Requester Email</label><span>' + esc(s.requesterEmail) + '</span></div>'
+      + '<div class="iitem"><label>CSM</label><span>' + esc(s.csmName) + '</span></div>'
+      + '<div class="iitem"><label>CSM Email</label><span>' + esc(s.csmEmail || '—') + '</span></div>'
+      + '<div class="iitem"><label>HR URL</label><span>' + esc(s.hrUrl) + '</span></div>'
+      + '<div class="iitem"><label>Payroll Codes</label><span>' + esc(s.payrollCodes || '—') + '</span></div>'
+      + '<div class="iitem"><label>Account MRR</label><span>' + esc(s.accountMrr || '—') + '</span></div>'
+      + '<div class="iitem"><label>Account Headcount</label><span>' + esc(s.accountHeadcount || '—') + '</span></div>'
+      + '<div class="iitem"><label>Target Date</label><span>' + esc(s.targetDate || '—') + '</span></div>'
+      + '<div class="iitem"><label>Urgency</label><span>' + esc(s.urgency || '—') + '</span></div>'
+      + (s.timestamp ? '<div class="iitem"><label>Submitted</label><span>' + new Date(s.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) + '</span></div>' : '')
+      + (s.description ? '<div class="iitem full"><label>Description</label><span>' + esc(s.description) + '</span></div>' : '')
+      + (s.constraints ? '<div class="iitem full"><label>Constraints / Blackout Dates</label><span>' + esc(s.constraints) + '</span></div>' : '')
+      + (s.notes ? '<div class="iitem full"><label>Additional Notes</label><span>' + esc(s.notes) + '</span></div>' : '')
+      + '</div></div></div>';
   }
-  if(psrv){html+=`<div class="dsec"><div class="dsh"><h3>Inquiry ticket — ${psrv.key}</h3><span class="badge ${lcBadgeFromJira(psrv.status)}">${esc(psrv.status)}</span></div><div class="dsb">
-    <div class="igrid" style="margin-bottom:10px"><div class="iitem"><label>Assignee</label><span>${esc(psrv.assignee)}</span></div><div class="iitem"><label>Last updated</label><span>${(psrv.updated||'').substring(0,10)}</span></div></div>
-    ${renderComments(psrv.comments)}</div></div>`;}
-  if(linked.length){
-    html+=`<div class="dsec"><div class="dsh"><h3>Activity tickets (CRF &amp; execution)</h3></div><div class="dsb">`;
-    linked.forEach((t,i)=>{
-      const tid='tc'+i;
-      html+=`<div class="tcard"><div class="tc-hd" onclick="tog('${tid}')">
-        <div><div class="tc-key"><a href="${t.url}" target="_blank" onclick="event.stopPropagation()">${t.key} [${t.project}] ↗</a>
-          ${t.costStatus?`<span class="cost-badge ${t.costStatus==='Paid'?'cost-paid':'cost-waived'}" style="margin-left:5px">${t.costStatus}</span>`:''}
-        </div><div class="tc-sum">${esc(t.summary)}</div><div class="tc-who">Assigned: ${esc(t.assignee)}</div></div>
-        <span class="badge ${lcBadgeFromJira(t.status)}">${esc(t.status)}</span>
-      </div><div class="tc-bd" id="${tid}">`;
-      if(t.subTickets&&t.subTickets.length){html+=`<div class="sub-list"><h4>Sub-tickets</h4>`;t.subTickets.forEach(sub=>{html+=`<div class="sub-row"><div class="sub-info"><div class="sub-key"><a href="${sub.url}" target="_blank">${sub.key} [${sub.project}] ↗</a></div><div class="sub-sum">${esc(sub.summary)}</div><div class="sub-who">${esc(sub.assignee)}</div></div><span class="badge ${lcBadgeFromJira(sub.status)}">${esc(sub.status)}</span></div>`;});html+=`</div>`;}
-      html+=renderComments(t.comments)+'</div></div>';
+  if (psrv) {
+    html += '<div class="dsec"><div class="dsh"><h3>Inquiry ticket — ' + psrv.key + '</h3><span class="badge ' + lcBadgeFromJira(psrv.status) + '">' + esc(psrv.status) + '</span></div><div class="dsb">'
+      + '<div class="igrid" style="margin-bottom:10px"><div class="iitem"><label>Assignee</label><span>' + esc(psrv.assignee) + '</span></div><div class="iitem"><label>Last updated</label><span>' + (psrv.updated || '').substring(0, 10) + '</span></div></div>'
+      + renderComments(psrv.comments) + '</div></div>';
+  }
+  if (linked.length) {
+    html += '<div class="dsec"><div class="dsh"><h3>Activity tickets (CRF &amp; execution)</h3></div><div class="dsb">';
+    linked.forEach(function(t, i) {
+      var tid = 'tc' + i;
+      html += '<div class="tcard"><div class="tc-hd" onclick="tog(\'' + tid + '\')">'
+        + '<div><div class="tc-key"><a href="' + t.url + '" target="_blank" onclick="event.stopPropagation()">' + t.key + ' [' + t.project + '] ↗</a>'
+        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
+        + '</div><div class="tc-sum">' + esc(t.summary) + '</div><div class="tc-who">Assigned: ' + esc(t.assignee) + '</div></div>'
+        + '<span class="badge ' + lcBadgeFromJira(t.status) + '">' + esc(t.status) + '</span>'
+        + '</div><div class="tc-bd" id="' + tid + '">';
+      if (t.subTickets && t.subTickets.length) {
+        html += '<div class="sub-list"><h4>Sub-tickets</h4>';
+        t.subTickets.forEach(function(sub) {
+          html += '<div class="sub-row"><div class="sub-info"><div class="sub-key"><a href="' + sub.url + '" target="_blank">' + sub.key + ' [' + sub.project + '] ↗</a></div><div class="sub-sum">' + esc(sub.summary) + '</div><div class="sub-who">' + esc(sub.assignee) + '</div></div><span class="badge ' + lcBadgeFromJira(sub.status) + '">' + esc(sub.status) + '</span></div>';
+        });
+        html += '</div>';
+      }
+      html += renderComments(t.comments) + '</div></div>';
     });
-    html+=`</div></div>`;
+    html += '</div></div>';
   } else {
-    const noST=['For Quotation','Ongoing Review','Quotation Provided'].includes(lc);
-    if(noST)html+=`<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>`;
+    var noST = ['For Quotation','Ongoing Review','Quotation Provided'].includes(lc);
+    if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
   }
-  panel.innerHTML=html;
+  panel.innerHTML = html;
 }
-function renderStepper(currentLc){return LIFECYCLE.map(lc=>{const cIdx=LIFECYCLE.indexOf(currentLc);const lIdx=LIFECYCLE.indexOf(lc);const cls=lIdx<cIdx?'done':lIdx===cIdx?'current':'';const short=lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');return`<div class="step ${cls}"><div class="step-dot"></div><div class="step-label">${esc(short)}</div></div>`;}).join('');}
-function renderComments(comments){if(!comments||!comments.length)return'<p class="no-c">No comments yet.</p>';return`<div class="clist">`+comments.map(c=>`<div class="ci"><div class="ci-who">${esc(c.author)} · ${(c.date||'').substring(0,10)}</div><div class="ci-body">${esc(c.body)}</div></div>`).join('')+'</div>';}
-function tog(id){document.getElementById(id).classList.toggle('on');}
-function lcBadge(lc){const map={'For Quotation':'b-gray','Ongoing Review':'b-amber','Quotation Provided':'b-blue','For Execution / Schedule':'b-purple','Ongoing Execution / Activity':'b-teal','Request Done':'b-green'};return map[lc]||'b-gray';}
-function lcBadgeFromJira(status){const s=(status||'').toLowerCase();if(['done','closed','resolved'].some(v=>s.includes(v)))return'b-green';if(['in progress','for pr review'].some(v=>s.includes(v)))return'b-teal';if(['ready for checking','for checking'].some(v=>s.includes(v)))return'b-blue';if(['on hold'].some(v=>s.includes(v)))return'b-amber';if(['cancelled','canceled'].some(v=>s.includes(v)))return'b-red';return'b-gray';}
-function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderStepper(currentLc) {
+  return LIFECYCLE.map(function(lc) {
+    var cIdx = LIFECYCLE.indexOf(currentLc);
+    var lIdx = LIFECYCLE.indexOf(lc);
+    var cls = lIdx < cIdx ? 'done' : lIdx === cIdx ? 'current' : '';
+    var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
+    return '<div class="step ' + cls + '"><div class="step-dot"></div><div class="step-label">' + esc(short) + '</div></div>';
+  }).join('');
+}
+
+function renderComments(comments) {
+  if (!comments || !comments.length) return '<p class="no-c">No comments yet.</p>';
+  return '<div class="clist">' + comments.map(function(c) {
+    return '<div class="ci"><div class="ci-who">' + esc(c.author) + ' · ' + (c.date || '').substring(0, 10) + '</div><div class="ci-body">' + esc(c.body) + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function tog(id) { document.getElementById(id).classList.toggle('on'); }
+function lcBadge(lc) {
+  var map = { 'For Quotation':'b-gray','Ongoing Review':'b-amber','Quotation Provided':'b-blue','For Execution / Schedule':'b-purple','Ongoing Execution / Activity':'b-teal','Request Done':'b-green' };
+  return map[lc] || 'b-gray';
+}
+function lcBadgeFromJira(status) {
+  var s = (status || '').toLowerCase();
+  if (['done','closed','resolved'].some(v => s.includes(v))) return 'b-green';
+  if (['in progress','for pr review'].some(v => s.includes(v))) return 'b-teal';
+  if (['ready for checking','for checking'].some(v => s.includes(v))) return 'b-blue';
+  if (['on hold'].some(v => s.includes(v))) return 'b-amber';
+  if (['cancelled','canceled'].some(v => s.includes(v))) return 'b-red';
+  return 'b-gray';
+}
+function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── ANALYTICS PAGE ─────────────────────────────────────────
-var charts={};
-var COLORS={green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8'};
-var LC_COLORS=[COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.greenL];
-var LC_BORDERS=[COLORS.gray,COLORS.amber,COLORS.blue,COLORS.purple,COLORS.teal,COLORS.green];
-function fmtPhp(n){if(n===null||n===undefined)return'—';if(n>=1000000)return'₱'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'₱'+(n/1000).toFixed(0)+'K';return'₱'+n.toLocaleString('en-PH',{minimumFractionDigits:0,maximumFractionDigits:0});}
-async function load_analytics(from,to){
-  document.getElementById('an-loadingState').style.display='flex';
-  document.getElementById('an-content').style.display='none';
-  try{
-    let url=GAS_URL+'?action=analytics';
-    if(from)url+='&from='+from; if(to)url+='&to='+to;
-    const res=await fetch(url); const data=await res.json();
+var charts = {};
+var COLORS = { green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8' };
+var LC_COLORS  = [COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.greenL];
+var LC_BORDERS = [COLORS.gray,COLORS.amber,COLORS.blue,COLORS.purple,COLORS.teal,COLORS.green];
+
+function fmtPhp(n) {
+  if (n === null || n === undefined) return '—';
+  if (n >= 1000000) return '₱' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '₱' + (n/1000).toFixed(0) + 'K';
+  return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits:0, maximumFractionDigits:0 });
+}
+
+async function load_analytics(from, to) {
+  document.getElementById('an-loadingState').style.display = 'flex';
+  document.getElementById('an-content').style.display = 'none';
+  try {
+    var url = GAS_URL + '?action=analytics';
+    if (from) url += '&from=' + from;
+    if (to) url += '&to=' + to;
+    var res = await fetch(url);
+    var data = await res.json();
     render_analytics(data);
-    document.getElementById('an-loadingState').style.display='none';
-    document.getElementById('an-content').style.display='block';
-  }catch(e){
-    const ls=document.getElementById('an-loadingState');
-    if(ls)ls.innerHTML='<p style="color:var(--muted)">Failed to load analytics. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="load_analytics()">Retry</span></p>';
+    document.getElementById('an-loadingState').style.display = 'none';
+    document.getElementById('an-content').style.display = 'block';
+  } catch(e) {
+    var ls = document.getElementById('an-loadingState');
+    if (ls) ls.innerHTML = '<p style="color:var(--muted)">Failed to load analytics. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="load_analytics()">Retry</span></p>';
   }
 }
-function render_analytics(data){
-  const lc=data.lifecycleCounts||{};const svc=data.byService||{};const cost=data.byCost||{};const urg=data.byUrgency||{};
-  const svcKeys=Object.keys(svc).sort((a,b)=>svc[b]-svc[a]);
-  document.getElementById('an-total').textContent=data.total??'—';
-  document.getElementById('an-fq').textContent=lc['For Quotation']??'—';
-  document.getElementById('an-or').textContent=lc['Ongoing Review']??'—';
-  document.getElementById('an-qp').textContent=lc['Quotation Provided']??'—';
-  document.getElementById('an-fe').textContent=lc['For Execution / Schedule']??'—';
-  document.getElementById('an-oe').textContent=lc['Ongoing Execution / Activity']??'—';
-  document.getElementById('an-rd').textContent=lc['Request Done']??'—';
-  document.getElementById('an-avg').textContent=data.avgDays!=null?data.avgDays+'d':'—';
-  document.getElementById('an-rev-in').textContent=fmtPhp(data.revenueReceived??null);
-  document.getElementById('an-rev-out').textContent=fmtPhp(data.revenueLost??null);
-  const tbody=document.querySelector('#an-serviceTable tbody');
-  if(tbody){tbody.innerHTML='';const total=Object.values(svc).reduce((a,b)=>a+b,0)||1;svcKeys.forEach(k=>{const pct=Math.round((svc[k]/total)*100);tbody.innerHTML+=`<tr><td>${k}</td><td>${svc[k]}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px"><div style="width:${pct}%;height:100%;background:var(--primary);border-radius:3px"></div></div><span style="font-size:0.72rem;color:var(--muted);min-width:30px">${pct}%</span></div></td></tr>`;});}
-  setTimeout(()=>{
-    if(typeof Chart==='undefined')return;
-    const monthly=data.monthlyArr||[];
-    const lcLabels=['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
-    const lcShort=['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done'];
-    const svcColors=[COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
+
+function render_analytics(data) {
+  var lc = data.lifecycleCounts || {}; var svc = data.byService || {}; var cost = data.byCost || {}; var urg = data.byUrgency || {};
+  var svcKeys = Object.keys(svc).sort((a,b) => svc[b]-svc[a]);
+  document.getElementById('an-total').textContent = data.total ?? '—';
+  document.getElementById('an-fq').textContent = lc['For Quotation'] ?? '—';
+  document.getElementById('an-or').textContent = lc['Ongoing Review'] ?? '—';
+  document.getElementById('an-qp').textContent = lc['Quotation Provided'] ?? '—';
+  document.getElementById('an-fe').textContent = lc['For Execution / Schedule'] ?? '—';
+  document.getElementById('an-oe').textContent = lc['Ongoing Execution / Activity'] ?? '—';
+  document.getElementById('an-rd').textContent = lc['Request Done'] ?? '—';
+  document.getElementById('an-avg').textContent = data.avgDays != null ? data.avgDays + 'd' : '—';
+  document.getElementById('an-rev-in').textContent = fmtPhp(data.revenueReceived ?? null);
+  document.getElementById('an-rev-out').textContent = fmtPhp(data.revenueLost ?? null);
+  var tbody = document.querySelector('#an-serviceTable tbody');
+  if (tbody) {
+    tbody.innerHTML = '';
+    var total = Object.values(svc).reduce((a,b) => a+b, 0) || 1;
+    svcKeys.forEach(function(k) {
+      var pct = Math.round((svc[k]/total)*100);
+      tbody.innerHTML += '<tr><td>' + k + '</td><td>' + svc[k] + '</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px"><div style="width:' + pct + '%;height:100%;background:var(--primary);border-radius:3px"></div></div><span style="font-size:0.72rem;color:var(--muted);min-width:30px">' + pct + '%</span></div></td></tr>';
+    });
+  }
+  setTimeout(function() {
+    if (typeof Chart === 'undefined') return;
+    var monthly = data.monthlyArr || [];
+    var lcLabels = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
+    var lcShort  = ['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done'];
+    var svcColors = [COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
     buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
     buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcLabels.map(l=>lc[l]||0),backgroundColor:LC_COLORS,borderColor:LC_BORDERS,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
-    const revMonthly=data.revenueByMonth||[];
+    var revMonthly = data.revenueByMonth || [];
     buildChart('an-chartRevTime','bar',{labels:revMonthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Received',data:revMonthly.map(m=>m.received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revMonthly.map(m=>m.lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
-    const revSvc=data.revenueByService||{};
-    const revSvcKeys=Object.keys(revSvc).sort((a,b)=>(revSvc[b].received+revSvc[b].lost)-(revSvc[a].received+revSvc[a].lost));
+    var revSvc = data.revenueByService || {};
+    var revSvcKeys = Object.keys(revSvc).sort((a,b) => (revSvc[b].received+revSvc[b].lost)-(revSvc[a].received+revSvc[a].lost));
     buildChart('an-chartRevService','bar',{labels:revSvcKeys,datasets:[{label:'Received',data:revSvcKeys.map(k=>revSvc[k].received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revSvcKeys.map(k=>revSvc[k].lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
-  },150);
+  }, 150);
 }
-function buildChart(id,type,data,options){if(charts[id])charts[id].destroy();const ctx=document.getElementById(id).getContext('2d');charts[id]=new Chart(ctx,{type,data,options:Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type==='doughnut',labels:{font:{family:"'Rubik'"}}}},scales:type==='doughnut'?{}:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}}}},options||{})});}
-function applyFilter(){const from=document.getElementById('an-fromDate').value;const to=document.getElementById('an-toDate').value;load_analytics(from,to);}
-function clearFilter(){document.getElementById('an-fromDate').value='';document.getElementById('an-toDate').value='';load_analytics();}
-function fmtMonth(ym){if(!ym)return'';const[y,m]=ym.split('-');const names=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return(names[parseInt(m,10)-1]||m)+' '+y;}
 
-// ── OPERATIONAL DETAILS CARD ───────────────────────────────────────────────
-function renderOpCard(s){
-  if(!IS_INTERNAL || !isAdmin)return'';
-  const cost=s&&s.serviceCost!=null?s.serviceCost:'';
-  const adate=s&&s.activityDate?s.activityDate.substring(0,10):'';
-  const cstat=s&&s.costStatus?s.costStatus:'Pending';
-  const jk=s&&s.jiraKey?s.jiraKey:'';
-  const statusOpts=['Pending','Paid','Waived'].map(o=>`<option value="${o}"${cstat===o?' selected':''}>${o}</option>`).join('');
-  return`<div class="dsec" id="opCard">
-    <div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>
-    <div class="dsb"><div class="igrid">
-      <div class="iitem"><label>Service / Operational Cost (₱)</label>
-        <input type="number" id="op-cost" value="${esc(String(cost))}" min="0" step="100" placeholder="e.g. 5000"
-          style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s"
-          onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-      </div>
-      <div class="iitem"><label>Activity Date</label>
-        <input type="date" id="op-date" value="${adate}"
-          style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s"
-          onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-      </div>
-      <div class="iitem"><label>Cost Status</label>
-        <select id="op-status" style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">${statusOpts}</select>
-      </div>
-      <div class="iitem" style="display:flex;align-items:flex-end">
-        <button onclick="saveOpDetails('${jk}')"
-          style="font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%"
-          onmouseover="this.style.background='var(--primary-dk)'" onmouseout="this.style.background='var(--primary)'">Save</button>
-      </div>
-    </div></div>
-  </div>`;
+function buildChart(id, type, data, options) {
+  if (charts[id]) charts[id].destroy();
+  var ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, { type, data, options: Object.assign({ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:type==='doughnut',labels:{font:{family:"'Rubik'"}}}}, scales:type==='doughnut'?{}:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}}} }, options || {}) });
 }
-async function saveOpDetails(jiraKey){
-  const cost=document.getElementById('op-cost').value;
-  const date=document.getElementById('op-date').value;
-  const status=document.getElementById('op-status').value;
-  const msgEl=document.getElementById('opSaveMsg');
-  if(msgEl)msgEl.style.display='none';
-  try{
-    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'update',jiraKey,serviceCost:cost,activityDate:date,costStatus:status})});
-    const entry=all.find(x=>x.jiraKey===jiraKey);
-    if(entry){entry.serviceCost=cost!==''?parseFloat(cost):null;entry.activityDate=date;entry.costStatus=status;}
-    const cb=document.querySelector('.dh-meta .cost-badge');
-    if(cb){const cc=status==='Paid'?'cost-paid':status==='Waived'?'cost-waived':'cost-pending';cb.className='cost-badge '+cc;cb.textContent=status;}
+
+function applyFilter() { load_analytics(document.getElementById('an-fromDate').value, document.getElementById('an-toDate').value); }
+function clearFilter() { document.getElementById('an-fromDate').value = ''; document.getElementById('an-toDate').value = ''; load_analytics(); }
+function fmtMonth(ym) { if (!ym) return ''; var p = ym.split('-'); var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return (names[parseInt(p[1],10)-1]||p[1]) + ' ' + p[0]; }
+
+// ── OPERATIONAL DETAILS CARD ────────────────────────────────
+function renderOpCard(s) {
+  if (!IS_INTERNAL || !isAdmin) return '';
+  var cost  = s && s.serviceCost != null ? s.serviceCost : '';
+  var adate = s && s.activityDate ? s.activityDate.substring(0,10) : '';
+  var cstat = s && s.costStatus ? s.costStatus : 'Pending';
+  var jk    = s && s.jiraKey ? s.jiraKey : '';
+  var statusOpts = ['Pending','Paid','Waived'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  return '<div class="dsec" id="opCard">'
+    + '<div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>'
+    + '<div class="dsb"><div class="igrid">'
+    + '<div class="iitem"><label>Service / Operational Cost (₱)</label><input type="number" id="op-cost" value="' + esc(String(cost)) + '" min="0" step="100" placeholder="e.g. 5000" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
+    + '<div class="iitem"><label>Activity Date</label><input type="date" id="op-date" value="' + adate + '" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
+    + '<div class="iitem"><label>Cost Status</label><select id="op-status" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">' + statusOpts + '</select></div>'
+    + '<div class="iitem" style="display:flex;align-items:flex-end"><button onclick="saveOpDetails(\'' + jk + '\')" style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%" onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">Save</button></div>'
+    + '</div></div></div>';
+}
+
+async function saveOpDetails(jiraKey) {
+  var cost   = document.getElementById('op-cost').value;
+  var date   = document.getElementById('op-date').value;
+  var status = document.getElementById('op-status').value;
+  var msgEl  = document.getElementById('opSaveMsg');
+  if (msgEl) msgEl.style.display = 'none';
+  try {
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ action:'update', jiraKey, serviceCost:cost, activityDate:date, costStatus:status }) });
+    var entry = all.find(x => x.jiraKey === jiraKey);
+    if (entry) { entry.serviceCost = cost !== '' ? parseFloat(cost) : null; entry.activityDate = date; entry.costStatus = status; }
+    var cb = document.querySelector('.dh-meta .cost-badge');
+    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
     render();
-    if(msgEl){msgEl.style.display='inline';setTimeout(()=>{if(msgEl)msgEl.style.display='none';},3000);}
-  }catch(e){alert('Save failed: '+e.message);}
+    if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
+  } catch(e) { alert('Save failed: ' + e.message); }
 }
 </script>
 </body>
