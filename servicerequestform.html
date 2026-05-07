@@ -353,6 +353,68 @@
 
   .error-msg { font-size: 0.75rem; color: var(--red); margin-top: 4px; display: none; }
 
+  /* ── Validation toast ── */
+  .validation-toast {
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: #fff;
+    border: 1.5px solid var(--red);
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(192, 57, 43, 0.14);
+    padding: 0.875rem 1.125rem;
+    min-width: 300px;
+    max-width: min(520px, calc(100vw - 2rem));
+    transition: top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+  .validation-toast.visible {
+    top: 1.25rem;
+    pointer-events: auto;
+  }
+  .validation-toast-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .validation-toast-icon {
+    width: 20px; height: 20px;
+    background: #fde8e6;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .validation-toast-icon svg { width: 11px; height: 11px; }
+  .validation-toast-title {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink);
+    flex: 1;
+  }
+  .validation-toast-close {
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-muted); padding: 2px; line-height: 1;
+    border-radius: 4px; transition: color 0.15s;
+  }
+  .validation-toast-close:hover { color: var(--ink); }
+  .validation-toast-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .validation-toast-field {
+    font-size: 0.72rem;
+    font-weight: 500;
+    background: #fde8e6;
+    color: var(--red);
+    border-radius: 20px;
+    padding: 2px 9px;
+    white-space: nowrap;
+  }
+
   .field.invalid input,
   .field.invalid textarea,
   .field.invalid select { border-color: var(--red); }
@@ -630,6 +692,21 @@
 </header>
 
 <main>
+
+  <!-- Validation toast -->
+  <div class="validation-toast" id="validationToast" role="alert" aria-live="assertive">
+    <div class="validation-toast-header">
+      <div class="validation-toast-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <span class="validation-toast-title">Please fix the following before submitting</span>
+      <button class="validation-toast-close" onclick="dismissToast()" aria-label="Dismiss">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="validation-toast-list" id="validationToastList"></div>
+  </div>
+
   <div class="notice">
     Submitting this form does not guarantee approval or scheduling. Our team will review your request and reach out with a cost estimate and next steps before any work begins.
   </div>
@@ -1277,43 +1354,113 @@ function validateField(id, test) {
   wrapper.classList.remove('invalid'); return true;
 }
 
+/* ── Validation toast ── */
+var toastTimer = null;
+
+function showValidationToast(fields) {
+  var toast = document.getElementById('validationToast');
+  var list  = document.getElementById('validationToastList');
+  if (!toast || !list) return;
+  list.innerHTML = fields.map(function(f) {
+    return '<span class="validation-toast-field">' + f + '</span>';
+  }).join('');
+  toast.classList.add('visible');
+  // Auto-dismiss after 6 seconds
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(dismissToast, 6000);
+}
+
+function dismissToast() {
+  var toast = document.getElementById('validationToast');
+  if (toast) toast.classList.remove('visible');
+  clearTimeout(toastTimer);
+}
+
 /* ── Submit with auto-retry on failure ── */
 document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
+  const invalidFields = [];
 
-  valid = validateField('requestorName',    document.getElementById('requestorName').value.trim() !== '')    && valid;
+  function vf(id, test, label) {
+    const ok = validateField(id, test);
+    if (!ok) invalidFields.push(label);
+    return ok && valid ? true : (valid = ok && valid, ok);
+  }
+
+  // Run all field validations, collecting friendly labels for failed ones
+  valid = vf('requestorName',    document.getElementById('requestorName').value.trim() !== '',   'Requester name')    && valid;
   const email = document.getElementById('requestorEmail').value.trim();
-  valid = validateField('requestorEmail',   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))                        && valid;
-  valid = validateField('clientName',       document.getElementById('clientName').value.trim() !== '')        && valid;
-  valid = validateField('csm',              document.getElementById('csm').value.trim() !== '')               && valid;
+  valid = vf('requestorEmail',   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),                       'Requester email')   && valid;
+  valid = vf('clientName',       document.getElementById('clientName').value.trim() !== '',       'Client name')       && valid;
+  valid = vf('csm',              document.getElementById('csm').value.trim() !== '',              'CSM name')          && valid;
   const csmEmail = document.getElementById('csmEmail').value.trim();
-  valid = validateField('csmEmail',         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(csmEmail))                     && valid;
-  valid = validateField('accountMrr',       document.getElementById('accountMrr').value.trim() !== '')        && valid;
-  valid = validateField('accountHeadcount', document.getElementById('accountHeadcount').value.trim() !== '')  && valid;
-  valid = validateField('hrUrl',            document.getElementById('hrUrl').value.trim() !== '')             && valid;
-  valid = validateField('payrollCodes',     document.getElementById('payrollCodes').value.trim() !== '')      && valid;
+  valid = vf('csmEmail',         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(csmEmail),                    'CSM email')         && valid;
+  valid = vf('accountMrr',       document.getElementById('accountMrr').value.trim() !== '',       'Account MRR')       && valid;
+  valid = vf('accountHeadcount', document.getElementById('accountHeadcount').value.trim() !== '', 'Account headcount') && valid;
+  valid = vf('hrUrl',            document.getElementById('hrUrl').value.trim() !== '',            'HR URL')            && valid;
+  valid = vf('payrollCodes',     document.getElementById('payrollCodes').value.trim() !== '',     'Payroll code/s')    && valid;
 
   const serviceSelected = document.querySelector('input[name="serviceType"]:checked');
   const serviceErr = document.getElementById('service-error');
-  if (!serviceSelected) { serviceErr.style.display = 'block'; valid = false; } else serviceErr.style.display = 'none';
+  if (!serviceSelected) {
+    serviceErr.style.display = 'block';
+    invalidFields.push('Service type');
+    valid = false;
+  } else {
+    serviceErr.style.display = 'none';
+  }
 
   if (serviceSelected && ['Data Migration','Change HR URL','Rename Database'].includes(serviceSelected.value)) {
     const ackErr = document.getElementById('ack-error');
-    if (!document.getElementById('ackCheck').checked) { ackErr.style.display = 'block'; valid = false; } else ackErr.style.display = 'none';
+    if (!document.getElementById('ackCheck').checked) {
+      ackErr.style.display = 'block';
+      invalidFields.push('Acknowledgement');
+      valid = false;
+    } else {
+      ackErr.style.display = 'none';
+    }
   }
 
   const desc = document.getElementById('description').value.trim();
   const descErr = document.getElementById('desc-error');
-  if (!desc) { descErr.style.display = 'block'; valid = false; } else descErr.style.display = 'none';
+  if (!desc) {
+    descErr.style.display = 'block';
+    invalidFields.push('Description');
+    valid = false;
+  } else {
+    descErr.style.display = 'none';
+  }
 
   const sigErr = document.getElementById('sig-error');
-  if (!hasSig) { sigErr.style.display = 'block'; wrap.classList.add('invalid-sig'); valid = false; }
-  else { sigErr.style.display = 'none'; wrap.classList.remove('invalid-sig'); }
-  valid = validateField('sigName', document.getElementById('sigName').value.trim() !== '') && valid;
-  valid = validateField('sigDate', document.getElementById('sigDate').value !== '')         && valid;
+  if (!hasSig) {
+    sigErr.style.display = 'block';
+    wrap.classList.add('invalid-sig');
+    invalidFields.push('Signature');
+    valid = false;
+  } else {
+    sigErr.style.display = 'none';
+    wrap.classList.remove('invalid-sig');
+  }
 
-  if (!valid) return;
+  if (!validateField('sigName', document.getElementById('sigName').value.trim() !== '')) {
+    invalidFields.push('Full name (print)');
+    valid = false;
+  }
+  if (!validateField('sigDate', document.getElementById('sigDate').value !== '')) {
+    invalidFields.push('Date signed');
+    valid = false;
+  }
+
+  if (!valid) {
+    showValidationToast(invalidFields);
+    // Scroll to first invalid field
+    var first = document.querySelector('.field.invalid, .sig-canvas-wrap.invalid-sig');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  dismissToast();
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -1422,6 +1569,7 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
 document.getElementById('resetBtn').addEventListener('click', resetForm);
 
 function resetForm() {
+  dismissToast();
   document.getElementById('inquiryForm').reset();
   document.getElementById('inquiryForm').style.display = 'block';
   document.getElementById('successScreen').classList.remove('visible');
