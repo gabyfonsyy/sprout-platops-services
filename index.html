@@ -297,6 +297,8 @@ tr:hover td{background:var(--bg)}
 .sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
 .sv-card-actions{display:flex;gap:6px}
 .sv-card-actions button{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
+/* Admin buttons used in both card actions and expand footer */
+.sv-btn-edit,.sv-btn-del{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
 .sv-btn-edit{background:var(--bg);border:1.5px solid var(--border);color:var(--muted)}
 .sv-btn-edit:hover{border-color:var(--primary);color:var(--primary)}
 .sv-btn-del{background:var(--tomato-lt);border:1.5px solid #fbbdbd;color:var(--tomato)}
@@ -340,7 +342,7 @@ tr:hover td{background:var(--bg)}
 .form-iframe-loader.hidden{opacity:0;pointer-events:none}
 .form-iframe-loader p{font-size:0.8rem;color:var(--muted)}
 .form-iframe-fallback{
-  position:absolute;bottom:84px;right:24px;z-index:5;
+  position:absolute;top:12px;right:16px;z-index:15;
   font-size:0.72rem;color:var(--muted);
   display:flex;align-items:center;gap:5px;
   background:var(--surface);border:1px solid var(--border);
@@ -1083,8 +1085,8 @@ function renderServicesView() {
     // Admin edit/delete actions (inside expanded panel)
     var adminActions = '';
     if (isAdmin) {
-      adminActions = '<button class="sv-btn-edit" onclick="event.stopPropagation();openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')" style="font-size:0.72rem">Edit</button>'
-        + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')" style="font-size:0.72rem">Delete</button>';
+      adminActions = '<button class="sv-btn-edit" onclick="event.stopPropagation();openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')">Edit</button>'
+        + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
     }
 
     // Chevron icon
