@@ -287,17 +287,8 @@
     line-height: 1.7;
     margin-bottom: 1rem;
   }
-  .fee-policy-icon {
-    color: #c9a227;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .fee-policy-title {
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 2px;
-    font-size: 0.8125rem;
-  }
+  .fee-policy-icon { color: #c9a227; flex-shrink: 0; margin-top: 2px; }
+  .fee-policy-title { font-weight: 600; color: var(--ink); margin-bottom: 2px; font-size: 0.8125rem; }
   .fee-policy strong { color: var(--ink); font-weight: 600; }
 
   .form-actions { display: flex; justify-content: flex-end; gap: 10px; }
@@ -313,7 +304,6 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-
   .btn-reset:hover { border-color: var(--ink-muted); color: var(--ink); }
 
   .btn-submit {
@@ -329,7 +319,6 @@
     transition: background 0.15s;
     letter-spacing: 0.01em;
   }
-
   .btn-submit:hover { background: var(--green-mid); }
   .btn-submit:active { transform: scale(0.98); }
   .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -344,7 +333,6 @@
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 1.25rem;
   }
-
   .success-icon svg { width: 24px; height: 24px; }
 
   .success-screen h2 {
@@ -378,7 +366,6 @@
     border-radius: 8px;
     overflow: hidden;
   }
-
   .migration-notice.visible { display: block; }
 
   .migration-notice-header {
@@ -393,31 +380,17 @@
     align-items: center;
     gap: 8px;
   }
-
   .migration-notice-header svg { flex-shrink: 0; }
 
   .migration-notice-body { background: var(--white); padding: 1rem 1.125rem; }
 
-  .mn-block {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-
+  .mn-block { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
   .mn-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-
   .mn-block h4 { font-size: 0.8rem; font-weight: 500; color: var(--green); margin-bottom: 5px; }
-
-  .mn-block p, .mn-block li {
-    font-size: 0.7875rem;
-    color: var(--ink-muted);
-    line-height: 1.65;
-  }
-
+  .mn-block p, .mn-block li { font-size: 0.7875rem; color: var(--ink-muted); line-height: 1.65; }
   .mn-block ol { padding-left: 1.25rem; margin-top: 4px; }
   .mn-block ol li { margin-bottom: 6px; }
   .mn-block a { color: var(--green-mid); text-decoration: underline; }
-
   .mn-legal { font-size: 0.7375rem; color: var(--ink-muted); line-height: 1.65; margin-top: 4px; }
   .mn-legal + .mn-legal { margin-top: 6px; }
 
@@ -431,26 +404,15 @@
     border: 1px solid #F6C84B;
     border-radius: 6px;
   }
-
   .acknowledgement-row.visible { display: flex; }
-
   .acknowledgement-row input[type="checkbox"] {
-    margin-top: 2px;
-    width: 15px; height: 15px;
-    accent-color: var(--green);
-    flex-shrink: 0;
-    cursor: pointer;
+    margin-top: 2px; width: 15px; height: 15px;
+    accent-color: var(--green); flex-shrink: 0; cursor: pointer;
   }
-
   .acknowledgement-row label {
-    font-size: 0.7875rem;
-    color: var(--ink);
-    line-height: 1.6;
-    font-weight: 400;
-    margin: 0;
-    cursor: pointer;
+    font-size: 0.7875rem; color: var(--ink); line-height: 1.6;
+    font-weight: 400; margin: 0; cursor: pointer;
   }
-
   .error-msg.ack-error { margin-top: 6px; }
 
   .sig-section { margin-bottom: 2rem; }
@@ -463,7 +425,6 @@
     overflow: hidden;
     cursor: crosshair;
   }
-
   .sig-canvas-wrap.signed { border-color: var(--green-mid); }
   .sig-canvas-wrap.invalid-sig { border-color: var(--red); }
 
@@ -473,43 +434,28 @@
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
     pointer-events: none;
-    font-size: 0.8125rem;
-    color: #C0C0B4;
-    gap: 8px;
-    transition: opacity 0.2s;
+    font-size: 0.8125rem; color: #C0C0B4;
+    gap: 8px; transition: opacity 0.2s;
   }
-
   .sig-placeholder.hidden { opacity: 0; }
 
   .sig-baseline {
     position: absolute;
     bottom: 36px; left: 24px; right: 24px;
-    height: 1px;
-    background: var(--border);
-    pointer-events: none;
+    height: 1px; background: var(--border); pointer-events: none;
   }
 
   .sig-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 6px;
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 6px;
   }
-
   .sig-note { font-size: 0.75rem; color: var(--ink-muted); }
 
   .btn-clear-sig {
-    font-family: var(--sans);
-    font-size: 0.75rem;
-    color: var(--ink-muted);
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 4px 10px;
-    cursor: pointer;
-    transition: all 0.15s;
+    font-family: var(--sans); font-size: 0.75rem; color: var(--ink-muted);
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 4px; padding: 4px 10px; cursor: pointer; transition: all 0.15s;
   }
-
   .btn-clear-sig:hover { border-color: var(--ink-muted); color: var(--ink); }
 
   @media (max-width: 520px) {
@@ -534,8 +480,7 @@
   }
   .svc-preview-header {
     padding: 16px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
   }
   .svc-preview-header h3 { font-size: 1rem; font-weight: 500; color: var(--ink); }
   .svc-preview-close {
@@ -544,15 +489,11 @@
     line-height: 1; transition: color 0.15s;
   }
   .svc-preview-close:hover { color: var(--ink); }
-  .svc-preview-body {
-    flex: 1; overflow-y: auto; padding: 1.25rem;
-  }
+  .svc-preview-body { flex: 1; overflow-y: auto; padding: 1.25rem; }
   .svc-preview-body::-webkit-scrollbar { width: 4px; }
   .svc-preview-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   .svc-preview-list { display: flex; flex-direction: column; gap: 10px; }
-  .svc-preview-item {
-    border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 14px;
-  }
+  .svc-preview-item { border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 14px; }
   .svc-preview-item-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
   .svc-preview-item-cat {
     display: inline-block; font-size: 0.63rem; font-weight: 600;
@@ -563,129 +504,83 @@
   .svc-preview-item-price { font-size: 0.8rem; font-weight: 600; color: var(--green); margin-top: 6px; }
   .svc-preview-empty { text-align: center; padding: 2.5rem 1rem; color: var(--ink-muted); font-size: 0.875rem; }
 
-  /* view services link row */
-  .view-services-row {
-    display: flex; justify-content: flex-end; margin-bottom: 6px;
-  }
+  .view-services-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
   .view-services-btn {
     font-family: var(--sans); font-size: 0.75rem; font-weight: 500;
     color: var(--green-mid); background: none; border: none; cursor: pointer;
     display: flex; align-items: center; gap: 5px; padding: 0;
-    text-decoration: underline; text-underline-offset: 2px;
-    transition: color 0.15s;
+    text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s;
   }
   .view-services-btn:hover { color: var(--green); }
 
   .svc-preview-selectable { cursor: pointer; position: relative; transition: border-color 0.15s, background 0.15s; }
   .svc-preview-selectable:hover { border-color: var(--green-mid) !important; background: var(--green-light) !important; }
   .svc-preview-select-hint {
-    display: none;
-    position: absolute; top: 10px; right: 12px;
-    font-size: 0.65rem; font-weight: 600;
-    color: var(--green); background: var(--green-light);
-    border: 1px solid var(--green-muted);
+    display: none; position: absolute; top: 10px; right: 12px;
+    font-size: 0.65rem; font-weight: 600; color: var(--green);
+    background: var(--green-light); border: 1px solid var(--green-muted);
     border-radius: 20px; padding: 2px 8px;
   }
   .svc-preview-selectable:hover .svc-preview-select-hint { display: inline-flex; }
+
   /* ── PROCESS DRAWER ── */
   .proc-fab {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 8000;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--green);
-    color: #fff;
-    font-family: var(--sans);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    padding: 10px 18px 10px 14px;
-    border: none;
-    border-radius: 100px;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(27,67,50,0.35);
+    position: fixed; bottom: 84px; right: 28px; z-index: 8000;
+    display: flex; align-items: center; gap: 8px;
+    background: var(--green); color: #fff;
+    font-family: var(--sans); font-size: 0.8125rem; font-weight: 500;
+    padding: 10px 18px 10px 14px; border: none; border-radius: 100px;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(27,67,50,0.35);
     transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
   }
   .proc-fab:hover { background: var(--green-mid); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(27,67,50,0.4); }
   .proc-fab svg { flex-shrink: 0; }
 
   .proc-drawer-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    z-index: 8100;
-    transition: opacity 0.25s;
-    opacity: 0;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35); z-index: 8100;
+    transition: opacity 0.25s; opacity: 0;
   }
   .proc-drawer-overlay.open { display: block; }
   .proc-drawer-overlay.visible { opacity: 1; }
 
   .proc-drawer {
-    position: fixed;
-    top: 0; right: 0; bottom: 0;
-    width: 560px;
-    max-width: 96vw;
-    background: var(--white);
-    z-index: 8200;
-    display: flex;
-    flex-direction: column;
+    position: fixed; top: 0; right: 0; bottom: 0; width: 560px; max-width: 96vw;
+    background: var(--white); z-index: 8200; display: flex; flex-direction: column;
     box-shadow: -8px 0 40px rgba(0,0,0,0.14);
-    transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
   }
   .proc-drawer.open { transform: translateX(0); }
 
   .proc-drawer-header {
-    background: var(--green);
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
+    background: var(--green); padding: 1.25rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
   }
   .proc-drawer-header h3 { font-size: 1rem; font-weight: 600; color: #fff; }
   .proc-drawer-header p  { font-size: 0.75rem; color: rgba(255,255,255,0.65); margin-top: 2px; }
   .proc-drawer-close {
-    background: rgba(255,255,255,0.12);
-    border: none; border-radius: 6px;
-    color: #fff; cursor: pointer;
-    padding: 6px; line-height: 1;
+    background: rgba(255,255,255,0.12); border: none; border-radius: 6px;
+    color: #fff; cursor: pointer; padding: 6px; line-height: 1;
     transition: background 0.15s; flex-shrink: 0;
   }
   .proc-drawer-close:hover { background: rgba(255,255,255,0.22); }
 
-  .proc-drawer-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem;
-  }
+  .proc-drawer-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
   .proc-drawer-body::-webkit-scrollbar { width: 4px; }
   .proc-drawer-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* reuse proc-* classes from index — redeclare lightweight versions here */
   .proc-drawer-body .pd-section { margin-bottom: 2rem; }
-  .pd-section-label {
-    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px;
-  }
+  .pd-section-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px; }
   .pd-section-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.875rem; }
 
   .pd-overview {
-    background: var(--bg-alt);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem 1.125rem;
-    font-size: 0.8125rem;
-    color: var(--ink);
-    line-height: 1.75;
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem 1.125rem;
+    font-size: 0.8125rem; color: var(--ink); line-height: 1.75;
   }
   .pd-overview p { margin-bottom: 0.6rem; }
   .pd-overview p:last-child { margin-bottom: 0; }
 
-  /* lifecycle stepper inside drawer */
   .pd-stepper {
     display: flex; align-items: flex-start; gap: 0;
     background: var(--bg-alt); border: 1px solid var(--border);
@@ -694,62 +589,34 @@
   }
   .pd-stepper::-webkit-scrollbar { height: 3px; }
   .pd-stepper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .pd-step {
-    display: flex; flex-direction: column; align-items: center;
-    flex: 1; min-width: 80px; position: relative;
-  }
-  .pd-step:not(:last-child)::after {
-    content: ''; position: absolute; top: 16px; left: 50%;
-    width: 100%; height: 2px; background: var(--green-light); z-index: 0;
-  }
+  .pd-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 80px; position: relative; }
+  .pd-step:not(:last-child)::after { content: ''; position: absolute; top: 16px; left: 50%; width: 100%; height: 2px; background: var(--green-light); z-index: 0; }
   .pd-step-num {
     width: 32px; height: 32px; border-radius: 50%;
     background: var(--green-light); border: 2px solid var(--green-muted);
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.75rem; font-weight: 700; color: var(--green);
-    z-index: 1; flex-shrink: 0;
+    font-size: 0.75rem; font-weight: 700; color: var(--green); z-index: 1; flex-shrink: 0;
   }
-  .pd-step-label {
-    font-size: 0.6rem; font-weight: 600; text-align: center;
-    color: var(--ink); margin-top: 8px; line-height: 1.4; padding: 0 3px;
-  }
-  .pd-step-sub {
-    font-size: 0.55rem; color: var(--ink-muted); text-align: center;
-    margin-top: 2px; padding: 0 3px; line-height: 1.3;
-  }
+  .pd-step-label { font-size: 0.6rem; font-weight: 600; text-align: center; color: var(--ink); margin-top: 8px; line-height: 1.4; padding: 0 3px; }
+  .pd-step-sub { font-size: 0.55rem; color: var(--ink-muted); text-align: center; margin-top: 2px; padding: 0 3px; line-height: 1.3; }
 
   .pd-step-notes { display: grid; gap: 7px; }
-  .pd-step-note {
-    display: flex; gap: 10px; align-items: flex-start;
-    background: var(--bg-alt); border: 1px solid var(--border);
-    border-radius: 7px; padding: 0.75rem 0.875rem;
-  }
-  .pd-step-note-num {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--green-light); color: var(--green);
-    font-size: 0.65rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
+  .pd-step-note { display: flex; gap: 10px; align-items: flex-start; background: var(--bg-alt); border: 1px solid var(--border); border-radius: 7px; padding: 0.75rem 0.875rem; }
+  .pd-step-note-num { width: 22px; height: 22px; border-radius: 50%; background: var(--green-light); color: var(--green); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .pd-step-note-body strong { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
   .pd-step-note-body span  { font-size: 0.76rem; color: var(--ink-muted); line-height: 1.65; }
 
   .pd-table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .pd-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-  .pd-table th {
-    background: var(--bg-alt); text-align: left;
-    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.07em; color: var(--ink-muted);
-    padding: 8px 12px; border-bottom: 1px solid var(--border);
-  }
+  .pd-table th { background: var(--bg-alt); text-align: left; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-muted); padding: 8px 12px; border-bottom: 1px solid var(--border); }
   .pd-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--ink); vertical-align: top; line-height: 1.55; }
   .pd-table tr:last-child td { border-bottom: none; }
   .pd-table td:first-child { font-weight: 500; }
   .pd-table .td-m { color: var(--ink-muted); font-size: 0.73rem; }
 
   @media(max-width:540px) {
-    .proc-fab { bottom: 18px; right: 16px; padding: 9px 14px 9px 12px; font-size: 0.75rem; }
+    .proc-fab { bottom: 76px; right: 16px; padding: 9px 14px 9px 12px; font-size: 0.75rem; }
   }
-
 </style>
 </head>
 <body>
@@ -809,7 +676,6 @@
         </div>
       </div>
 
-      <!-- CHANGED: MRR is now required; Headcount is a new required field -->
       <div class="two-col">
         <div class="field" id="f-mrr">
           <label for="accountMrr">Account MRR <span class="req">*</span></label>
@@ -843,7 +709,6 @@
             View all services
           </button>
         </div>
-        <!-- Tiles are rendered dynamically from localStorage (synced by index.html) -->
         <div class="service-grid" id="serviceGrid"></div>
         <div class="others-field" id="othersField">
           <input type="text" id="othersSpecify" name="othersSpecify" placeholder="Please specify..."/>
@@ -1090,8 +955,6 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cb
 const NOTICE_SERVICES = ['Data Migration', 'Change HR URL', 'Rename Database'];
 
 // ── DYNAMIC SERVICE TILES ────────────────────────────────────────────────────
-// Reads service names from localStorage (written by index.html).
-// Falls back to hardcoded defaults if nothing has been synced yet.
 const DEFAULT_SERVICES = [
   'Data Migration', 'Data Extraction', 'Change HR URL',
   'Rename Database', 'Database Backup', 'Others'
@@ -1108,31 +971,26 @@ function getServiceNames() {
   return DEFAULT_SERVICES;
 }
 
-// Fetch fresh services from GAS and update localStorage + tiles
 function fetchServicesFromGAS() {
   fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' })
     .then(function(r) {
       var ct = r.headers.get('content-type') || '';
       if (!ct.includes('application/json') && !ct.includes('text/plain')) {
-        throw new Error('Non-JSON response — GAS may need redeployment');
+        throw new Error('Non-JSON response');
       }
       return r.json();
     })
     .then(function(d) {
       var svcs = d.services || [];
       if (!svcs.length) return;
-      // Write full objects for preview modal
       try { localStorage.setItem('platops_services_cache', JSON.stringify(svcs)); } catch(e) {}
-      // Write name list for tile rendering
       var names = svcs.map(function(s) { return s.name; });
-      // Ensure Others is always available
       if (!names.some(function(n){ return n.toLowerCase() === 'others'; })) names.push('Others');
       try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
       renderServiceTiles();
     })
     .catch(function(err) {
       console.warn('fetchServicesFromGAS:', err);
-      // Silently fail — hardcoded defaults already rendered
     });
 }
 
@@ -1140,12 +998,9 @@ function renderServiceTiles() {
   var grid = document.getElementById('serviceGrid');
   if (!grid) return;
   var names = getServiceNames();
-  // Always ensure "Others" is last
   var others  = names.filter(function(n){ return n.toLowerCase() === 'others'; });
   var rest    = names.filter(function(n){ return n.toLowerCase() !== 'others'; });
   var othersName = others.length ? others[0] : 'Others';
-
-  // Show first 5 non-Others + Others as tile 6
   var visible = rest.slice(0, 5).concat([othersName]);
 
   grid.innerHTML = visible.map(function(name, idx) {
@@ -1156,7 +1011,6 @@ function renderServiceTiles() {
       + '</div>';
   }).join('');
 
-  // Re-attach change listeners on fresh tiles
   document.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
     r.addEventListener('change', function() {
       var val = this.value;
@@ -1171,13 +1025,59 @@ function renderServiceTiles() {
   });
 }
 
+// ── Pre-select service from URL param (?service=Data+Migration) ──────────────
+// Called after tiles are rendered. Polls briefly if GAS fetch is still in flight.
+function tryPreSelectService(serviceName) {
+  // Exact match first
+  var radio = document.querySelector('input[name="serviceType"][value="' + serviceName.replace(/"/g, '&quot;') + '"]');
+  if (radio) {
+    radio.checked = true;
+    radio.dispatchEvent(new Event('change'));
+    return true;
+  }
+  // Service may not be in the visible 6 tiles — inject it temporarily
+  var grid = document.getElementById('serviceGrid');
+  if (!grid) return false;
+  var tempId = 'svc-url-preselect';
+  var existing = document.getElementById(tempId);
+  if (existing) existing.parentElement.remove();
+  var div = document.createElement('div');
+  div.className = 'service-option';
+  div.innerHTML = '<input type="radio" name="serviceType" id="' + tempId + '" value="' + serviceName.replace(/"/g, '&quot;') + '" checked/>'
+    + '<label for="' + tempId + '">' + serviceName + '</label>';
+  grid.appendChild(div);
+  var newRadio = document.getElementById(tempId);
+  newRadio.addEventListener('change', function() {
+    var val = this.value;
+    document.getElementById('othersField').classList[val === 'Others' ? 'add' : 'remove']('visible');
+    if (val !== 'Others') document.getElementById('othersSpecify').value = '';
+    showNoticeFor(val);
+  });
+  showNoticeFor(serviceName);
+  return true;
+}
+
+function initUrlPreSelect() {
+  var params = new URLSearchParams(window.location.search);
+  var preService = params.get('service');
+  if (!preService) return;
+
+  // Try immediately (tiles already rendered from cache/defaults)
+  if (tryPreSelectService(preService)) return;
+
+  // Poll while GAS fetch is in flight (max ~4 seconds)
+  var attempts = 0;
+  var poll = setInterval(function() {
+    if (tryPreSelectService(preService) || ++attempts > 20) clearInterval(poll);
+  }, 200);
+}
+
 // ── SERVICES PREVIEW MODAL ────────────────────────────────────────────────────
 function openServicesPreview() {
   var overlay = document.getElementById('svcPreviewOverlay');
   var list    = document.getElementById('svcPreviewList');
   if (!overlay || !list) return;
 
-  // Load full service objects from localStorage
   var services = [];
   try {
     var raw = localStorage.getItem('platops_services_cache');
@@ -1185,7 +1085,6 @@ function openServicesPreview() {
   } catch(e) {}
 
   if (!services.length) {
-    // Fall back to just names
     var names = getServiceNames();
     list.innerHTML = names.map(function(n) {
       return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + n.replace(/'/g,"\\'") + '\')">'
@@ -1195,9 +1094,9 @@ function openServicesPreview() {
     }).join('');
   } else {
     list.innerHTML = services.map(function(svc) {
-      var catHtml  = svc.category    ? '<span class="svc-preview-item-cat">'  + svc.category    + '</span>' : '';
-      var descHtml = svc.description ? '<p class="svc-preview-item-desc">'    + svc.description + '</p>'    : '';
-      var priceHtml= svc.price       ? '<p class="svc-preview-item-price">'   + svc.price       + '</p>'    : '';
+      var catHtml   = svc.category    ? '<span class="svc-preview-item-cat">'  + svc.category    + '</span>' : '';
+      var descHtml  = svc.description ? '<p class="svc-preview-item-desc">'    + svc.description + '</p>'    : '';
+      var priceHtml = svc.price       ? '<p class="svc-preview-item-price">'   + svc.price       + '</p>'    : '';
       return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + svc.name.replace(/'/g,"\\'") + '\')">'
         + '<div class="svc-preview-item-name">' + svc.name + '</div>'
         + catHtml + descHtml + priceHtml
@@ -1215,30 +1114,22 @@ function closeServicesPreview() {
 }
 
 function selectServiceFromPreview(name) {
-  // Close the preview
   closeServicesPreview();
-
-  // Check if this service already exists as a tile
   var existingRadio = document.querySelector('input[name="serviceType"][value="' + name.replace(/"/g,'&quot;') + '"]');
   if (existingRadio) {
     existingRadio.checked = true;
     existingRadio.dispatchEvent(new Event('change'));
     return;
   }
-
-  // Service not in current tiles — inject it temporarily as a selected tile
   var grid = document.getElementById('serviceGrid');
   var tempId = 'svc-temp-selected';
   var existing = document.getElementById(tempId);
   if (existing) existing.parentElement.remove();
-
   var div = document.createElement('div');
   div.className = 'service-option';
   div.innerHTML = '<input type="radio" name="serviceType" id="' + tempId + '" value="' + name.replace(/"/g,'&quot;') + '" checked/>'
     + '<label for="' + tempId + '">' + name + '</label>';
   grid.appendChild(div);
-
-  // Attach change listener
   var radio = document.getElementById(tempId);
   radio.addEventListener('change', function() {
     var val = this.value;
@@ -1246,8 +1137,6 @@ function selectServiceFromPreview(name) {
     if (val !== 'Others') document.getElementById('othersSpecify').value = '';
     showNoticeFor(val);
   });
-
-  // Trigger notice logic
   if (name === 'Others') {
     document.getElementById('othersField').classList.add('visible');
   } else {
@@ -1261,7 +1150,7 @@ document.getElementById('svcPreviewOverlay').addEventListener('click', function(
   if (e.target === this) closeServicesPreview();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeServicesPreview();
+  if (e.key === 'Escape') { closeServicesPreview(); closeProcDrawer(); }
 });
 
 /* ── Proper casing ── */
@@ -1279,9 +1168,12 @@ function toProperCase(str) {
 /* ── Pre-fill today's date ── */
 document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
 
-/* ── Render service tiles dynamically on load ── */
-renderServiceTiles();     // immediate render from cache / defaults
-fetchServicesFromGAS();   // async refresh from GAS, re-renders tiles when done
+/* ── Render service tiles then check for URL pre-selection ── */
+renderServiceTiles();
+fetchServicesFromGAS();
+
+// ── CHANGED: Init URL param pre-selection after tiles are rendered ──
+initUrlPreSelect();
 
 /* ── Signature canvas ── */
 const canvas = document.getElementById('sigCanvas');
@@ -1349,7 +1241,7 @@ document.getElementById('clearSigBtn').addEventListener('click', function() {
   sigNote.textContent = '';
 });
 
-/* ── Migration notice ── */
+/* ── Migration / notice logic ── */
 function hideAllNotices() {
   document.getElementById('migrationNotice').classList.remove('visible');
   document.getElementById('hrUrlNotice').classList.remove('visible');
@@ -1376,7 +1268,6 @@ function showNoticeFor(value) {
   }
 }
 
-
 /* ── Validation helper ── */
 function validateField(id, test) {
   const el = document.getElementById(id);
@@ -1386,7 +1277,7 @@ function validateField(id, test) {
   wrapper.classList.remove('invalid'); return true;
 }
 
-/* ── Submit ── */
+/* ── Submit with auto-retry on failure ── */
 document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
@@ -1398,10 +1289,8 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
   valid = validateField('csm',              document.getElementById('csm').value.trim() !== '')               && valid;
   const csmEmail = document.getElementById('csmEmail').value.trim();
   valid = validateField('csmEmail',         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(csmEmail))                     && valid;
-  // CHANGED: MRR now required
-  valid = validateField('accountMrr',       document.getElementById('accountMrr').value.trim() !== '')       && valid;
-  // NEW: Headcount required
-  valid = validateField('accountHeadcount', document.getElementById('accountHeadcount').value.trim() !== '') && valid;
+  valid = validateField('accountMrr',       document.getElementById('accountMrr').value.trim() !== '')        && valid;
+  valid = validateField('accountHeadcount', document.getElementById('accountHeadcount').value.trim() !== '')  && valid;
   valid = validateField('hrUrl',            document.getElementById('hrUrl').value.trim() !== '')             && valid;
   valid = validateField('payrollCodes',     document.getElementById('payrollCodes').value.trim() !== '')      && valid;
 
@@ -1442,7 +1331,7 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     csm:                   document.getElementById('csm').value.trim(),
     csmEmail:              document.getElementById('csmEmail').value.trim(),
     accountMrr:            document.getElementById('accountMrr').value.trim(),
-    accountHeadcount:      document.getElementById('accountHeadcount').value.trim(), // NEW
+    accountHeadcount:      document.getElementById('accountHeadcount').value.trim(),
     serviceType,
     hrUrl:                 document.getElementById('hrUrl').value.trim(),
     payrollCodes:          document.getElementById('payrollCodes').value.trim(),
@@ -1457,19 +1346,45 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     signatureImage:        canvas.toDataURL('image/png'),
   };
 
+  // ── AUTO-RETRY: attempt up to 3 times with exponential backoff ──────────────
+  const MAX_ATTEMPTS = 3;
+  let attempt = 0;
+  let lastError = null;
+
+  async function doSubmit() {
+    attempt++;
+    const delayMs = attempt > 1 ? Math.pow(2, attempt - 1) * 1500 : 0; // 0, 1.5s, 3s
+    if (delayMs > 0) {
+      btn.textContent = 'Retrying in ' + (delayMs / 1000).toFixed(0) + 's…';
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+    btn.textContent = attempt > 1 ? 'Retrying… (attempt ' + attempt + ')' : 'Submitting…';
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
   try {
-    if (SHEET_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-      await new Promise(r => setTimeout(r, 800));
-      console.log('Form data (no endpoint set):', payload);
-    } else {
-      await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    while (attempt < MAX_ATTEMPTS) {
+      try {
+        await doSubmit();
+        // no-cors always resolves — treat as success after final attempt or first non-throw
+        break;
+      } catch (err) {
+        lastError = err;
+        if (attempt >= MAX_ATTEMPTS) throw err;
+        // loop continues for retry
+      }
     }
     document.getElementById('inquiryForm').style.display = 'none';
     document.getElementById('successScreen').classList.add('visible');
   } catch (err) {
     btn.disabled = false;
     btn.textContent = 'Submit inquiry';
-    alert('Submission failed. Please try again or contact the team directly.');
+    alert('Submission failed after ' + MAX_ATTEMPTS + ' attempts. Please try again or contact the team directly.');
   }
 });
 
@@ -1485,7 +1400,6 @@ function resetForm() {
   ['service-error','desc-error','ack-error','sig-error'].forEach(id => document.getElementById(id).style.display = 'none');
   hideAllNotices();
   document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-  // Re-render service tiles (in case list was updated since page load)
   renderServiceTiles();
   document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
   const ratio = window.devicePixelRatio || 1;
@@ -1515,9 +1429,6 @@ function closeProcDrawer() {
   document.body.style.overflow = '';
   setTimeout(function() { overlay.classList.remove('open'); }, 300);
 }
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeProcDrawer();
-});
 </script>
 
 <!-- ── PROCESS GUIDE FAB ── -->
@@ -1539,8 +1450,6 @@ document.addEventListener('keydown', function(e) {
     </button>
   </div>
   <div class="proc-drawer-body">
-
-    <!-- 01 Overview -->
     <div class="pd-section">
       <div class="pd-section-label">01 — Overview</div>
       <div class="pd-section-title">What qualifies as a Platform Operations service request?</div>
@@ -1549,78 +1458,24 @@ document.addEventListener('keydown', function(e) {
         <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
       </div>
     </div>
-
-    <!-- 02 Lifecycle -->
     <div class="pd-section">
       <div class="pd-section-label">02 — Request Lifecycle</div>
       <div class="pd-section-title">From submission to completion</div>
       <div class="pd-stepper">
-        <div class="pd-step">
-          <div class="pd-step-num">1</div>
-          <div class="pd-step-label">Quotation<br>Request</div>
-          <div class="pd-step-sub">You submit this form</div>
-        </div>
-        <div class="pd-step">
-          <div class="pd-step-num">2</div>
-          <div class="pd-step-label">Assessment &amp;<br>Coordination</div>
-          <div class="pd-step-sub">Ops reviews &amp; estimates</div>
-        </div>
-        <div class="pd-step">
-          <div class="pd-step-num">3</div>
-          <div class="pd-step-label">Scheduling</div>
-          <div class="pd-step-sub">If downtime required</div>
-        </div>
-        <div class="pd-step">
-          <div class="pd-step-num">4</div>
-          <div class="pd-step-label">CRF + Signed<br>Work Order</div>
-          <div class="pd-step-sub">Required to proceed</div>
-        </div>
-        <div class="pd-step">
-          <div class="pd-step-num">5</div>
-          <div class="pd-step-label">Activity<br>Execution</div>
-          <div class="pd-step-sub">Work is carried out</div>
-        </div>
+        <div class="pd-step"><div class="pd-step-num">1</div><div class="pd-step-label">Quotation<br>Request</div><div class="pd-step-sub">You submit this form</div></div>
+        <div class="pd-step"><div class="pd-step-num">2</div><div class="pd-step-label">Assessment &amp;<br>Coordination</div><div class="pd-step-sub">Ops reviews &amp; estimates</div></div>
+        <div class="pd-step"><div class="pd-step-num">3</div><div class="pd-step-label">Scheduling</div><div class="pd-step-sub">If downtime required</div></div>
+        <div class="pd-step"><div class="pd-step-num">4</div><div class="pd-step-label">CRF + Signed<br>Work Order</div><div class="pd-step-sub">Required to proceed</div></div>
+        <div class="pd-step"><div class="pd-step-num">5</div><div class="pd-step-label">Activity<br>Execution</div><div class="pd-step-sub">Work is carried out</div></div>
       </div>
       <div class="pd-step-notes">
-        <div class="pd-step-note">
-          <div class="pd-step-note-num">1</div>
-          <div class="pd-step-note-body">
-            <strong>Quotation Request</strong>
-            <span>You submit this form with client details, service needed, target date, and constraints. Submitting does not guarantee approval — it opens the request for review.</span>
-          </div>
-        </div>
-        <div class="pd-step-note">
-          <div class="pd-step-note-num">2</div>
-          <div class="pd-step-note-body">
-            <strong>Assessment &amp; Coordination</strong>
-            <span>Platform Ops assesses feasibility, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span>
-          </div>
-        </div>
-        <div class="pd-step-note">
-          <div class="pd-step-note-num">3</div>
-          <div class="pd-step-note-body">
-            <strong>Scheduling <span style="font-weight:400;color:var(--ink-muted)">(if downtime required)</span></strong>
-            <span>For Change HR URL, Rename Database, and similar activities — a confirmed maintenance window must be agreed before a CRF is raised.</span>
-          </div>
-        </div>
-        <div class="pd-step-note">
-          <div class="pd-step-note-num">4</div>
-          <div class="pd-step-note-body">
-            <strong>CRF + Signed Work Order</strong>
-            <span>Must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without these.</span>
-          </div>
-        </div>
-        <div class="pd-step-note">
-          <div class="pd-step-note-num">5</div>
-          <div class="pd-step-note-body">
-            <strong>Activity Execution</strong>
-            <span>Work is executed and results validated. The requester and CSM are notified upon completion and the tracker is updated.</span>
-          </div>
-        </div>
+        <div class="pd-step-note"><div class="pd-step-note-num">1</div><div class="pd-step-note-body"><strong>Quotation Request</strong><span>You submit this form with client details, service needed, target date, and constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">2</div><div class="pd-step-note-body"><strong>Assessment &amp; Coordination</strong><span>Platform Ops assesses feasibility, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">3</div><div class="pd-step-note-body"><strong>Scheduling <span style="font-weight:400;color:var(--ink-muted)">(if downtime required)</span></strong><span>For Change HR URL, Rename Database, and similar — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">4</div><div class="pd-step-note-body"><strong>CRF + Signed Work Order</strong><span>Must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without these.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">5</div><div class="pd-step-note-body"><strong>Activity Execution</strong><span>Work is executed and results validated. The requester and CSM are notified upon completion and the tracker is updated.</span></div></div>
       </div>
     </div>
-
-    <!-- 03 Guardrails -->
     <div class="pd-section">
       <div class="pd-section-label">03 — Scope &amp; Quality Safeguards</div>
       <div class="pd-section-title">Guardrails that apply to all requests</div>
@@ -1638,8 +1493,6 @@ document.addEventListener('keydown', function(e) {
         </table>
       </div>
     </div>
-
-    <!-- 04 Exit Criteria -->
     <div class="pd-section">
       <div class="pd-section-label">04 — Exit Criteria</div>
       <div class="pd-section-title">When is a request considered complete?</div>
@@ -1656,8 +1509,6 @@ document.addEventListener('keydown', function(e) {
         </table>
       </div>
     </div>
-
-    <!-- 05 Escalation -->
     <div class="pd-section">
       <div class="pd-section-label">05 — Escalation</div>
       <div class="pd-section-title">When things get stuck</div>
@@ -1675,9 +1526,8 @@ document.addEventListener('keydown', function(e) {
         </table>
       </div>
     </div>
-
-  </div><!-- end drawer body -->
-</div><!-- end drawer -->
+  </div>
+</div>
 
 </body>
 </html>
