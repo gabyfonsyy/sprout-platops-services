@@ -525,7 +525,7 @@
 
   /* ── PROCESS DRAWER ── */
   .proc-fab {
-    position: fixed; bottom: 84px; right: 28px; z-index: 8000;
+    position: fixed; bottom: 28px; right: 28px; z-index: 8000;
     display: flex; align-items: center; gap: 8px;
     background: var(--green); color: #fff;
     font-family: var(--sans); font-size: 0.8125rem; font-weight: 500;
@@ -615,7 +615,7 @@
   .pd-table .td-m { color: var(--ink-muted); font-size: 0.73rem; }
 
   @media(max-width:540px) {
-    .proc-fab { bottom: 76px; right: 16px; padding: 9px 14px 9px 12px; font-size: 0.75rem; }
+    .proc-fab { bottom: 18px; right: 16px; padding: 9px 14px 9px 12px; font-size: 0.75rem; }
   }
 </style>
 </head>
@@ -1323,6 +1323,19 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     ? 'Others: ' + (document.getElementById('othersSpecify').value.trim() || 'unspecified')
     : serviceSelected.value;
 
+  // Look up category from the local services cache by service name
+  let serviceCategory = '';
+  try {
+    const cached = localStorage.getItem('platops_services_cache');
+    if (cached) {
+      const svcs = JSON.parse(cached);
+      const match = svcs.find(function(s) {
+        return s.name.toLowerCase() === serviceSelected.value.toLowerCase();
+      });
+      if (match) serviceCategory = match.category || '';
+    }
+  } catch(e) {}
+
   const payload = {
     timestamp:             new Date().toISOString(),
     requestorName:         document.getElementById('requestorName').value.trim(),
@@ -1333,6 +1346,7 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     accountMrr:            document.getElementById('accountMrr').value.trim(),
     accountHeadcount:      document.getElementById('accountHeadcount').value.trim(),
     serviceType,
+    category:              serviceCategory,
     hrUrl:                 document.getElementById('hrUrl').value.trim(),
     payrollCodes:          document.getElementById('payrollCodes').value.trim(),
     description:           desc,
