@@ -1323,17 +1323,34 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     ? 'Others: ' + (document.getElementById('othersSpecify').value.trim() || 'unspecified')
     : serviceSelected.value;
 
-  // Look up category from the local services cache by service name
+  // Look up category from services cache.
+  // If cache is empty (e.g. direct URL access without going through the portal),
+  // fetch from GAS first so the category is always populated.
   let serviceCategory = '';
   try {
+    let svcs = [];
     const cached = localStorage.getItem('platops_services_cache');
     if (cached) {
-      const svcs = JSON.parse(cached);
-      const match = svcs.find(function(s) {
-        return s.name.toLowerCase() === serviceSelected.value.toLowerCase();
-      });
-      if (match) serviceCategory = match.category || '';
+      svcs = JSON.parse(cached);
+    } else {
+      // Cache miss — fetch directly before submitting
+      btn.textContent = 'Preparing…';
+      try {
+        const r = await fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' });
+        const d = await r.json();
+        svcs = d.services || [];
+        if (svcs.length) {
+          try { localStorage.setItem('platops_services_cache', JSON.stringify(svcs)); } catch(e) {}
+        }
+      } catch(fetchErr) {
+        console.warn('Category fetch failed:', fetchErr);
+      }
+      btn.textContent = 'Submitting…';
     }
+    const match = svcs.find(function(s) {
+      return s.name.toLowerCase() === serviceSelected.value.toLowerCase();
+    });
+    if (match) serviceCategory = match.category || '';
   } catch(e) {}
 
   const payload = {
