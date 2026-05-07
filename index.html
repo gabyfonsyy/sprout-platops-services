@@ -255,7 +255,6 @@ tr:hover td{background:var(--bg)}
 .analytics-view-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
 /* ── SERVICES VIEW ── */
-/* ── SERVICES VIEW ── */
 .sv-shell { display:flex; flex:1; overflow:hidden; }
 .sv-sidebar {
   width:220px; flex-shrink:0;
@@ -652,7 +651,6 @@ tr:hover td{background:var(--bg)}
       <div class="landing">
         <h2>What would you like to do?</h2>
         <p class="landing-sub">Select an option to get started.</p>
-        <!-- 4 cards: process, services, submit, tracker -->
         <div class="cards" style="grid-template-columns:repeat(2,1fr);max-width:680px" id="landingCards">
           <div class="lcard" onclick="switchTab('process')">
             <div class="lcard-icon">
@@ -689,7 +687,6 @@ tr:hover td{background:var(--bg)}
     <!-- PROCESS VIEW -->
     <div class="view" id="view-process">
       <div class="process-scroll">
-        <!-- Hero -->
         <div class="process-hero">
           <div class="process-hero-inner">
             <h2>Platform Operations Services — How It Works</h2>
@@ -699,7 +696,6 @@ tr:hover td{background:var(--bg)}
 
         <div class="process-body">
 
-          <!-- 01 Overview -->
           <div class="proc-section">
             <div class="proc-section-label">01 — Overview</div>
             <div class="proc-section-title">What qualifies as a Platform Operations service request?</div>
@@ -710,12 +706,10 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
 
-          <!-- 02 Lifecycle -->
           <div class="proc-section">
             <div class="proc-section-label">02 — Request Lifecycle</div>
             <div class="proc-section-title">From submission to completion</div>
 
-            <!-- Stepper -->
             <div class="proc-lifecycle" style="margin-bottom:1rem">
               <div class="proc-step">
                 <div class="proc-step-num">1</div>
@@ -744,7 +738,6 @@ tr:hover td{background:var(--bg)}
               </div>
             </div>
 
-            <!-- Step detail notes -->
             <div class="proc-step-notes">
               <div class="proc-step-note">
                 <div class="proc-step-note-num">1</div>
@@ -784,7 +777,6 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
 
-          <!-- 03 Guardrails -->
           <div class="proc-section">
             <div class="proc-section-label">03 — Scope &amp; Quality Safeguards</div>
             <div class="proc-section-title">Guardrails that apply to all requests</div>
@@ -827,7 +819,6 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
 
-          <!-- 04 Exit Criteria -->
           <div class="proc-section">
             <div class="proc-section-label">04 — Exit Criteria</div>
             <div class="proc-section-title">When is a request considered complete?</div>
@@ -845,7 +836,6 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
 
-          <!-- 05 Escalation -->
           <div class="proc-section">
             <div class="proc-section-label">05 — Escalation</div>
             <div class="proc-section-title">When things get stuck</div>
@@ -888,7 +878,6 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
 
-          <!-- CTA -->
           <div class="proc-cta">
             <div class="proc-cta-text">
               <h3>Ready to submit a service request?</h3>
@@ -944,7 +933,6 @@ tr:hover td{background:var(--bg)}
     <!-- SERVICES VIEW -->
     <div class="view" id="view-services">
       <div class="sv-shell">
-        <!-- Category sidebar -->
         <div class="sv-sidebar">
           <div class="sv-sidebar-head">
             <span>Categories</span>
@@ -957,7 +945,6 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
         </div>
-        <!-- Main panel -->
         <div class="sv-main">
           <div class="sv-topbar">
             <div class="sv-search-wrap">
@@ -1098,7 +1085,6 @@ function startGoogleLogin() {
     cancel_on_tap_outside: true,
   });
   google.accounts.id.prompt(function(notification) {
-    // If One Tap is suppressed (e.g. browser blocks it), fall back to popup
     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
       showGooglePopup();
     }
@@ -1106,7 +1092,6 @@ function startGoogleLogin() {
 }
 
 function showGooglePopup() {
-  // Render a hidden button and programmatically click it to trigger popup flow
   var container = document.createElement('div');
   container.style.display = 'none';
   document.body.appendChild(container);
@@ -1122,10 +1107,16 @@ async function handleGoogleCredential(response) {
   var errEl = document.getElementById('gErr');
   var btn   = document.getElementById('gGoogleBtn');
   try {
-    // Decode JWT payload (no verification needed client-side — GAS can verify if needed)
-    var payload = JSON.parse(atob(response.credential.split('.')[1]));
-    var email   = (payload.email || '').toLowerCase();
-    var hd      = payload.hd || '';   // hosted domain from Google
+    // ── FIX: decode Base64url-encoded JWT payload safely ──────────────────
+    // Google JWTs use Base64url (- and _ instead of + and /). Standard
+    // atob() only handles Base64, so we normalise before decoding.
+    var b64 = response.credential.split('.')[1]
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    var payload = JSON.parse(atob(b64));
+    // ─────────────────────────────────────────────────────────────────────
+
+    var email = (payload.email || '').toLowerCase();
 
     // Enforce @sprout.ph domain
     if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
@@ -1182,23 +1173,20 @@ function initApp(email,role) {
   userEmail=email; userRole=role||'client';
   isAdmin    = userRole==='admin';
   isLead     = userRole==='lead';
-  isInternal = isAdmin || isLead; // both see all tracker requests
+  isInternal = isAdmin || isLead;
   document.getElementById('shUser').textContent=email;
   document.getElementById('app').classList.add('on');
-  // Analytics + Quotation Builder + manage services → admin only
   if (isAdmin) {
     document.getElementById('tab-analytics').style.display='flex';
     document.getElementById('tab-quotation').style.display='flex';
     document.getElementById('sv-add-btn').style.display='flex';
   }
   if (!isInternal) document.getElementById('trackerCardDesc').textContent='View your submitted service requests and their current status.';
-  // Pre-warm tracker cache — pass role so GAS filters correctly
   var cacheKey='tracker_cache_'+email;
   if (!sessionStorage.getItem(cacheKey)) {
     fetch(GAS_URL+'?action=list&email='+encodeURIComponent(email)+'&role='+encodeURIComponent(userRole)).then(r=>r.json())
       .then(d=>sessionStorage.setItem(cacheKey,JSON.stringify({data:d,ts:Date.now()}))).catch(()=>{});
   }
-  // Pre-warm services cache
   loadServicesData();
 }
 
@@ -1222,7 +1210,6 @@ function switchTab(name){
   openView(name);
   if(name==='tracker'&&!trackerInit){trackerInit=true;USER_EMAIL=userEmail;USER_ROLE=userRole;IS_INTERNAL=isInternal;init_tracker();}
   if(name==='services'){renderServicesView();}
-  if(name==='process'){/* static content, nothing to init */}
   if(name==='analytics'&&!analyticsInit){
     analyticsInit=true;
     var from=new Date();from.setDate(1);
@@ -1240,7 +1227,7 @@ if(saved){try{var s=JSON.parse(saved);document.getElementById('gate').style.disp
 // ── SERVICES MODULE ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
 var SVC_LS_KEY = 'platops_services_cache';
-var servicesList = []; // { id, name, category, description, price, sortOrder }
+var servicesList = [];
 
 function lsReadServices() {
   try { return JSON.parse(localStorage.getItem(SVC_LS_KEY)||'[]'); } catch(e){ return []; }
@@ -1250,11 +1237,8 @@ function lsWriteServices(arr) {
 }
 
 async function loadServicesData() {
-  // Show cached immediately
   var cached = lsReadServices();
   if (cached.length) { servicesList = cached; }
-
-  // Fetch from GAS (source of truth)
   try {
     var res = await fetch(GAS_URL + '?action=getServices');
     var d   = await res.json();
@@ -1274,7 +1258,6 @@ function svSetCat(el) {
   document.querySelectorAll('.sv-cat-item').forEach(function(i){ i.classList.remove('active'); });
   el.classList.add('active');
   svActiveCat = el.dataset.cat;
-  // clear search when switching category
   var s = document.getElementById('svSearch');
   if (s) s.value = '';
   renderServicesView();
@@ -1284,7 +1267,6 @@ function renderServicesView() {
   var grid = document.getElementById('sv-grid');
   if (!grid) return;
 
-  // Build category sidebar
   var catList = document.getElementById('svCatList');
   if (catList) {
     var cats = {};
@@ -1292,7 +1274,6 @@ function renderServicesView() {
       var c = svc.category || 'Uncategorized';
       cats[c] = (cats[c]||0) + 1;
     });
-    // Rebuild sidebar preserving active state
     var allItem = '<div class="sv-cat-item' + (svActiveCat==='all'?' active':'') + '" data-cat="all" onclick="svSetCat(this)"><span>All Services</span><span class="sv-cat-count">' + servicesList.length + '</span></div>';
     var catItems = Object.keys(cats).sort().map(function(c) {
       var active = svActiveCat === c ? ' active' : '';
@@ -1306,7 +1287,6 @@ function renderServicesView() {
     return;
   }
 
-  // Filter by category + search
   var q = ((document.getElementById('svSearch')||{}).value||'').toLowerCase().trim();
   var filtered = servicesList.filter(function(svc) {
     var catMatch = svActiveCat === 'all' || (svc.category||'Uncategorized') === svActiveCat;
@@ -1314,7 +1294,6 @@ function renderServicesView() {
     return catMatch && searchMatch;
   });
 
-  // Update result count
   var countEl = document.getElementById('svResultCount');
   if (countEl) {
     countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
@@ -1397,7 +1376,6 @@ async function saveService() {
       : servicesList.length + 1,
   };
 
-  // Update local state immediately
   if (editingServiceId) {
     var idx = servicesList.findIndex(function(s){ return s.id === editingServiceId; });
     if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc);
@@ -1406,11 +1384,8 @@ async function saveService() {
   }
   lsWriteServices(servicesList);
   renderServicesView();
-
-  // Also push name list to form.html via localStorage so form can pick it up
   syncServiceNamesToForm();
 
-  // Sync to GAS in background
   try {
     await fetch(GAS_URL, {
       method: 'POST', mode: 'no-cors',
@@ -1427,8 +1402,6 @@ async function saveService() {
 
 async function deleteService(id) {
   if (!confirm('Delete this service?')) return;
-  var svc = servicesList.find(function(s){ return s.id === id; });
-  var name = svc ? svc.name : '';
   servicesList = servicesList.filter(function(s){ return s.id !== id; });
   lsWriteServices(servicesList);
   renderServicesView();
@@ -1446,7 +1419,6 @@ async function deleteService(id) {
   showSyncMsg();
 }
 
-// Push service names to localStorage so form.html reads them on load
 function syncServiceNamesToForm() {
   var names = servicesList.map(function(s){ return s.name; });
   try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e){}
@@ -1467,7 +1439,6 @@ function showToast(msg) {
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-// Close service modal on overlay click
 document.getElementById('svcModal').addEventListener('click', function(e){
   if (e.target === this) closeSvcModal();
 });
