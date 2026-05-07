@@ -1290,14 +1290,17 @@ var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized
 
 // ── CATEGORY PILLS (Tracker sidebar) ──────────────────────
 // Derives unique categories from servicesList and renders pills.
+// Filter tracker list by category: reads s.category stored on each submission row.
+// Submissions with no category appear under the Uncategorized pill.
 function renderCatPills() {
   var container = document.getElementById('catPills');
   if (!container) return;
 
+  // Derive unique categories from actual submission data, not the services catalog
   var cats = {};
-  servicesList.forEach(function(svc) {
-    var c = svc.category || 'Uncategorized';
-    cats[c] = true;
+  all.forEach(function(s) {
+    var c = (s.category || '').trim();
+    if (c) cats[c] = true;
   });
   var catKeys = Object.keys(cats).sort();
 
@@ -1305,13 +1308,21 @@ function renderCatPills() {
   catKeys.forEach(function(c) {
     html += '<span class="pill' + (activeCat === c ? ' on' : '') + '" data-cat="' + esc(c) + '" onclick="setCatF(this)">' + esc(c) + '</span>';
   });
+  // Uncategorized pill — shown only if there are submissions without a category
+  var hasUncategorized = all.some(function(s) { return !(s.category || '').trim(); });
+  if (hasUncategorized) {
+    html += '<span class="pill' + (activeCat === '__uncategorized__' ? ' on' : '') + '" data-cat="__uncategorized__" onclick="setCatF(this)">Uncategorized</span>';
+  }
   container.innerHTML = html;
 }
 
-// Filter tracker list by category: a submission matches if its serviceType
-// belongs to any service in the selected category.
+function getAllKnownServiceNames() {
+  return servicesList.map(function(svc) { return svc.name.toLowerCase(); });
+}
+
 function getServiceNamesForCat(cat) {
-  if (cat === 'all') return null; // null = show all
+  if (cat === 'all') return null;
+  if (cat === '__uncategorized__') return null;
   return servicesList
     .filter(function(svc) { return (svc.category || 'Uncategorized') === cat; })
     .map(function(svc) { return svc.name.toLowerCase(); });
@@ -1321,7 +1332,6 @@ function setCatF(el) {
   document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
   el.classList.add('on');
   activeCat = el.dataset.cat;
-  // Reset analytics SC highlight
   activeSC = 'all';
   document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
   render();
@@ -1331,7 +1341,6 @@ function scFilter(el) {
   document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
   el.classList.add('active');
   activeSC = el.dataset.lc;
-  // Clear category filter when filtering by lifecycle stage
   activeCat = 'all';
   document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
   var allPill = document.querySelector('#catPills .pill[data-cat="all"]');
@@ -1340,13 +1349,14 @@ function scFilter(el) {
 }
 
 function matches(s) {
-  // Category filter
+  // Category filter — reads directly from submission's stored category field
   if (activeCat !== 'all') {
-    var names = getServiceNamesForCat(activeCat);
-    var sType = (s.serviceType || '').toLowerCase();
-    // Match if the service type starts with or equals any service name in category
-    var catMatch = names && names.some(function(n) { return sType === n || sType.startsWith(n); });
-    if (!catMatch) return false;
+    var sCat = (s.category || '').trim();
+    if (activeCat === '__uncategorized__') {
+      if (sCat) return false; // exclude anything that has a category
+    } else {
+      if (sCat.toLowerCase() !== activeCat.toLowerCase()) return false;
+    }
   }
   // Lifecycle filter (from analytics strip)
   if (activeSC !== 'all' && (s.lifecycle || '') !== activeSC) return false;
@@ -1360,8 +1370,7 @@ function matches(s) {
 async function init_tracker() {
   if (initialized) return; initialized = true;
   if (IS_INTERNAL) { document.getElementById('analytics').classList.add('on'); loadAnalytics(); }
-  renderCatPills(); // populate from servicesList (already loaded)
-  await loadList();
+  await loadList(); // renderCatPills() is called inside loadList after all[] is populated
 }
 
 async function loadList() {
@@ -1369,10 +1378,10 @@ async function loadList() {
   var cached = sessionStorage.getItem(cacheKey);
   var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
   if (cached) {
-    try { var cd = JSON.parse(cached); all = cd.data.submissions || []; render(); } catch(e) {}
+    try { var cd = JSON.parse(cached); all = cd.data.submissions || []; renderCatPills(); render(); } catch(e) {}
     fetch(GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam)
       .then(r => r.json())
-      .then(d => { sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() })); all = d.submissions || []; render(); })
+      .then(d => { sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() })); all = d.submissions || []; renderCatPills(); render(); })
       .catch(() => {});
     return;
   }
@@ -1384,7 +1393,7 @@ async function loadList() {
     clearTimeout(to);
     var d = await res.json();
     sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
-    all = d.submissions || []; render();
+    all = d.submissions || []; renderCatPills(); render();
   } catch(e) {
     document.getElementById('sbList').innerHTML = '<div class="empty-sb">Failed to load.<br><span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadList()">Retry</span></div>';
   }
