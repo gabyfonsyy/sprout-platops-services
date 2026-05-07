@@ -1323,6 +1323,19 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     ? 'Others: ' + (document.getElementById('othersSpecify').value.trim() || 'unspecified')
     : serviceSelected.value;
 
+  // Look up category from the local services cache by service name
+  let serviceCategory = '';
+  try {
+    const cached = localStorage.getItem('platops_services_cache');
+    if (cached) {
+      const svcs = JSON.parse(cached);
+      const match = svcs.find(function(s) {
+        return s.name.toLowerCase() === serviceSelected.value.toLowerCase();
+      });
+      if (match) serviceCategory = match.category || '';
+    }
+  } catch(e) {}
+
   const payload = {
     timestamp:             new Date().toISOString(),
     requestorName:         document.getElementById('requestorName').value.trim(),
@@ -1333,6 +1346,7 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     accountMrr:            document.getElementById('accountMrr').value.trim(),
     accountHeadcount:      document.getElementById('accountHeadcount').value.trim(),
     serviceType,
+    category:              serviceCategory,
     hrUrl:                 document.getElementById('hrUrl').value.trim(),
     payrollCodes:          document.getElementById('payrollCodes').value.trim(),
     description:           desc,
