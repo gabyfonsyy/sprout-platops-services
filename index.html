@@ -280,8 +280,9 @@ tr:hover td{background:var(--bg)}
 .sv-content::-webkit-scrollbar{width:4px}
 .sv-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .sv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.sv-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.125rem;display:flex;flex-direction:column;gap:6px;transition:border-color 0.15s,box-shadow 0.15s}
-.sv-card:hover{border-color:var(--k300);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.sv-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.125rem;display:flex;flex-direction:column;gap:6px;transition:border-color 0.15s,box-shadow 0.15s;cursor:pointer;user-select:none}
+.sv-card:hover{border-color:var(--primary);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.sv-card.expanded{border-color:var(--primary);box-shadow:0 4px 16px rgba(33,122,61,0.1)}
 .sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
@@ -309,6 +310,22 @@ tr:hover td{background:var(--bg)}
   transition:background 0.15s;white-space:nowrap;
 }
 .sv-btn-submit:hover{background:var(--primary-dk)}
+
+/* Expandable card panel */
+.sv-card{cursor:pointer}
+.sv-card-expand{
+  display:none;margin-top:8px;padding-top:12px;
+  border-top:1px solid var(--border);
+  animation:svExpand 0.18s ease;
+}
+.sv-card-expand.open{display:block}
+@keyframes svExpand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.sv-card-expand-row{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.sv-card-expand-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)}
+.sv-card-expand-value{font-size:0.8125rem;color:var(--text);line-height:1.5}
+.sv-card-expand-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sv-card-chevron{transition:transform 0.2s;flex-shrink:0;color:var(--muted)}
+.sv-card.expanded .sv-card-chevron{transform:rotate(180deg)}
 
 .sv-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.875rem;grid-column:1/-1}
 .sv-empty p{margin-top:8px}
@@ -1061,39 +1078,53 @@ function renderServicesView() {
   }
 
   grid.innerHTML = filtered.map(function(svc) {
-    // Admin edit/delete actions
+    var cardId = 'svcard-' + svc.id.replace(/[^a-z0-9]/gi, '-');
+
+    // Admin edit/delete actions (inside expanded panel)
     var adminActions = '';
     if (isAdmin) {
-      adminActions = '<button class="sv-btn-edit" onclick="openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')">Edit</button>'
-        + '<button class="sv-btn-del" onclick="deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
+      adminActions = '<button class="sv-btn-edit" onclick="event.stopPropagation();openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')" style="font-size:0.72rem">Edit</button>'
+        + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')" style="font-size:0.72rem">Delete</button>';
     }
 
-    // Meta row: teams involved
-    var metaHtml = '';
-    if (svc.teams) {
-      metaHtml += '<div class="sv-card-meta-row">'
-        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
-        + esc(svc.teams)
+    // Chevron icon
+    var chevron = '<svg class="sv-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+    // Expanded panel content
+    var expandRows = '';
+    if (svc.price) {
+      expandRows += '<div class="sv-card-expand-row">'
+        + '<span class="sv-card-expand-label">Estimated Cost</span>'
+        + '<span class="sv-card-expand-value">' + esc(svc.price) + '</span>'
         + '</div>';
     }
-    if (metaHtml) metaHtml = '<div class="sv-card-meta">' + metaHtml + '</div>';
+    if (svc.teams) {
+      expandRows += '<div class="sv-card-expand-row">'
+        + '<span class="sv-card-expand-label">Teams Involved</span>'
+        + '<span class="sv-card-expand-value">' + esc(svc.teams) + '</span>'
+        + '</div>';
+    }
+    if (!expandRows) {
+      expandRows = '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">No additional details available for this service.</p>';
+    }
 
-    // Price display
-    var priceHtml = svc.price ? '<span class="sv-card-price">' + esc(svc.price) + '</span>' : '<span></span>';
+    var expandFooter = '<div class="sv-card-expand-footer">'
+      + '<div style="display:flex;gap:6px">' + adminActions + '</div>'
+      + '<button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button>'
+      + '</div>';
 
-    // Submit a Request button (always visible)
-    var submitBtn = '<button class="sv-btn-submit" onclick="openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request</button>';
-
-    return '<div class="sv-card">'
+    return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')">'
       + '<div class="sv-card-header">'
       + '<span class="sv-card-name">' + esc(svc.name) + '</span>'
+      + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
+      + chevron
+      + '</div>'
       + '</div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
-      + metaHtml
-      + '<div class="sv-card-footer">'
-      + priceHtml
-      + '<div class="sv-card-actions">' + adminActions + submitBtn + '</div>'
+      + '<div class="sv-card-expand" id="' + cardId + '-expand">'
+      + expandRows
+      + expandFooter
       + '</div>'
       + '</div>';
   }).join('');
@@ -1208,6 +1239,29 @@ function showSyncMsg() {
   if (!el) return;
   el.style.display = 'inline';
   setTimeout(function() { el.style.display = 'none'; }, 3000);
+}
+
+// Toggle expand/collapse on a service card
+function toggleSvCard(cardId) {
+  var card   = document.getElementById(cardId);
+  var panel  = document.getElementById(cardId + '-expand');
+  if (!card || !panel) return;
+  var isOpen = panel.classList.contains('open');
+  // Collapse all other cards first
+  document.querySelectorAll('.sv-card.expanded').forEach(function(c) {
+    if (c.id !== cardId) {
+      c.classList.remove('expanded');
+      var p = document.getElementById(c.id + '-expand');
+      if (p) p.classList.remove('open');
+    }
+  });
+  if (isOpen) {
+    panel.classList.remove('open');
+    card.classList.remove('expanded');
+  } else {
+    panel.classList.add('open');
+    card.classList.add('expanded');
+  }
 }
 
 // ── TOAST ────────────────────────────────────────────────────
