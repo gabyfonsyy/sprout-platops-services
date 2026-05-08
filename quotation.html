@@ -220,7 +220,6 @@ textarea { resize: vertical; min-height: 60px; }
 .amount { font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* ── TERMS ────────────────────────────────────────────── */
-/* Now a two-column layout: notes (wider) + prepared-by block */
 .terms-wrap {
   display: grid;
   grid-template-columns: 1fr 220px;
@@ -289,7 +288,6 @@ textarea { resize: vertical; min-height: 60px; }
   .main { padding: 0 !important; }
   .card { box-shadow: none !important; margin-bottom: 14px !important; page-break-inside: avoid; }
 
-  /* Print header */
   .print-header {
     display: flex !important;
     align-items: flex-start;
@@ -334,9 +332,7 @@ textarea { resize: vertical; min-height: 60px; }
     font-size: 10px;
     color: #7a7b7a;
   }
-  .print-opnote {
-    display: none !important;
-  }
+  .print-opnote { display: none !important; }
   .print-sig-row {
     display: block !important;
     margin-top: 28px;
@@ -352,7 +348,6 @@ textarea { resize: vertical; min-height: 60px; }
   .input-prefix { display: block !important; }
   .form-group .input-prefix .print-value { display: block !important; }
 
-  /* Terms card — 2-col layout in print (notes | prepared-by) */
   .terms-wrap { display: grid !important; grid-template-columns: 1fr 200px !important; gap: 20px; align-items: start; }
   .terms-col  { display: flex !important; flex-direction: column !important; }
   .terms-col label { display: block !important; font-size: 9px; font-weight: 700;
@@ -361,7 +356,6 @@ textarea { resize: vertical; min-height: 60px; }
     font-weight: 500; color: #131413; white-space: pre-wrap; }
   .terms-col textarea, .terms-col input { display: none !important; }
 
-  /* Hide the separate sig-row — Prepared By is already in the terms column */
   .print-sig-row { display: none !important; }
   .col-num  { display: table-cell !important; }
   .col-desc { display: none !important; }
@@ -497,15 +491,9 @@ textarea { resize: vertical; min-height: 60px; }
         <div class="form-grid" style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)">
           <div class="form-group">
             <label>Service Type</label>
+            <!-- CHANGED: options rendered dynamically by loadServiceOptions() -->
             <select id="serviceType">
               <option value="">— Select —</option>
-              <option>Data Migration</option>
-              <option>Data Extraction</option>
-              <option>Change HR URL</option>
-              <option>Rename Database</option>
-              <option>Database Backup</option>
-              <option>Copy Database</option>
-              <option>Others</option>
             </select>
           </div>
           <div class="form-group full">
@@ -556,7 +544,7 @@ textarea { resize: vertical; min-height: 60px; }
       </div>
     </div>
 
-    <!-- TERMS & NOTES — Payment Terms removed; Additional Notes is now full-width -->
+    <!-- TERMS & NOTES -->
     <div class="card">
       <div class="card-header">
         <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
@@ -564,13 +552,11 @@ textarea { resize: vertical; min-height: 60px; }
       </div>
       <div class="card-body">
         <div class="terms-wrap">
-          <!-- Additional Notes — wider, taller, pre-populated with default notes -->
           <div class="terms-col">
             <label>Additional Notes / Assumptions</label>
             <textarea id="addlNotes" rows="6" placeholder="Add notes or assumptions...">- This quotation is for internal operational cost reference only and is not intended for client distribution.
 - Signed Work Order attached to the CRF must be provided at least 2 business days before target date of activity to proceed.</textarea>
           </div>
-          <!-- Prepared By block -->
           <div class="terms-col">
             <div class="form-group">
               <label>Prepared By</label>
@@ -615,15 +601,9 @@ textarea { resize: vertical; min-height: 60px; }
     </div>
     <div class="form-group" style="margin-top:10px">
       <label>Service Type Tag</label>
+      <!-- CHANGED: options rendered dynamically by loadServiceOptions() -->
       <select id="templateTypeInput">
         <option value="">— Select —</option>
-        <option>Data Migration</option>
-        <option>Data Extraction</option>
-        <option>Change HR URL</option>
-        <option>Rename Database</option>
-        <option>Database Backup</option>
-        <option>Copy Database</option>
-        <option>Others</option>
       </select>
     </div>
     <div class="modal-actions">
@@ -646,6 +626,12 @@ var GAS_URL = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJy
 // Default notes pre-filled on every new quotation and template load fallback
 var DEFAULT_NOTES = '- This quotation is for internal operational cost reference only and is not intended for client distribution.\n- Signed Work Order attached to the CRF must be provided at least 2 business days before target date of activity to proceed.';
 
+// Default service options — used as fallback if localStorage cache is empty
+var DEFAULT_SERVICE_OPTIONS = [
+  'Data Migration', 'Data Extraction', 'Change HR URL',
+  'Rename Database', 'Database Backup', 'Copy Database', 'Others'
+];
+
 // ── STATE ─────────────────────────────────────────────────────
 var rows = [];
 var rowId = 0;
@@ -656,9 +642,52 @@ var CURRENCY_SYMBOLS = { PHP: '₱', USD: '$' };
 function currSym() { return CURRENCY_SYMBOLS[document.getElementById('currency').value] || '₱'; }
 function fmt(n) { return currSym() + ' ' + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
+// ── LOAD SERVICE OPTIONS ──────────────────────────────────────
+// Reads from localStorage services cache (shared with the portal).
+// Falls back to DEFAULT_SERVICE_OPTIONS if cache is empty.
+// Populates both the Service Type dropdown and the Save Template modal dropdown.
+function loadServiceOptions() {
+  var options = DEFAULT_SERVICE_OPTIONS;
+  try {
+    var raw = localStorage.getItem('platops_services_cache');
+    if (raw) {
+      var svcs = JSON.parse(raw);
+      if (Array.isArray(svcs) && svcs.length) {
+        // Sort by sortOrder, keep Others last
+        var sorted = svcs.slice().sort(function(a, b) { return (a.sortOrder || 0) - (b.sortOrder || 0); });
+        var others = sorted.filter(function(s) { return s.name.toLowerCase() === 'others'; });
+        var rest   = sorted.filter(function(s) { return s.name.toLowerCase() !== 'others'; });
+        options = rest.concat(others).map(function(s) { return s.name; });
+      }
+    }
+  } catch(e) { console.warn('loadServiceOptions:', e); }
+
+  var optionsHtml = '<option value="">— Select —</option>'
+    + options.map(function(name) {
+        return '<option value="' + name.replace(/"/g, '&quot;') + '">' + name + '</option>';
+      }).join('');
+
+  var st = document.getElementById('serviceType');
+  var tt = document.getElementById('templateTypeInput');
+  if (st) st.innerHTML = optionsHtml;
+  if (tt) tt.innerHTML = optionsHtml;
+}
+
+// Also refresh options when the Save Template modal opens —
+// in case services were updated in the portal during the same session
+function openSaveTemplateModal() {
+  loadServiceOptions(); // refresh dropdown before showing modal
+  document.getElementById('templateNameInput').value = '';
+  var st = document.getElementById('serviceType').value;
+  document.getElementById('templateTypeInput').value = st || '';
+  document.getElementById('saveModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('templateNameInput').focus(); }, 100);
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   setToday();
+  loadServiceOptions(); // populate dropdowns from services cache
   loadTemplates();
   addRow();
   addRow();
@@ -766,10 +795,6 @@ function lsWriteTemplates(tmplArr) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(tmplArr)); } catch(e) {}
 }
 
-function lsMarkSynced(name) {
-  // No-op — full array written on every save
-}
-
 function forceSyncToSheet() {
   var local = lsReadTemplates();
   if (!local.length) { showStatus('No local templates to sync.'); return; }
@@ -864,14 +889,6 @@ function renderTemplates() {
   }).join('');
 }
 
-function openSaveTemplateModal() {
-  document.getElementById('templateNameInput').value = '';
-  var st = document.getElementById('serviceType').value;
-  document.getElementById('templateTypeInput').value = st || '';
-  document.getElementById('saveModal').classList.add('open');
-  setTimeout(function(){ document.getElementById('templateNameInput').focus(); }, 100);
-}
-
 function closeSaveModal() { document.getElementById('saveModal').classList.remove('open'); }
 
 function saveTemplate() {
@@ -896,7 +913,6 @@ function saveTemplate() {
     scopeDesc:   document.getElementById('scopeDesc').value,
     addlNotes:   document.getElementById('addlNotes').value,
     discountPct: document.getElementById('discountPct').value,
-    // paymentTerms intentionally omitted — field removed
   };
 
   var existingIdx = templates.findIndex(function(t){ return t.name === tmpl.name; });
@@ -906,9 +922,7 @@ function saveTemplate() {
   showStatus('Template "' + name + '" saved!');
   lsWriteTemplates(templates);
 
-  saveTemplatesToServer(tmpl, function(success) {
-    if (success) lsMarkSynced(tmpl.name);
-  });
+  saveTemplatesToServer(tmpl, function(success) {});
 }
 
 function loadTemplate(idx) {
@@ -921,7 +935,6 @@ function loadTemplate(idx) {
 
   if (t.serviceType) document.getElementById('serviceType').value = t.serviceType;
   if (t.scopeDesc)   document.getElementById('scopeDesc').value   = t.scopeDesc;
-  // Use saved notes from template if present, otherwise fall back to defaults
   document.getElementById('addlNotes').value   = t.addlNotes || DEFAULT_NOTES;
   document.getElementById('discountPct').value = t.discountPct || 0;
 
