@@ -1676,6 +1676,16 @@ async function saveOpDetails(jiraKey) {
     await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ action:'update', jiraKey, serviceCost:cost, activityDate:date, costStatus:status }) });
     var entry = all.find(x => x.jiraKey === jiraKey);
     if (entry) { entry.serviceCost = cost !== '' ? parseFloat(cost) : null; entry.activityDate = date; entry.costStatus = status; }
+    // Write updated all[] back to session cache so changes persist across tab switches
+    try {
+      var cacheKey = 'tracker_cache_' + USER_EMAIL;
+      var existing = sessionStorage.getItem(cacheKey);
+      if (existing) {
+        var parsed = JSON.parse(existing);
+        parsed.data.submissions = all;
+        sessionStorage.setItem(cacheKey, JSON.stringify(parsed));
+      }
+    } catch(cacheErr) { Logger.log('Cache update error: ' + cacheErr); }
     var cb = document.querySelector('.dh-meta .cost-badge');
     if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
     render();
