@@ -653,10 +653,10 @@ function loadServiceOptions() {
     if (raw) {
       var svcs = JSON.parse(raw);
       if (Array.isArray(svcs) && svcs.length) {
-        // Sort by sortOrder, keep Others last
-        var sorted = svcs.slice().sort(function(a, b) { return (a.sortOrder || 0) - (b.sortOrder || 0); });
-        var others = sorted.filter(function(s) { return s.name.toLowerCase() === 'others'; });
-        var rest   = sorted.filter(function(s) { return s.name.toLowerCase() !== 'others'; });
+        // Sort alphabetically, keep Others last
+        var others = svcs.filter(function(s) { return s.name.toLowerCase() === 'others'; });
+        var rest   = svcs.filter(function(s) { return s.name.toLowerCase() !== 'others'; });
+        rest.sort(function(a, b) { return a.name.localeCompare(b.name); });
         options = rest.concat(others).map(function(s) { return s.name; });
       }
     }
