@@ -91,7 +91,7 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
 .analytics.on{display:flex}
 .analytics-row{display:flex;gap:8px;flex-wrap:wrap}
-.sc{flex:1;min-width:110px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color 0.15s,background 0.15s}
+.sc{flex:1;min-width:100px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color 0.15s,background 0.15s}
 .sc:hover{border-color:var(--k300)}
 .sc.active{border-color:var(--primary);background:var(--primary-lt)}
 .sc-label{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px}
@@ -99,6 +99,10 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc-sub{font-size:0.62rem;color:var(--muted);margin-top:2px}
 .sc.active .sc-label,.sc.active .sc-sub{color:var(--k600)}
 .sc.active .sc-value{color:var(--primary-dk)}
+/* Rejected scorecard gets a red tint when active */
+.sc[data-lc="Rejected"].active{border-color:var(--tomato);background:var(--tomato-lt)}
+.sc[data-lc="Rejected"].active .sc-label,.sc[data-lc="Rejected"].active .sc-sub{color:#7a1010}
+.sc[data-lc="Rejected"].active .sc-value{color:var(--tomato)}
 .analytics-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .meta-pill span{color:var(--text);font-weight:600}
@@ -151,6 +155,7 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .cost-paid{background:#e8ecfd;color:#1c3a9e}
 .cost-waived{background:#ede9ff;color:#3b1d9e}
 .cost-pending{background:#f4f5f4;color:#4a4b4a}
+.cost-withdrawn{background:#fff3cd;color:#7a4800}
 
 /* ── DETAIL ── */
 .detail{flex:1;overflow-y:auto;padding:1.75rem}
@@ -212,6 +217,12 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .no-c{font-size:0.78rem;color:var(--muted);font-style:italic;margin-top:8px}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
 
+/* ── REJECTED BANNER ── */
+.rejected-banner{background:var(--tomato-lt);border:1.5px solid #fbbdbd;border-radius:8px;padding:12px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.rejected-banner svg{flex-shrink:0;color:var(--tomato)}
+.rejected-banner p{font-size:0.8125rem;color:#7a1010;line-height:1.5}
+.rejected-banner strong{font-weight:600}
+
 /* ── ANALYTICS PAGE ── */
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .toolbar h2{font-size:1.25rem;font-weight:600;color:var(--text)}
@@ -238,6 +249,9 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc-an.revenue-out{border-color:var(--lavender);background:var(--lavender-lt)}
 .sc-an.revenue-out .sc-label,.sc-an.revenue-out .sc-sub{color:#3b1d9e}
 .sc-an.revenue-out .sc-value{color:var(--lavender)}
+.sc-an.rejected{border-color:var(--tomato);background:var(--tomato-lt)}
+.sc-an.rejected .sc-label,.sc-an.rejected .sc-sub{color:#7a1010}
+.sc-an.rejected .sc-value{color:var(--tomato)}
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
 .chart-grid.full{grid-template-columns:1fr}
 .chart-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.25rem}
@@ -287,39 +301,22 @@ tr:hover td{background:var(--bg)}
 .sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
 .sv-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;flex:1}
-
-/* ── SERVICE CARD META (teams + cost) ── */
 .sv-card-meta{display:flex;flex-direction:column;gap:4px;margin-top:2px}
 .sv-card-meta-row{display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--muted)}
 .sv-card-meta-row svg{flex-shrink:0;opacity:0.6}
-
 .sv-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px}
 .sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
 .sv-card-actions{display:flex;gap:6px}
 .sv-card-actions button{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
-/* Admin buttons used in both card actions and expand footer */
 .sv-btn-edit,.sv-btn-del{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
 .sv-btn-edit{background:var(--bg);border:1.5px solid var(--border);color:var(--muted)}
 .sv-btn-edit:hover{border-color:var(--primary);color:var(--primary)}
 .sv-btn-del{background:var(--tomato-lt);border:1.5px solid #fbbdbd;color:var(--tomato)}
 .sv-btn-del:hover{background:#ffd0d0}
-
-/* Submit a Request button on service card */
-.sv-btn-submit{
-  font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;
-  padding:5px 12px;border-radius:6px;cursor:pointer;
-  background:var(--primary);border:none;color:#fff;
-  transition:background 0.15s;white-space:nowrap;
-}
+.sv-btn-submit{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s;white-space:nowrap}
 .sv-btn-submit:hover{background:var(--primary-dk)}
-
-/* Expandable card panel */
 .sv-card{cursor:pointer}
-.sv-card-expand{
-  display:none;margin-top:8px;padding-top:12px;
-  border-top:1px solid var(--border);
-  animation:svExpand 0.18s ease;
-}
+.sv-card-expand{display:none;margin-top:8px;padding-top:12px;border-top:1px solid var(--border);animation:svExpand 0.18s ease}
 .sv-card-expand.open{display:block}
 @keyframes svExpand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .sv-card-expand-row{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
@@ -328,27 +325,15 @@ tr:hover td{background:var(--bg)}
 .sv-card-expand-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
 .sv-card-chevron{transition:transform 0.2s;flex-shrink:0;color:var(--muted)}
 .sv-card.expanded .sv-card-chevron{transform:rotate(180deg)}
-
 .sv-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.875rem;grid-column:1/-1}
 .sv-empty p{margin-top:8px}
 
 /* ── FORM IFRAME VIEW ── */
 .form-iframe-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-.form-iframe-loader{
-  position:absolute;inset:0;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:10px;z-index:10;transition:opacity 0.35s
-}
+.form-iframe-loader{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;transition:opacity 0.35s}
 .form-iframe-loader.hidden{opacity:0;pointer-events:none}
 .form-iframe-loader p{font-size:0.8rem;color:var(--muted)}
-.form-iframe-fallback{
-  position:absolute;top:12px;right:16px;z-index:15;
-  font-size:0.72rem;color:var(--muted);
-  display:flex;align-items:center;gap:5px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;padding:4px 12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
-}
+.form-iframe-fallback{position:absolute;top:12px;right:16px;z-index:15;font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .form-iframe-fallback a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
 
 /* ── SERVICE MODAL ── */
@@ -503,30 +488,22 @@ tr:hover td{background:var(--bg)}
         <p class="landing-sub">Select an option to get started.</p>
         <div class="cards" style="grid-template-columns:repeat(2,1fr);max-width:680px" id="landingCards">
           <div class="lcard" onclick="switchTab('process')">
-            <div class="lcard-icon">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-            </div>
+            <div class="lcard-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
             <h3>How It Works</h3>
             <p>Learn about the request process, lifecycle stages, guardrails, and escalation paths.</p>
           </div>
           <div class="lcard" onclick="switchTab('services')">
-            <div class="lcard-icon">
-              <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
-            </div>
+            <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg></div>
             <h3>List of Services</h3>
             <p>Browse all available Platform Operations services and what they cover.</p>
           </div>
           <div class="lcard" onclick="switchTab('form')">
-            <div class="lcard-icon">
-              <svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg>
-            </div>
+            <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg></div>
             <h3>Submit a Request</h3>
             <p>Log a new paid service request for review and quotation.</p>
           </div>
           <div class="lcard" id="trackerCard" onclick="switchTab('tracker')">
-            <div class="lcard-icon">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-            </div>
+            <div class="lcard-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
             <h3>View Tracker</h3>
             <p id="trackerCardDesc">Monitor the status of service requests and activity tickets.</p>
           </div>
@@ -632,20 +609,16 @@ tr:hover td{background:var(--bg)}
       </div>
     </div>
 
-    <!-- FORM VIEW (iframe — same approach as Quotation Builder) -->
+    <!-- FORM VIEW -->
     <div class="view" id="view-form">
       <div class="form-iframe-wrap">
         <div class="form-iframe-loader" id="formLoader">
           <span class="spinner"></span>
           <p>Loading request form…</p>
         </div>
-        <iframe id="form-iframe"
-          style="flex:1;border:none;width:100%;height:100%"
-          title="Service Request Form">
-        </iframe>
+        <iframe id="form-iframe" style="flex:1;border:none;width:100%;height:100%" title="Service Request Form"></iframe>
         <div class="form-iframe-fallback">
-          Having trouble?
-          <a href="servicerequestform.html" target="_blank">Open in new tab ↗</a>
+          Having trouble? <a href="servicerequestform.html" target="_blank">Open in new tab ↗</a>
         </div>
       </div>
     </div>
@@ -661,6 +634,8 @@ tr:hover td{background:var(--bg)}
           <div class="sc" data-lc="For Execution / Schedule" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
           <div class="sc" data-lc="Ongoing Execution / Activity" onclick="scFilter(this)"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="sc-oe">—</div><div class="sc-sub">In execution</div></div>
           <div class="sc" data-lc="Request Done" onclick="scFilter(this)"><div class="sc-label">Done</div><div class="sc-value" id="sc-rd">—</div><div class="sc-sub">Completed</div></div>
+          <!-- ── NEW: Rejected scorecard ── -->
+          <div class="sc" data-lc="Rejected" onclick="scFilter(this)"><div class="sc-label">Rejected</div><div class="sc-value" id="sc-rej">—</div><div class="sc-sub">Request rejected</div></div>
         </div>
         <div class="analytics-meta" id="analyticsMeta"></div>
       </div>
@@ -670,7 +645,6 @@ tr:hover td{background:var(--bg)}
             <input type="text" id="srch" placeholder="Search client, ticket, email…" oninput="render()"/>
             <button class="sb-refresh" onclick="refresh()" title="Refresh">↻</button>
           </div>
-          <!-- CHANGED: Category-based filter replaces status pills -->
           <div class="sb-cat-section">
             <div class="sb-cat-label">Filter by category</div>
             <div class="sb-cat-pills" id="catPills">
@@ -746,6 +720,8 @@ tr:hover td{background:var(--bg)}
             <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
             <div class="sc-an"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="an-oe">—</div><div class="sc-sub">In execution</div></div>
             <div class="sc-an"><div class="sc-label">Request Done</div><div class="sc-value" id="an-rd">—</div><div class="sc-sub">Completed</div></div>
+            <!-- ── NEW: Rejected scorecard in analytics page ── -->
+            <div class="sc-an rejected"><div class="sc-label">Rejected</div><div class="sc-value" id="an-rej">—</div><div class="sc-sub">Request rejected</div></div>
             <div class="sc-an"><div class="sc-label">Avg. Resolution</div><div class="sc-value" id="an-avg">—</div><div class="sc-sub">Days to complete</div></div>
             <div class="sc-an revenue-in"><div class="sc-label">Revenue Received</div><div class="sc-value" id="an-rev-in">—</div><div class="sc-sub">Paid requests total</div></div>
             <div class="sc-an revenue-out"><div class="sc-label">Revenue Lost</div><div class="sc-value" id="an-rev-out">—</div><div class="sc-sub">Waived requests total</div></div>
@@ -778,10 +754,7 @@ tr:hover td{background:var(--bg)}
     <!-- QUOTATION VIEW -->
     <div class="view" id="view-quotation">
       <div id="quotation-frame-wrap" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-        <iframe id="quotation-iframe" src="quotation.html"
-          style="flex:1;border:none;width:100%;height:100%"
-          title="Quotation Builder">
-        </iframe>
+        <iframe id="quotation-iframe" src="quotation.html" style="flex:1;border:none;width:100%;height:100%" title="Quotation Builder"></iframe>
       </div>
     </div>
 
@@ -793,28 +766,11 @@ tr:hover td{background:var(--bg)}
   <div class="svc-modal">
     <h3 id="svcModalTitle">Add Service</h3>
     <input type="hidden" id="svcEditId"/>
-    <div class="svc-form-group">
-      <label>Service Name <span style="color:var(--tomato)">*</span></label>
-      <input type="text" id="svcName" placeholder="e.g. Data Migration"/>
-    </div>
-    <div class="svc-form-group">
-      <label>Category <span style="color:var(--tomato)">*</span></label>
-      <input type="text" id="svcCategory" placeholder="e.g. Database, Configuration"/>
-    </div>
-    <div class="svc-form-group">
-      <label>Description / Overview</label>
-      <textarea id="svcDesc" rows="3" placeholder="What does this service involve? What's included?"></textarea>
-    </div>
-    <!-- CHANGED: Estimated Cost Range replaces Starting Price -->
-    <div class="svc-form-group">
-      <label>Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-      <input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/>
-    </div>
-    <!-- NEW: Teams Involved -->
-    <div class="svc-form-group">
-      <label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-      <input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/>
-    </div>
+    <div class="svc-form-group"><label>Service Name <span style="color:var(--tomato)">*</span></label><input type="text" id="svcName" placeholder="e.g. Data Migration"/></div>
+    <div class="svc-form-group"><label>Category <span style="color:var(--tomato)">*</span></label><input type="text" id="svcCategory" placeholder="e.g. Database, Configuration"/></div>
+    <div class="svc-form-group"><label>Description / Overview</label><textarea id="svcDesc" rows="3" placeholder="What does this service involve? What's included?"></textarea></div>
+    <div class="svc-form-group"><label>Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
+    <div class="svc-form-group"><label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/></div>
     <div class="svc-modal-actions">
       <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
       <button class="btn-save" id="svcSaveBtn" onclick="saveService()">Save</button>
@@ -954,14 +910,11 @@ function switchTab(name) {
   }
   if (name === 'form') {
     openView('form');
-    // Load iframe on first visit, show loader until ready
     var iframe = document.getElementById('form-iframe');
     if (!formIframeLoaded) {
       formIframeLoaded = true;
       var loader = document.getElementById('formLoader');
-      iframe.onload = function() {
-        loader.classList.add('hidden');
-      };
+      iframe.onload = function() { loader.classList.add('hidden'); };
       iframe.src = 'servicerequestform.html';
     }
     return;
@@ -978,7 +931,6 @@ function switchTab(name) {
   }
 }
 
-// Open form with a pre-selected service type via URL param
 function openFormWithService(serviceName) {
   openView('form');
   var iframe = document.getElementById('form-iframe');
@@ -1004,12 +956,8 @@ if (saved) {
 var SVC_LS_KEY = 'platops_services_cache';
 var servicesList = [];
 
-function lsReadServices() {
-  try { return JSON.parse(localStorage.getItem(SVC_LS_KEY) || '[]'); } catch(e) { return []; }
-}
-function lsWriteServices(arr) {
-  try { localStorage.setItem(SVC_LS_KEY, JSON.stringify(arr)); } catch(e) {}
-}
+function lsReadServices() { try { return JSON.parse(localStorage.getItem(SVC_LS_KEY) || '[]'); } catch(e) { return []; } }
+function lsWriteServices(arr) { try { localStorage.setItem(SVC_LS_KEY, JSON.stringify(arr)); } catch(e) {} }
 
 async function loadServicesData() {
   var cached = lsReadServices();
@@ -1021,11 +969,9 @@ async function loadServicesData() {
       servicesList = d.services;
       lsWriteServices(servicesList);
       renderServicesView();
-      renderCatPills(); // refresh tracker pills after fresh load
+      renderCatPills();
     }
-  } catch(e) {
-    console.warn('Services fetch failed, using cache:', e);
-  }
+  } catch(e) { console.warn('Services fetch failed, using cache:', e); }
 }
 
 var svActiveCat = 'all';
@@ -1042,15 +988,10 @@ function svSetCat(el) {
 function renderServicesView() {
   var grid = document.getElementById('sv-grid');
   if (!grid) return;
-
-  // Rebuild category sidebar
   var catList = document.getElementById('svCatList');
   if (catList) {
     var cats = {};
-    servicesList.forEach(function(svc) {
-      var c = svc.category || 'Uncategorized';
-      cats[c] = (cats[c] || 0) + 1;
-    });
+    servicesList.forEach(function(svc) { var c = svc.category || 'Uncategorized'; cats[c] = (cats[c] || 0) + 1; });
     var allItem = '<div class="sv-cat-item' + (svActiveCat === 'all' ? ' active' : '') + '" data-cat="all" onclick="svSetCat(this)"><span>All Services</span><span class="sv-cat-count">' + servicesList.length + '</span></div>';
     var catItems = Object.keys(cats).sort().map(function(c) {
       var active = svActiveCat === c ? ' active' : '';
@@ -1058,92 +999,48 @@ function renderServicesView() {
     }).join('');
     catList.innerHTML = allItem + catItems;
   }
-
   if (!servicesList.length) {
     grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isAdmin ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
     return;
   }
-
   var q = ((document.getElementById('svSearch') || {}).value || '').toLowerCase().trim();
   var filtered = servicesList.filter(function(svc) {
     var catMatch = svActiveCat === 'all' || (svc.category || 'Uncategorized') === svActiveCat;
     var searchMatch = !q || (svc.name || '').toLowerCase().includes(q) || (svc.description || '').toLowerCase().includes(q) || (svc.category || '').toLowerCase().includes(q);
     return catMatch && searchMatch;
   });
-
   var countEl = document.getElementById('svResultCount');
   if (countEl) countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
-
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>';
-    return;
-  }
-
+  if (!filtered.length) { grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>'; return; }
   grid.innerHTML = filtered.map(function(svc) {
     var cardId = 'svcard-' + svc.id.replace(/[^a-z0-9]/gi, '-');
-
-    // Admin edit/delete actions (inside expanded panel)
     var adminActions = '';
     if (isAdmin) {
       adminActions = '<button class="sv-btn-edit" onclick="event.stopPropagation();openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')">Edit</button>'
         + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
     }
-
-    // Chevron icon
     var chevron = '<svg class="sv-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-
-    // Expanded panel content
     var expandRows = '';
-    if (svc.price) {
-      expandRows += '<div class="sv-card-expand-row">'
-        + '<span class="sv-card-expand-label">Estimated Cost</span>'
-        + '<span class="sv-card-expand-value">' + esc(svc.price) + '</span>'
-        + '</div>';
-    }
-    if (svc.teams) {
-      expandRows += '<div class="sv-card-expand-row">'
-        + '<span class="sv-card-expand-label">Teams Involved</span>'
-        + '<span class="sv-card-expand-value">' + esc(svc.teams) + '</span>'
-        + '</div>';
-    }
-    if (!expandRows) {
-      expandRows = '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">No additional details available for this service.</p>';
-    }
-
-    var expandFooter = '<div class="sv-card-expand-footer">'
-      + '<div style="display:flex;gap:6px">' + adminActions + '</div>'
-      + '<button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button>'
-      + '</div>';
-
+    if (svc.price) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(svc.price) + '</span></div>';
+    if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
+    if (!expandRows) expandRows = '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">No additional details available for this service.</p>';
+    var expandFooter = '<div class="sv-card-expand-footer"><div style="display:flex;gap:6px">' + adminActions + '</div><button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button></div>';
     return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')">'
-      + '<div class="sv-card-header">'
-      + '<span class="sv-card-name">' + esc(svc.name) + '</span>'
+      + '<div class="sv-card-header"><span class="sv-card-name">' + esc(svc.name) + '</span>'
       + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
-      + chevron
-      + '</div>'
-      + '</div>'
+      + chevron + '</div></div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
-      + '<div class="sv-card-expand" id="' + cardId + '-expand">'
-      + expandRows
-      + expandFooter
-      + '</div>'
+      + '<div class="sv-card-expand" id="' + cardId + '-expand">' + expandRows + expandFooter + '</div>'
       + '</div>';
   }).join('');
 }
 
-// ── SERVICE MODAL ───────────────────────────────────────────
 var editingServiceId = null;
-
 function openServiceModal(id) {
   editingServiceId = id || null;
   document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
-  document.getElementById('svcName').value     = '';
-  document.getElementById('svcCategory').value = '';
-  document.getElementById('svcDesc').value     = '';
-  document.getElementById('svcPrice').value    = '';
-  document.getElementById('svcTeams').value    = '';
-
+  ['svcName','svcCategory','svcDesc','svcPrice','svcTeams'].forEach(function(f) { document.getElementById(f).value = ''; });
   if (id) {
     var svc = servicesList.find(function(s) { return s.id === id; });
     if (svc) {
@@ -1157,191 +1054,78 @@ function openServiceModal(id) {
   document.getElementById('svcModal').classList.add('open');
   setTimeout(function() { document.getElementById('svcName').focus(); }, 100);
 }
-
-function closeSvcModal() {
-  document.getElementById('svcModal').classList.remove('open');
-  editingServiceId = null;
-}
+function closeSvcModal() { document.getElementById('svcModal').classList.remove('open'); editingServiceId = null; }
 
 async function saveService() {
-  var name     = document.getElementById('svcName').value.trim();
+  var name = document.getElementById('svcName').value.trim();
   var category = document.getElementById('svcCategory').value.trim();
-  var desc     = document.getElementById('svcDesc').value.trim();
-  var price    = document.getElementById('svcPrice').value.trim();
-  var teams    = document.getElementById('svcTeams').value.trim();
-
-  if (!name)     { document.getElementById('svcName').focus(); return; }
+  var desc  = document.getElementById('svcDesc').value.trim();
+  var price = document.getElementById('svcPrice').value.trim();
+  var teams = document.getElementById('svcTeams').value.trim();
+  if (!name) { document.getElementById('svcName').focus(); return; }
   if (!category) { document.getElementById('svcCategory').focus(); return; }
-
   var btn = document.getElementById('svcSaveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
-
-  var svc = {
-    id:          editingServiceId || ('svc_' + Date.now()),
-    name:        name,
-    category:    category,
-    description: desc,
-    price:       price,
-    teams:       teams,
-    sortOrder:   editingServiceId
-      ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0
-      : servicesList.length + 1,
-  };
-
-  if (editingServiceId) {
-    var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; });
-    if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc);
-  } else {
-    servicesList.push(svc);
-  }
-  lsWriteServices(servicesList);
-  renderServicesView();
-  renderCatPills();
-  syncServiceNamesToForm();
-
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'saveService', service: svc })
-    });
-  } catch(e) { console.warn('Service sync failed:', e); }
-
-  btn.disabled = false; btn.textContent = 'Save';
-  closeSvcModal();
-  showToast(editingServiceId ? 'Service updated.' : 'Service added.');
-  showSyncMsg();
+  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, price, teams,
+    sortOrder: editingServiceId ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0 : servicesList.length + 1 };
+  if (editingServiceId) { var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; }); if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc); } else servicesList.push(svc);
+  lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'saveService', service: svc }) }); } catch(e) {}
+  btn.disabled = false; btn.textContent = 'Save'; closeSvcModal(); showToast(editingServiceId ? 'Service updated.' : 'Service added.'); showSyncMsg();
 }
 
 async function deleteService(id) {
   if (!confirm('Delete this service?')) return;
   servicesList = servicesList.filter(function(s) { return s.id !== id; });
-  lsWriteServices(servicesList);
-  renderServicesView();
-  renderCatPills();
-  syncServiceNamesToForm();
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'deleteService', id: id })
-    });
-  } catch(e) { console.warn('Service delete sync failed:', e); }
-  showToast('Service deleted.');
-  showSyncMsg();
+  lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'deleteService', id }) }); } catch(e) {}
+  showToast('Service deleted.'); showSyncMsg();
 }
 
-function syncServiceNamesToForm() {
-  var names = servicesList.map(function(s) { return s.name; });
-  try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
-}
-
-function showSyncMsg() {
-  var el = document.getElementById('sv-sync-msg');
-  if (!el) return;
-  el.style.display = 'inline';
-  setTimeout(function() { el.style.display = 'none'; }, 3000);
-}
-
-// Toggle expand/collapse on a service card
+function syncServiceNamesToForm() { var names = servicesList.map(function(s) { return s.name; }); try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {} }
+function showSyncMsg() { var el = document.getElementById('sv-sync-msg'); if (!el) return; el.style.display = 'inline'; setTimeout(function() { el.style.display = 'none'; }, 3000); }
 function toggleSvCard(cardId) {
-  var card   = document.getElementById(cardId);
-  var panel  = document.getElementById(cardId + '-expand');
+  var card = document.getElementById(cardId), panel = document.getElementById(cardId + '-expand');
   if (!card || !panel) return;
   var isOpen = panel.classList.contains('open');
-  // Collapse all other cards first
-  document.querySelectorAll('.sv-card.expanded').forEach(function(c) {
-    if (c.id !== cardId) {
-      c.classList.remove('expanded');
-      var p = document.getElementById(c.id + '-expand');
-      if (p) p.classList.remove('open');
-    }
-  });
-  if (isOpen) {
-    panel.classList.remove('open');
-    card.classList.remove('expanded');
-  } else {
-    panel.classList.add('open');
-    card.classList.add('expanded');
-  }
+  document.querySelectorAll('.sv-card.expanded').forEach(function(c) { if (c.id !== cardId) { c.classList.remove('expanded'); var p = document.getElementById(c.id + '-expand'); if (p) p.classList.remove('open'); } });
+  if (isOpen) { panel.classList.remove('open'); card.classList.remove('expanded'); } else { panel.classList.add('open'); card.classList.add('expanded'); }
 }
-
-// ── TOAST ────────────────────────────────────────────────────
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 3000);
-}
-
-document.getElementById('svcModal').addEventListener('click', function(e) {
-  if (e.target === this) closeSvcModal();
-});
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeSvcModal();
-});
+function showToast(msg) { var t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 3000); }
+document.getElementById('svcModal').addEventListener('click', function(e) { if (e.target === this) closeSvcModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSvcModal(); });
 
 // ═══════════════════════════════════════════════════════════
 // ── TRACKER GLOBALS ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
 var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
-var LIFECYCLE = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
+// ── CHANGE: Rejected is a terminal branch, not a linear step — kept separate
+var LIFECYCLE_STEPS = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
 var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
 
-// ── CATEGORY PILLS (Tracker sidebar) ──────────────────────
-// Derives unique categories from servicesList and renders pills.
-// Filter tracker list by category: reads s.category stored on each submission row.
-// Submissions with no category appear under the Uncategorized pill.
 function renderCatPills() {
   var container = document.getElementById('catPills');
   if (!container) return;
-
-  // Derive unique categories from actual submission data, not the services catalog
   var cats = {};
-  all.forEach(function(s) {
-    var c = (s.category || '').trim();
-    if (c) cats[c] = true;
-  });
+  all.forEach(function(s) { var c = (s.category || '').trim(); if (c) cats[c] = true; });
   var catKeys = Object.keys(cats).sort();
-
   var html = '<span class="pill' + (activeCat === 'all' ? ' on' : '') + '" data-cat="all" onclick="setCatF(this)">All</span>';
-  catKeys.forEach(function(c) {
-    html += '<span class="pill' + (activeCat === c ? ' on' : '') + '" data-cat="' + esc(c) + '" onclick="setCatF(this)">' + esc(c) + '</span>';
-  });
-  // Uncategorized pill — shown only if there are submissions without a category
+  catKeys.forEach(function(c) { html += '<span class="pill' + (activeCat === c ? ' on' : '') + '" data-cat="' + esc(c) + '" onclick="setCatF(this)">' + esc(c) + '</span>'; });
   var hasUncategorized = all.some(function(s) { return !(s.category || '').trim(); });
-  if (hasUncategorized) {
-    html += '<span class="pill' + (activeCat === '__uncategorized__' ? ' on' : '') + '" data-cat="__uncategorized__" onclick="setCatF(this)">Uncategorized</span>';
-  }
+  if (hasUncategorized) html += '<span class="pill' + (activeCat === '__uncategorized__' ? ' on' : '') + '" data-cat="__uncategorized__" onclick="setCatF(this)">Uncategorized</span>';
   container.innerHTML = html;
-}
-
-function getAllKnownServiceNames() {
-  return servicesList.map(function(svc) { return svc.name.toLowerCase(); });
-}
-
-function getServiceNamesForCat(cat) {
-  if (cat === 'all') return null;
-  if (cat === '__uncategorized__') return null;
-  return servicesList
-    .filter(function(svc) { return (svc.category || 'Uncategorized') === cat; })
-    .map(function(svc) { return svc.name.toLowerCase(); });
 }
 
 function setCatF(el) {
   document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
-  el.classList.add('on');
-  activeCat = el.dataset.cat;
-  activeSC = 'all';
+  el.classList.add('on'); activeCat = el.dataset.cat; activeSC = 'all';
   document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
   render();
 }
 
 function scFilter(el) {
   document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
-  el.classList.add('active');
-  activeSC = el.dataset.lc;
-  activeCat = 'all';
+  el.classList.add('active'); activeSC = el.dataset.lc; activeCat = 'all';
   document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
   var allPill = document.querySelector('#catPills .pill[data-cat="all"]');
   if (allPill) allPill.classList.add('on');
@@ -1349,18 +1133,12 @@ function scFilter(el) {
 }
 
 function matches(s) {
-  // Category filter — reads directly from submission's stored category field
   if (activeCat !== 'all') {
     var sCat = (s.category || '').trim();
-    if (activeCat === '__uncategorized__') {
-      if (sCat) return false; // exclude anything that has a category
-    } else {
-      if (sCat.toLowerCase() !== activeCat.toLowerCase()) return false;
-    }
+    if (activeCat === '__uncategorized__') { if (sCat) return false; }
+    else { if (sCat.toLowerCase() !== activeCat.toLowerCase()) return false; }
   }
-  // Lifecycle filter (from analytics strip)
   if (activeSC !== 'all' && (s.lifecycle || '') !== activeSC) return false;
-  // Text search
   var q = document.getElementById('srch').value.toLowerCase();
   if (!q) return true;
   return [s.clientName, s.requesterName, s.requesterEmail, s.jiraKey, s.serviceType, s.hrUrl, s.csmName]
@@ -1370,7 +1148,7 @@ function matches(s) {
 async function init_tracker() {
   if (initialized) return; initialized = true;
   if (IS_INTERNAL) { document.getElementById('analytics').classList.add('on'); loadAnalytics(); }
-  await loadList(); // renderCatPills() is called inside loadList after all[] is populated
+  await loadList();
 }
 
 async function loadList() {
@@ -1414,15 +1192,17 @@ async function loadAnalytics() {
     if (!data || data.error) return;
     var lc = data.lifecycleCounts || {};
     document.getElementById('sc-total').textContent = data.total != null ? data.total : '—';
-    document.getElementById('sc-fq').textContent = lc['For Quotation'] != null ? lc['For Quotation'] : '—';
-    document.getElementById('sc-or').textContent = lc['Ongoing Review'] != null ? lc['Ongoing Review'] : '—';
-    document.getElementById('sc-qp').textContent = lc['Quotation Provided'] != null ? lc['Quotation Provided'] : '—';
-    document.getElementById('sc-fe').textContent = lc['For Execution / Schedule'] != null ? lc['For Execution / Schedule'] : '—';
-    document.getElementById('sc-oe').textContent = lc['Ongoing Execution / Activity'] != null ? lc['Ongoing Execution / Activity'] : '—';
-    document.getElementById('sc-rd').textContent = lc['Request Done'] != null ? lc['Request Done'] : '—';
+    document.getElementById('sc-fq').textContent  = lc['For Quotation']                  != null ? lc['For Quotation']                  : '—';
+    document.getElementById('sc-or').textContent  = lc['Ongoing Review']                 != null ? lc['Ongoing Review']                 : '—';
+    document.getElementById('sc-qp').textContent  = lc['Quotation Provided']             != null ? lc['Quotation Provided']             : '—';
+    document.getElementById('sc-fe').textContent  = lc['For Execution / Schedule']       != null ? lc['For Execution / Schedule']       : '—';
+    document.getElementById('sc-oe').textContent  = lc['Ongoing Execution / Activity']   != null ? lc['Ongoing Execution / Activity']   : '—';
+    document.getElementById('sc-rd').textContent  = lc['Request Done']                   != null ? lc['Request Done']                   : '—';
+    // ── NEW: populate Rejected scorecard
+    document.getElementById('sc-rej').textContent = lc['Rejected']                       != null ? lc['Rejected']                       : '—';
     var meta = document.getElementById('analyticsMeta');
     var pills = [];
-    if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
+    if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Withdrawn: <span>' + (data.byCost['Withdrawn']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
     if (data.revenueReceived != null) pills.push('Revenue received: <span>' + fmtPhp(data.revenueReceived) + '</span>');
     if (data.revenueLost != null) pills.push('Revenue lost: <span>' + fmtPhp(data.revenueLost) + '</span>');
     if (data.avgDays != null) pills.push('Avg. resolution: <span>' + data.avgDays + 'd</span>');
@@ -1473,13 +1253,22 @@ function renderDetail(s, d) {
   var lc = s ? s.lifecycle : '—';
   var bcls = lcBadge(lc);
   var costHtml = '';
-  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
+  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : s.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
   var html = '<div class="dh"><h2>' + esc(s ? s.clientName : (psrv ? psrv.summary : '—')) + '</h2>'
     + '<div class="dh-meta"><span class="badge ' + bcls + '">' + esc(lc) + '</span>' + costHtml
     + (psrv ? '<a href="' + psrv.url + '" target="_blank">' + psrv.key + ' ↗</a>' : '')
     + (s ? '<span>·</span><span>' + esc(s.serviceType) + '</span>' : '')
     + (s && s.urgency ? '<span>·</span><span>' + esc(s.urgency) + ' urgency</span>' : '')
     + '</div></div>';
+
+  // ── NEW: Rejected banner shown before the stepper when request is rejected
+  if (lc === 'Rejected') {
+    html += '<div class="rejected-banner">'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+      + '<p><strong>This request has been rejected.</strong> Check the Jira ticket comments below for the reason provided by Platform Operations. If you believe this was in error, please resubmit or contact the team directly.</p>'
+      + '</div>';
+  }
+
   html += renderOpCard(s);
   html += '<div class="dsec"><div class="dsh"><h3>Request lifecycle</h3></div><div class="dsb"><div class="stepper">' + renderStepper(lc) + '</div></div></div>';
   if (s) {
@@ -1512,7 +1301,7 @@ function renderDetail(s, d) {
       var tid = 'tc' + i;
       html += '<div class="tcard"><div class="tc-hd" onclick="tog(\'' + tid + '\')">'
         + '<div><div class="tc-key"><a href="' + t.url + '" target="_blank" onclick="event.stopPropagation()">' + t.key + ' [' + t.project + '] ↗</a>'
-        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
+        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : t.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
         + '</div><div class="tc-sum">' + esc(t.summary) + '</div><div class="tc-who">Assigned: ' + esc(t.assignee) + '</div></div>'
         + '<span class="badge ' + lcBadgeFromJira(t.status) + '">' + esc(t.status) + '</span>'
         + '</div><div class="tc-bd" id="' + tid + '">';
@@ -1526,17 +1315,26 @@ function renderDetail(s, d) {
       html += renderComments(t.comments) + '</div></div>';
     });
     html += '</div></div>';
-  } else {
+  } else if (lc !== 'Rejected') {
     var noST = ['For Quotation','Ongoing Review','Quotation Provided'].includes(lc);
     if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
   }
   panel.innerHTML = html;
 }
 
+// ── STEPPER — Rejected is a terminal branch, not a linear step ──
 function renderStepper(currentLc) {
-  return LIFECYCLE.map(function(lc) {
-    var cIdx = LIFECYCLE.indexOf(currentLc);
-    var lIdx = LIFECYCLE.indexOf(lc);
+  if (currentLc === 'Rejected') {
+    // All steps shown greyed out with red Rejected appended at the end
+    return LIFECYCLE_STEPS.map(function(lc) {
+      var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
+      return '<div class="step"><div class="step-dot" style="border-color:#fbbdbd;background:var(--tomato-lt)"></div><div class="step-label" style="color:var(--tomato)">' + esc(short) + '</div></div>';
+    }).join('')
+      + '<div class="step current"><div class="step-dot" style="border-color:var(--tomato);background:var(--tomato);box-shadow:0 0 0 3px rgba(201,42,42,0.15)"></div><div class="step-label" style="color:var(--tomato);font-weight:700">Rejected</div></div>';
+  }
+  return LIFECYCLE_STEPS.map(function(lc) {
+    var cIdx = LIFECYCLE_STEPS.indexOf(currentLc);
+    var lIdx = LIFECYCLE_STEPS.indexOf(lc);
     var cls = lIdx < cIdx ? 'done' : lIdx === cIdx ? 'current' : '';
     var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
     return '<div class="step ' + cls + '"><div class="step-dot"></div><div class="step-label">' + esc(short) + '</div></div>';
@@ -1551,26 +1349,37 @@ function renderComments(comments) {
 }
 
 function tog(id) { document.getElementById(id).classList.toggle('on'); }
+
 function lcBadge(lc) {
-  var map = { 'For Quotation':'b-gray','Ongoing Review':'b-amber','Quotation Provided':'b-blue','For Execution / Schedule':'b-purple','Ongoing Execution / Activity':'b-teal','Request Done':'b-green' };
+  var map = {
+    'For Quotation':'b-gray',
+    'Ongoing Review':'b-amber',
+    'Quotation Provided':'b-blue',
+    'For Execution / Schedule':'b-purple',
+    'Ongoing Execution / Activity':'b-teal',
+    'Request Done':'b-green',
+    'Rejected':'b-red'   // ── NEW
+  };
   return map[lc] || 'b-gray';
 }
+
 function lcBadgeFromJira(status) {
   var s = (status || '').toLowerCase();
   if (['done','closed','resolved'].some(v => s.includes(v))) return 'b-green';
   if (['in progress','for pr review'].some(v => s.includes(v))) return 'b-teal';
   if (['ready for checking','for checking'].some(v => s.includes(v))) return 'b-blue';
   if (['on hold'].some(v => s.includes(v))) return 'b-amber';
-  if (['cancelled','canceled'].some(v => s.includes(v))) return 'b-red';
+  if (['cancelled','canceled','rejected'].some(v => s.includes(v))) return 'b-red';
   return 'b-gray';
 }
+
 function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── ANALYTICS PAGE ─────────────────────────────────────────
 var charts = {};
 var COLORS = { green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8' };
-var LC_COLORS  = [COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.greenL];
-var LC_BORDERS = [COLORS.gray,COLORS.amber,COLORS.blue,COLORS.purple,COLORS.teal,COLORS.green];
+var LC_COLORS  = [COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.greenL,COLORS.redL];
+var LC_BORDERS = [COLORS.gray,COLORS.amber,COLORS.blue,COLORS.purple,COLORS.teal,COLORS.green,COLORS.red];
 
 function fmtPhp(n) {
   if (n === null || n === undefined) return '—';
@@ -1601,14 +1410,16 @@ function render_analytics(data) {
   var lc = data.lifecycleCounts || {}; var svc = data.byService || {}; var cost = data.byCost || {}; var urg = data.byUrgency || {};
   var svcKeys = Object.keys(svc).sort((a,b) => svc[b]-svc[a]);
   document.getElementById('an-total').textContent = data.total ?? '—';
-  document.getElementById('an-fq').textContent = lc['For Quotation'] ?? '—';
-  document.getElementById('an-or').textContent = lc['Ongoing Review'] ?? '—';
-  document.getElementById('an-qp').textContent = lc['Quotation Provided'] ?? '—';
-  document.getElementById('an-fe').textContent = lc['For Execution / Schedule'] ?? '—';
-  document.getElementById('an-oe').textContent = lc['Ongoing Execution / Activity'] ?? '—';
-  document.getElementById('an-rd').textContent = lc['Request Done'] ?? '—';
+  document.getElementById('an-fq').textContent  = lc['For Quotation']                != null ? lc['For Quotation']                : '—';
+  document.getElementById('an-or').textContent  = lc['Ongoing Review']               != null ? lc['Ongoing Review']               : '—';
+  document.getElementById('an-qp').textContent  = lc['Quotation Provided']           != null ? lc['Quotation Provided']           : '—';
+  document.getElementById('an-fe').textContent  = lc['For Execution / Schedule']     != null ? lc['For Execution / Schedule']     : '—';
+  document.getElementById('an-oe').textContent  = lc['Ongoing Execution / Activity'] != null ? lc['Ongoing Execution / Activity'] : '—';
+  document.getElementById('an-rd').textContent  = lc['Request Done']                 != null ? lc['Request Done']                 : '—';
+  // ── NEW: Rejected scorecard in analytics page
+  document.getElementById('an-rej').textContent = lc['Rejected']                     != null ? lc['Rejected']                     : '—';
   document.getElementById('an-avg').textContent = data.avgDays != null ? data.avgDays + 'd' : '—';
-  document.getElementById('an-rev-in').textContent = fmtPhp(data.revenueReceived ?? null);
+  document.getElementById('an-rev-in').textContent  = fmtPhp(data.revenueReceived ?? null);
   document.getElementById('an-rev-out').textContent = fmtPhp(data.revenueLost ?? null);
   var tbody = document.querySelector('#an-serviceTable tbody');
   if (tbody) {
@@ -1622,13 +1433,14 @@ function render_analytics(data) {
   setTimeout(function() {
     if (typeof Chart === 'undefined') return;
     var monthly = data.monthlyArr || [];
-    var lcLabels = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
-    var lcShort  = ['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done'];
+    // ── CHANGE: Include Rejected in lifecycle chart
+    var lcLabels = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done','Rejected'];
+    var lcShort  = ['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done','Rejected'];
     var svcColors = [COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
     buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
     buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcLabels.map(l=>lc[l]||0),backgroundColor:LC_COLORS,borderColor:LC_BORDERS,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
-    buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
+    buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Withdrawn','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Withdrawn||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.amber,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     var revMonthly = data.revenueByMonth || [];
     buildChart('an-chartRevTime','bar',{labels:revMonthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Received',data:revMonthly.map(m=>m.received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revMonthly.map(m=>m.lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
@@ -1655,7 +1467,7 @@ function renderOpCard(s) {
   var adate = s && s.activityDate ? s.activityDate.substring(0,10) : '';
   var cstat = s && s.costStatus ? s.costStatus : 'Pending';
   var jk    = s && s.jiraKey ? s.jiraKey : '';
-  var statusOpts = ['Pending','Paid','Waived'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  var statusOpts = ['Pending','Paid','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
   return '<div class="dsec" id="opCard">'
     + '<div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>'
     + '<div class="dsb"><div class="igrid">'
@@ -1676,18 +1488,13 @@ async function saveOpDetails(jiraKey) {
     await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ action:'update', jiraKey, serviceCost:cost, activityDate:date, costStatus:status }) });
     var entry = all.find(x => x.jiraKey === jiraKey);
     if (entry) { entry.serviceCost = cost !== '' ? parseFloat(cost) : null; entry.activityDate = date; entry.costStatus = status; }
-    // Write updated all[] back to session cache so changes persist across tab switches
     try {
       var cacheKey = 'tracker_cache_' + USER_EMAIL;
       var existing = sessionStorage.getItem(cacheKey);
-      if (existing) {
-        var parsed = JSON.parse(existing);
-        parsed.data.submissions = all;
-        sessionStorage.setItem(cacheKey, JSON.stringify(parsed));
-      }
-    } catch(cacheErr) { Logger.log('Cache update error: ' + cacheErr); }
+      if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); }
+    } catch(cacheErr) {}
     var cb = document.querySelector('.dh-meta .cost-badge');
-    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
+    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : status === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
     render();
     if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
   } catch(e) { alert('Save failed: ' + e.message); }
