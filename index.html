@@ -627,7 +627,7 @@ tr:hover td{background:var(--bg)}
                   <tr><td>All requests through this portal</td><td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs.</td><td class="td-muted">Redirect requester to submit via this form.</td></tr>
                   <tr><td>Assessment before execution</td><td class="td-muted">No work begins without completed review of scope, cost, and timeline.</td><td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td></tr>
                   <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
-                  <tr><td>All services subject to fees</td><td class="td-muted">Fee waivers are not granted by default.</td><td class="td-muted">Written CTO approval required for any waiver.</td></tr>
+                  <tr><td>All services subject to fees</td><td class="td-muted">Fee waivers are not granted by default. To request a waiver, email the CTO, Gian Dela Rama (<a href="mailto:gdelarama@sprout.ph" style="color:var(--primary)">gdelarama@sprout.ph</a>) with CC to: DJ (<a href="mailto:diane@sprout.ph" style="color:var(--primary)">diane@sprout.ph</a>), Danica (<a href="mailto:afrancisco@sprout.ph" style="color:var(--primary)">afrancisco@sprout.ph</a>), Gaby (<a href="mailto:gabriellef@sprout.ph" style="color:var(--primary)">gabriellef@sprout.ph</a>).</td><td class="td-muted">Written CTO approval required. No exceptions.</td></tr>
                   <tr><td>No unapproved scope changes</td><td class="td-muted">New requirements mid-execution are treated as a separate request.</td><td class="td-muted">Log a new request. Re-assess and re-estimate.</td></tr>
                   <tr><td>Downtime must be confirmed</td><td class="td-muted">No CRF raised until schedule is confirmed with client.</td><td class="td-muted">Platform Ops coordinates with CSM to lock window.</td></tr>
                 </tbody>
@@ -703,6 +703,7 @@ tr:hover td{background:var(--bg)}
           <div class="sc" data-lc="For Execution / Schedule" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
           <div class="sc" data-lc="Ongoing Execution / Activity" onclick="scFilter(this)"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="sc-oe">—</div><div class="sc-sub">In execution</div></div>
           <div class="sc" data-lc="Request Done" onclick="scFilter(this)"><div class="sc-label">Done</div><div class="sc-value" id="sc-rd">—</div><div class="sc-sub">Completed</div></div>
+          <div class="sc" data-lc="Quotation Done" onclick="scFilter(this)"><div class="sc-label">Quotation Done</div><div class="sc-value" id="sc-qd">—</div><div class="sc-sub">No execution</div></div>
           <!-- ── NEW: Rejected scorecard ── -->
           <div class="sc" data-lc="Rejected" onclick="scFilter(this)"><div class="sc-label">Rejected</div><div class="sc-value" id="sc-rej">—</div><div class="sc-sub">Request rejected</div></div>
         </div>
@@ -789,6 +790,7 @@ tr:hover td{background:var(--bg)}
             <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
             <div class="sc-an"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="an-oe">—</div><div class="sc-sub">In execution</div></div>
             <div class="sc-an"><div class="sc-label">Request Done</div><div class="sc-value" id="an-rd">—</div><div class="sc-sub">Completed</div></div>
+            <div class="sc-an"><div class="sc-label">Quotation Done</div><div class="sc-value" id="an-qd">—</div><div class="sc-sub">No execution ticket</div></div>
             <!-- ── NEW: Rejected scorecard in analytics page ── -->
             <div class="sc-an rejected"><div class="sc-label">Rejected</div><div class="sc-value" id="an-rej">—</div><div class="sc-sub">Request rejected</div></div>
             <div class="sc-an"><div class="sc-label">Avg. Resolution</div><div class="sc-value" id="an-avg">—</div><div class="sc-sub">Days to complete</div></div>
@@ -1226,7 +1228,7 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 // ═══════════════════════════════════════════════════════════
 var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
 // ── CHANGE: Rejected is a terminal branch, not a linear step — kept separate
-var LIFECYCLE_STEPS = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
+var LIFECYCLE_STEPS = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Quotation Done','Request Done'];
 var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
 
 function renderCatPills() {
@@ -1376,6 +1378,7 @@ async function loadAnalytics() {
     document.getElementById('sc-fe').textContent  = lc['For Execution / Schedule']       != null ? lc['For Execution / Schedule']       : '—';
     document.getElementById('sc-oe').textContent  = lc['Ongoing Execution / Activity']   != null ? lc['Ongoing Execution / Activity']   : '—';
     document.getElementById('sc-rd').textContent  = lc['Request Done']                   != null ? lc['Request Done']                   : '—';
+    document.getElementById('sc-qd').textContent  = lc['Quotation Done']                 != null ? lc['Quotation Done']                 : '—';
     // ── NEW: populate Rejected scorecard
     document.getElementById('sc-rej').textContent = lc['Rejected']                       != null ? lc['Rejected']                       : '—';
     var meta = document.getElementById('analyticsMeta');
@@ -1448,6 +1451,15 @@ function renderDetail(s, d) {
   }
 
   html += renderOpCard(s);
+  if (s && s.quotationUrl) {
+    html += '<div class="dsec"><div class="dsh"><h3>Quotation document</h3></div>'
+      + '<div class="dsb" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      + '<a href="' + esc(s.quotationUrl) + '" target="_blank" class="quot-link">'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>'
+      + esc(s.quotationFilename || 'View quotation') + ' ↗</a>'
+      + '<span style="font-size:0.68rem;color:var(--muted)">Uploaded by ' + esc(s.quotationUploadedBy) + ' · ' + esc(s.quotationUploadedAt) + '</span>'
+      + '</div></div>';
+  }
   html += '<div class="dsec"><div class="dsh"><h3>Request lifecycle</h3></div><div class="dsb"><div class="stepper">' + renderStepper(lc) + '</div></div></div>';
   if (s) {
     html += '<div class="dsec"><div class="dsh"><h3>Request information</h3></div><div class="dsb"><div class="igrid">'
@@ -1548,8 +1560,9 @@ function lcBadge(lc) {
     'Quotation Provided':'b-blue',
     'For Execution / Schedule':'b-purple',
     'Ongoing Execution / Activity':'b-teal',
+    'Quotation Done':'b-blue',
     'Request Done':'b-green',
-    'Rejected':'b-red'   // ── NEW
+    'Rejected':'b-red'
   };
   return map[lc] || 'b-gray';
 }
@@ -1607,6 +1620,7 @@ function render_analytics(data) {
   document.getElementById('an-fe').textContent  = lc['For Execution / Schedule']     != null ? lc['For Execution / Schedule']     : '—';
   document.getElementById('an-oe').textContent  = lc['Ongoing Execution / Activity'] != null ? lc['Ongoing Execution / Activity'] : '—';
   document.getElementById('an-rd').textContent  = lc['Request Done']                 != null ? lc['Request Done']                 : '—';
+  document.getElementById('an-qd').textContent  = lc['Quotation Done']               != null ? lc['Quotation Done']               : '—';
   // ── NEW: Rejected scorecard in analytics page
   document.getElementById('an-rej').textContent = lc['Rejected']                     != null ? lc['Rejected']                     : '—';
   document.getElementById('an-avg').textContent = data.avgDays != null ? data.avgDays + 'd' : '—';
@@ -1624,12 +1638,13 @@ function render_analytics(data) {
   setTimeout(function() {
     if (typeof Chart === 'undefined') return;
     var monthly = data.monthlyArr || [];
-    // ── CHANGE: Include Rejected in lifecycle chart
-    var lcLabels = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done','Rejected'];
-    var lcShort  = ['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done','Rejected'];
+    var lcLabels = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Quotation Done','Request Done','Rejected'];
+    var lcShort  = ['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Quotation Done','Request Done','Rejected'];
+    var LC_COLORS_CHART  = [COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.blueL,COLORS.greenL,COLORS.redL];
+    var LC_BORDERS_CHART = [COLORS.gray, COLORS.amber, COLORS.blue, COLORS.purple, COLORS.teal, COLORS.blue, COLORS.green, COLORS.red];
     var svcColors = [COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
     buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
-    buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcLabels.map(l=>lc[l]||0),backgroundColor:LC_COLORS,borderColor:LC_BORDERS,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
+    buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcLabels.map(l=>lc[l]||0),backgroundColor:LC_COLORS_CHART,borderColor:LC_BORDERS_CHART,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Withdrawn','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Withdrawn||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.amber,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
@@ -1659,6 +1674,29 @@ function renderOpCard(s) {
   var cstat = s && s.costStatus ? s.costStatus : 'Pending';
   var jk    = s && s.jiraKey ? s.jiraKey : '';
   var statusOpts = ['Pending','Paid','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  var quotUrl  = s && s.quotationUrl        ? s.quotationUrl        : '';
+  var quotFile = s && s.quotationFilename   ? s.quotationFilename   : '';
+  var quotBy   = s && s.quotationUploadedBy ? s.quotationUploadedBy : '';
+  var quotAt   = s && s.quotationUploadedAt ? s.quotationUploadedAt : '';
+
+  var quotSection = '<div class="iitem full" style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px"><label style="margin-bottom:8px;display:block">Quotation Document</label>';
+  if (quotUrl) {
+    quotSection += '<div style="margin-bottom:8px"><a href="' + esc(quotUrl) + '" target="_blank" class="quot-link">'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>'
+      + esc(quotFile || 'View document') + ' ↗</a>'
+      + '<div style="font-size:0.68rem;color:var(--muted);margin-top:4px">Uploaded by ' + esc(quotBy) + ' on ' + esc(quotAt) + '</div></div>';
+  }
+  quotSection += '<div class="upload-zone" id="uploadZone">'
+    + '<input type="file" id="quotFile" accept=".pdf,.xlsx,.xls,.doc,.docx,.png,.jpg" onchange="handleFileSelect(this)"/>'
+    + '<div class="upload-zone-label"><strong>Click to upload</strong> or drag and drop<br><span style="font-size:0.68rem">PDF, Excel, Word, or image</span></div>'
+    + '</div>'
+    + '<div class="upload-file-preview" id="uploadPreview">'
+    + '<span class="upload-file-name" id="uploadFileName"></span>'
+    + '<span class="upload-file-clear" onclick="clearUpload()">✕</span>'
+    + '</div>'
+    + '<button class="upload-send-btn" id="uploadBtn" onclick="uploadQuotation(\'' + jk + '\')" style="display:none">Upload &amp; Notify CSM</button>'
+    + '<div class="upload-msg" id="uploadMsg"></div></div>';
+
   return '<div class="dsec" id="opCard">'
     + '<div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>'
     + '<div class="dsb"><div class="igrid">'
@@ -1666,6 +1704,7 @@ function renderOpCard(s) {
     + '<div class="iitem"><label>Activity Date</label><input type="date" id="op-date" value="' + adate + '" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
     + '<div class="iitem"><label>Cost Status</label><select id="op-status" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">' + statusOpts + '</select></div>'
     + '<div class="iitem" style="display:flex;align-items:flex-end"><button onclick="saveOpDetails(\'' + jk + '\')" style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%" onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">Save</button></div>'
+    + quotSection
     + '</div></div></div>';
 }
 
@@ -1716,6 +1755,91 @@ async function sendCsmComment(jiraKey) {
     if (msgEl) { msgEl.textContent = 'Failed to post. Please try again.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
   }
   btn.disabled = false; btn.textContent = 'Post Comment';
+}
+
+// ── QUOTATION UPLOAD ─────────────────────────────────────────────────────────
+var _uploadFile = null;
+
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) setUploadFile(input.files[0]);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) setUploadFile(e.dataTransfer.files[0]);
+}
+
+function setUploadFile(file) {
+  _uploadFile = file;
+  var preview = document.getElementById('uploadPreview');
+  var name    = document.getElementById('uploadFileName');
+  var btn     = document.getElementById('uploadBtn');
+  if (preview) preview.classList.add('show');
+  if (name)    name.textContent = file.name;
+  if (btn)     btn.style.display = 'block';
+  var msg = document.getElementById('uploadMsg');
+  if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+}
+
+function clearUpload() {
+  _uploadFile = null;
+  var preview = document.getElementById('uploadPreview');
+  var btn     = document.getElementById('uploadBtn');
+  var input   = document.getElementById('quotFile');
+  if (preview) preview.classList.remove('show');
+  if (btn)     btn.style.display = 'none';
+  if (input)   input.value = '';
+}
+
+async function uploadQuotation(jiraKey) {
+  if (!_uploadFile) return;
+  var btn = document.getElementById('uploadBtn');
+  var msg = document.getElementById('uploadMsg');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+  try {
+    var b64 = await new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload  = function(e) { resolve(e.target.result.split(',')[1]); };
+      reader.onerror = reject;
+      reader.readAsDataURL(_uploadFile);
+    });
+    var payload = {
+      action:     'uploadCostDocument',
+      jiraKey:    jiraKey,
+      fileData:   b64,
+      filename:   _uploadFile.name,
+      mimeType:   _uploadFile.type || 'application/octet-stream',
+      uploadedBy: userEmail,
+    };
+    var res  = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    var data = await res.json();
+    if (data.success) {
+      if (msg) { msg.textContent = 'Uploaded and CSM notified ✓'; msg.className = 'upload-msg upload-ok'; }
+      clearUpload();
+      var entry = all.find(function(x) { return x.jiraKey === jiraKey; });
+      if (entry) {
+        entry.quotationUrl        = data.fileUrl;
+        entry.quotationFilename   = data.filename;
+        entry.quotationUploadedBy = userEmail;
+        entry.quotationUploadedAt = data.uploadedAt;
+        try {
+          var cacheKey = 'tracker_cache_' + USER_EMAIL;
+          var existing = sessionStorage.getItem(cacheKey);
+          if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); }
+        } catch(ce) {}
+      }
+      var s = all.find(function(x) { return x.jiraKey === jiraKey; });
+      if (s) renderDetail(s, null);
+    } else {
+      if (msg) { msg.textContent = 'Upload failed: ' + (data.error || 'Unknown error'); msg.className = 'upload-msg upload-err'; }
+    }
+  } catch(e) {
+    if (msg) { msg.textContent = 'Upload failed. Please try again.'; msg.className = 'upload-msg upload-err'; }
+    console.error('uploadQuotation error:', e);
+  }
+  btn.disabled = false; btn.textContent = 'Upload & Notify CSM';
 }
 
 // ═══════════════════════════════════════════════════════════
