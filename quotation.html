@@ -109,7 +109,6 @@ body {
   border-right: 1px solid var(--border);
   padding: 20px 16px;
   display: flex;
-  flex-column: column;
   flex-direction: column;
   gap: 6px;
 }
@@ -117,16 +116,74 @@ body {
   font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--text-muted); padding: 10px 8px 4px;
 }
+
+/* Template item: pills row on top, name row below */
 .template-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 10px; border-radius: 8px; cursor: pointer;
-  border: 1.5px solid transparent; transition: all .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 32px 9px 10px; /* right padding leaves room for delete btn */
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .15s;
+  position: relative;
 }
 .template-item:hover { background: var(--mushroom-50); border-color: var(--border); }
 .template-item.active { background: var(--primary-light); border-color: var(--primary); }
-.template-item-name { font-size: 13px; font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.template-item-type { font-size: 10px; background: var(--mushroom-100); border-radius: 4px; padding: 1px 6px; color: var(--text-muted); }
-.template-delete { opacity: 0; cursor: pointer; color: var(--tomato); background: none; border: none; padding: 2px 4px; border-radius: 4px; transition: opacity .15s; font-size: 13px; }
+
+/* Row 1 inside template item: type + category pills */
+.template-item-pills {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+/* Service Type pill — green tint */
+.template-item-type {
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-radius: 4px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+/* Category pill — neutral gray */
+.template-item-category {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--mushroom-100);
+  color: var(--mushroom-600);
+  border-radius: 4px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+/* Row 2 inside template item: template name */
+.template-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.template-delete {
+  opacity: 0;
+  cursor: pointer;
+  color: var(--tomato);
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity .15s;
+  font-size: 13px;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
 .template-item:hover .template-delete { opacity: 1; }
 .sidebar-empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px 10px; }
 
@@ -201,58 +258,33 @@ textarea { resize: vertical; min-height: 60px; }
 }
 
 /* ── TOTALS ───────────────────────────────────────────── */
-.totals-row {
-  display: flex; justify-content: flex-end; margin-top: 12px;
-}
-.totals-box {
-  min-width: 300px; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden;
-}
+.totals-row { display: flex; justify-content: flex-end; margin-top: 12px; }
+.totals-box { min-width: 300px; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
 .totals-line {
   display: flex; justify-content: space-between; padding: 8px 16px;
   border-bottom: 1px solid var(--border); font-size: 13px;
 }
 .totals-line:last-child { border-bottom: none; }
-.totals-line.grand {
-  background: var(--kangkong-800); color: #fff;
-  font-weight: 700; font-size: 15px;
-}
+.totals-line.grand { background: var(--kangkong-800); color: #fff; font-weight: 700; font-size: 15px; }
 .totals-line.grand .amount { color: var(--kangkong-300); }
 .amount { font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* ── TERMS ────────────────────────────────────────────── */
-.terms-wrap {
-  display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 20px;
-  align-items: start;
-}
+.terms-wrap { display: grid; grid-template-columns: 1fr 220px; gap: 20px; align-items: start; }
 
 /* ── BADGE CHIPS ──────────────────────────────────────── */
-.chip {
-  display: inline-block; padding: 2px 8px; border-radius: 20px;
-  font-size: 11px; font-weight: 600; letter-spacing: .04em;
-}
+.chip { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: .04em; }
 .chip-green { background: var(--primary-light); color: var(--primary-dark); }
 .chip-gray  { background: var(--mushroom-100); color: var(--mushroom-600); }
 
 /* ── TOOLBAR STRIP ────────────────────────────────────── */
-.toolbar {
-  display: flex; gap: 8px; align-items: center; margin-bottom: 20px;
-  flex-wrap: wrap;
-}
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
 .toolbar-sep { width: 1px; height: 24px; background: var(--border); }
 
 /* ── MODAL ────────────────────────────────────────────── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.45); z-index: 999;
-  align-items: center; justify-content: center;
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 999; align-items: center; justify-content: center; }
 .modal-overlay.open { display: flex; }
-.modal {
-  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow-lg);
-  padding: 28px; min-width: 360px; max-width: 480px; width: 100%;
-}
+.modal { background: var(--surface); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 28px; min-width: 360px; max-width: 480px; width: 100%; }
 .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 
@@ -277,85 +309,55 @@ textarea { resize: vertical; min-height: 60px; }
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   img { display: block !important; max-width: 100% !important; }
-
   body { background: #fff !important; font-size: 12px; }
   .topbar, .sidebar, .toolbar, .no-print, .card-header button,
   .btn, .template-delete, .row-drag, .col-act,
   .items-table input, .items-table select, .items-table textarea,
   input, select, textarea { display: none !important; }
-
   .layout { display: block !important; }
   .main { padding: 0 !important; }
   .card { box-shadow: none !important; margin-bottom: 14px !important; page-break-inside: avoid; }
-
   .print-header {
-    display: flex !important;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 0 0 18px;
-    border-bottom: 3px solid #1a5c2e;
-    margin-bottom: 20px;
+    display: flex !important; align-items: flex-start; justify-content: space-between;
+    padding: 0 0 18px; border-bottom: 3px solid #1a5c2e; margin-bottom: 20px;
   }
   .print-logo-block h1 { font-size: 18px; font-weight: 700; color: #1a5c2e; margin: 0 0 2px; }
   .print-logo-block p  { font-size: 11px; color: #666; margin: 0; }
   .print-doc-block { text-align: right; }
   .print-doc-block .doc-title { font-size: 22px; font-weight: 700; color: #1a5c2e; letter-spacing: -.5px; }
   .print-doc-block .doc-sub   { font-size: 11px; color: #666; margin-top: 4px; }
-
   .print-value { display: block !important; font-size: 13px; font-weight: 500; color: #131413; white-space: pre-wrap; }
   .form-group label { color: #7a7b7a; font-size: 10px; }
   .form-grid, .form-grid-3 { gap: 10px; }
-
   .items-table { font-size: 11px; }
   .items-table th { background: #1a5c2e !important; color: #fff !important; font-size: 10px; padding: 7px 10px; }
   .items-table td { padding: 5px 10px; }
   .items-table tr:nth-child(even) td { background: #f4f5f4; }
-
   .totals-line.grand { background: #1a5c2e !important; color: #fff !important; }
   .totals-line.grand .amount { color: #7dd49a !important; }
-
   .print-cost-title {
-    display: block !important;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a5c2e !important;
-    margin: 0 0 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e8e9e8;
+    display: block !important; font-size: 14px; font-weight: 600; color: #1a5c2e !important;
+    margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid #e8e9e8;
   }
   .print-footer {
-    display: flex !important;
-    justify-content: space-between;
-    border-top: 1.5px solid #e8e9e8;
-    padding-top: 14px;
-    margin-top: 20px;
-    font-size: 10px;
-    color: #7a7b7a;
+    display: flex !important; justify-content: space-between; border-top: 1.5px solid #e8e9e8;
+    padding-top: 14px; margin-top: 20px; font-size: 10px; color: #7a7b7a;
   }
   .print-opnote { display: none !important; }
-  .print-sig-row {
-    display: block !important;
-    margin-top: 28px;
-    max-width: 260px;
-  }
+  .print-sig-row { display: block !important; margin-top: 28px; max-width: 260px; }
   .print-sig-box { border-top: 1.5px solid #343534; padding-top: 8px; }
   .print-sig-box .sig-name { font-size: 12px; font-weight: 600; }
   .print-sig-box .sig-role { font-size: 10px; color: #7a7b7a; }
-
   .col-act  { display: none !important; }
   .items-table .print-value { display: inline !important; font-size: 11px; font-weight: 500; color: #131413; }
   .input-prefix > span { display: none !important; }
   .input-prefix { display: block !important; }
   .form-group .input-prefix .print-value { display: block !important; }
-
   .terms-wrap { display: grid !important; grid-template-columns: 1fr 200px !important; gap: 20px; align-items: start; }
   .terms-col  { display: flex !important; flex-direction: column !important; }
-  .terms-col label { display: block !important; font-size: 9px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .08em; color: #7a7b7a; margin-bottom: 4px; }
-  .terms-col .print-value { display: block !important; font-size: 11px;
-    font-weight: 500; color: #131413; white-space: pre-wrap; }
+  .terms-col label { display: block !important; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #7a7b7a; margin-bottom: 4px; }
+  .terms-col .print-value { display: block !important; font-size: 11px; font-weight: 500; color: #131413; white-space: pre-wrap; }
   .terms-col textarea, .terms-col input { display: none !important; }
-
   .print-sig-row { display: none !important; }
   .col-num  { display: table-cell !important; }
   .col-desc { display: none !important; }
@@ -366,10 +368,7 @@ textarea { resize: vertical; min-height: 60px; }
 /* Print-only elements hidden during screen */
 .print-header, .print-footer, .print-sig-row, .print-cost-title, .print-opnote { display: none; }
 .print-value { display: none; font-size: 13px; font-weight: 500; color: #131413; }
-
-@media screen {
-  .print-value { display: none; }
-}
+@media screen { .print-value { display: none; } }
 </style>
 </head>
 <body>
@@ -487,11 +486,9 @@ textarea { resize: vertical; min-height: 60px; }
         </button>
       </div>
       <div class="card-body" style="padding-bottom:8px">
-        <!-- Service Type + Scope of Work -->
         <div class="form-grid" style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)">
           <div class="form-group">
             <label>Service Type</label>
-            <!-- CHANGED: options rendered dynamically by loadServiceOptions() -->
             <select id="serviceType">
               <option value="">— Select —</option>
             </select>
@@ -514,12 +511,9 @@ textarea { resize: vertical; min-height: 60px; }
                 <th class="col-act no-print"></th>
               </tr>
             </thead>
-            <tbody id="itemsBody">
-            </tbody>
+            <tbody id="itemsBody"></tbody>
           </table>
         </div>
-
-        <!-- Totals -->
         <div class="totals-row">
           <div class="totals-box">
             <div class="totals-line">
@@ -601,7 +595,6 @@ textarea { resize: vertical; min-height: 60px; }
     </div>
     <div class="form-group" style="margin-top:10px">
       <label>Service Type Tag</label>
-      <!-- CHANGED: options rendered dynamically by loadServiceOptions() -->
       <select id="templateTypeInput">
         <option value="">— Select —</option>
       </select>
@@ -623,10 +616,8 @@ textarea { resize: vertical; min-height: 60px; }
 // ── CONFIG ────────────────────────────────────────────────────
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
 
-// Default notes pre-filled on every new quotation and template load fallback
 var DEFAULT_NOTES = '- This quotation is for internal operational cost reference only and is not intended for client distribution.\n- Signed Work Order attached to the CRF must be provided at least 2 business days before target date of activity to proceed.';
 
-// Default service options — used as fallback if localStorage cache is empty
 var DEFAULT_SERVICE_OPTIONS = [
   'Data Migration', 'Data Extraction', 'Change HR URL',
   'Rename Database', 'Database Backup', 'Copy Database', 'Others'
@@ -638,22 +629,27 @@ var rowId = 0;
 var templates = [];
 var activeTemplateIdx = -1;
 
+// Map of service name → category, built from the services cache shared with the portal
+var serviceCategoryMap = {};
+
 var CURRENCY_SYMBOLS = { PHP: '₱', USD: '$' };
 function currSym() { return CURRENCY_SYMBOLS[document.getElementById('currency').value] || '₱'; }
 function fmt(n) { return currSym() + ' ' + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
 // ── LOAD SERVICE OPTIONS ──────────────────────────────────────
-// Reads from localStorage services cache (shared with the portal).
-// Falls back to DEFAULT_SERVICE_OPTIONS if cache is empty.
-// Populates both the Service Type dropdown and the Save Template modal dropdown.
+// Reads from the portal's localStorage services cache.
+// Also builds serviceCategoryMap so saveTemplate() can store the category.
 function loadServiceOptions() {
   var options = DEFAULT_SERVICE_OPTIONS;
+  serviceCategoryMap = {};
   try {
     var raw = localStorage.getItem('platops_services_cache');
     if (raw) {
       var svcs = JSON.parse(raw);
       if (Array.isArray(svcs) && svcs.length) {
-        // Sort alphabetically, keep Others last
+        svcs.forEach(function(s) {
+          if (s.name) serviceCategoryMap[s.name] = s.category || '';
+        });
         var others = svcs.filter(function(s) { return s.name.toLowerCase() === 'others'; });
         var rest   = svcs.filter(function(s) { return s.name.toLowerCase() !== 'others'; });
         rest.sort(function(a, b) { return a.name.localeCompare(b.name); });
@@ -673,10 +669,8 @@ function loadServiceOptions() {
   if (tt) tt.innerHTML = optionsHtml;
 }
 
-// Also refresh options when the Save Template modal opens —
-// in case services were updated in the portal during the same session
 function openSaveTemplateModal() {
-  loadServiceOptions(); // refresh dropdown before showing modal
+  loadServiceOptions();
   document.getElementById('templateNameInput').value = '';
   var st = document.getElementById('serviceType').value;
   document.getElementById('templateTypeInput').value = st || '';
@@ -687,18 +681,15 @@ function openSaveTemplateModal() {
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   setToday();
-  loadServiceOptions(); // populate dropdowns from services cache
+  loadServiceOptions();
   loadTemplates();
-  addRow();
-  addRow();
-  addRow();
+  addRow(); addRow(); addRow();
 });
 
 function setToday() {
   var today = new Date().toISOString().split('T')[0];
   document.getElementById('quotDate').value = today;
-  var num = 'PSRV-' + new Date().getFullYear() + '-001';
-  document.getElementById('quotNum').value = num;
+  document.getElementById('quotNum').value = 'PSRV-' + new Date().getFullYear() + '-001';
 }
 
 // ── ROW MANAGEMENT ────────────────────────────────────────────
@@ -711,20 +702,7 @@ function addRow(data) {
 
 function deleteRow(id) {
   rows = rows.filter(function(r){ return r.id !== id; });
-  renderRows();
-  recalc();
-}
-
-function getRowData(id) {
-  var tr = document.getElementById('row-' + id);
-  if (!tr) return null;
-  return {
-    step:   tr.querySelector('.f-step').value,
-    desc:   tr.querySelector('.f-desc').value,
-    effort: parseFloat(tr.querySelector('.f-effort').value) || 0,
-    unit:   'hours',
-    rate:   parseFloat(tr.querySelector('.f-rate').value) || 0
-  };
+  renderRows(); recalc();
 }
 
 function renderRows() {
@@ -754,8 +732,7 @@ function updateRow(id) {
   var rate   = parseFloat(tr.querySelector('.f-rate').value)   || 0;
   var step   = tr.querySelector('.f-step').value;
   var desc   = tr.querySelector('.f-desc').value;
-  var lineTotal = effort * rate;
-  document.getElementById('lc-' + id).textContent = fmt(lineTotal);
+  document.getElementById('lc-' + id).textContent = fmt(effort * rate);
   rows = rows.map(function(r) {
     return r.id === id ? { id:id, step:step, desc:desc, effort:effort, unit:'hours', rate:rate } : r;
   });
@@ -773,11 +750,9 @@ function recalc() {
       document.getElementById('lc-' + r.id).textContent = fmt(effort * rate);
     }
   });
-
   var discPct = parseFloat(document.getElementById('discountPct').value)||0;
   var discAmt = subtotal * (discPct/100);
-  var grand = subtotal - discAmt;
-
+  var grand   = subtotal - discAmt;
   document.getElementById('subtotal').textContent    = fmt(subtotal);
   document.getElementById('discountAmt').textContent = '- ' + fmt(discAmt);
   document.getElementById('grandTotal').textContent  = fmt(grand);
@@ -786,44 +761,25 @@ function recalc() {
 
 // ── TEMPLATES ─────────────────────────────────────────────────
 var LS_KEY = 'sprout_quot_templates_cache';
-
-function lsReadTemplates() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e) { return []; }
-}
-
-function lsWriteTemplates(tmplArr) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(tmplArr)); } catch(e) {}
-}
+function lsReadTemplates()       { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e) { return []; } }
+function lsWriteTemplates(arr)   { try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e) {} }
 
 function forceSyncToSheet() {
   var local = lsReadTemplates();
   if (!local.length) { showStatus('No local templates to sync.'); return; }
-
-  var btn   = document.getElementById('syncBtn');
-  var label = document.getElementById('syncBtnLabel');
-  if (btn)   btn.disabled = true;
+  var btn = document.getElementById('syncBtn'), label = document.getElementById('syncBtnLabel');
+  if (btn) btn.disabled = true;
   if (label) label.textContent = 'Syncing ' + local.length + '…';
-
-  var total = local.length, done = 0, failed = 0;
-
+  var total = local.length, failed = 0;
   function next(idx) {
     if (idx >= total) {
-      if (btn)   btn.disabled = false;
+      if (btn) btn.disabled = false;
       if (label) label.textContent = 'Sync to Sheet';
-      if (failed === 0) {
-        showStatus('All ' + total + ' template(s) synced to sheet ✓');
-        lsWriteTemplates(templates);
-      } else {
-        showStatus(failed + ' template(s) failed to sync. Check connection.');
-      }
+      showStatus(failed === 0 ? 'All ' + total + ' template(s) synced ✓' : failed + ' template(s) failed.');
       return;
     }
-    if (label) label.textContent = 'Syncing ' + (idx + 1) + '/' + total + '…';
-    saveTemplatesToServer(local[idx], function(success) {
-      if (!success) failed++;
-      done++;
-      next(idx + 1);
-    });
+    if (label) label.textContent = 'Syncing ' + (idx+1) + '/' + total + '…';
+    saveTemplatesToServer(local[idx], function(ok) { if (!ok) failed++; next(idx+1); });
   }
   next(0);
 }
@@ -832,48 +788,29 @@ function loadTemplates() {
   var el = document.getElementById('templateList');
   var lsCopy = lsReadTemplates();
   if (lsCopy.length) {
-    templates = lsCopy;
-    renderTemplates();
+    templates = lsCopy; renderTemplates();
     el.insertAdjacentHTML('beforeend', '<div style="font-size:10px;color:var(--text-muted);padding:4px 8px;opacity:.6">Syncing…</div>');
   } else {
     el.innerHTML = '<div class="sidebar-empty"><span style="opacity:.5">Loading templates…</span></div>';
   }
-
   fetch(GAS_URL + '?action=getTemplates')
     .then(function(r){ return r.json(); })
-    .then(function(d){
-      templates = d.templates || [];
-      lsWriteTemplates(templates);
-      renderTemplates();
-    })
-    .catch(function(e){
-      console.warn('GAS template fetch failed, using localStorage fallback:', e);
-      if (!lsCopy.length) { templates = []; renderTemplates(); }
-    });
+    .then(function(d){ templates = d.templates || []; lsWriteTemplates(templates); renderTemplates(); })
+    .catch(function(){ if (!lsCopy.length) { templates = []; renderTemplates(); } });
 }
 
 function saveTemplatesToServer(tmpl, callback) {
-  fetch(GAS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'saveTemplate', template: tmpl })
-  })
-  .then(function() { if (callback) callback(true); })
-  .catch(function(e) { console.warn('Template server sync failed:', e); if (callback) callback(false); });
+  fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'saveTemplate', template:tmpl }) })
+    .then(function() { if (callback) callback(true); })
+    .catch(function() { if (callback) callback(false); });
 }
 
-function deleteTemplateFromServer(name, callback) {
-  fetch(GAS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'deleteTemplate', name: name })
-  })
-  .then(function() { if (callback) callback(); })
-  .catch(function(e) { console.warn('Template delete server sync failed:', e); });
+function deleteTemplateFromServer(name) {
+  fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'deleteTemplate', name:name }) }).catch(function(){});
 }
 
+// ── RENDER TEMPLATES ──────────────────────────────────────────
+// Each template item shows: [Service Type pill] [Category pill] on row 1, then name on row 2.
 function renderTemplates() {
   var el = document.getElementById('templateList');
   if (!templates.length) {
@@ -881,11 +818,18 @@ function renderTemplates() {
     return;
   }
   el.innerHTML = templates.map(function(t, idx) {
-    return '<div class="template-item ' + (activeTemplateIdx===idx?'active':'') + '" onclick="loadTemplate(' + idx + ')">' +
-      '<span class="template-item-name">' + esc(t.name) + '</span>' +
-      (t.type ? '<span class="template-item-type">' + esc(t.type) + '</span>' : '') +
-      '<button class="template-delete" onclick="event.stopPropagation();deleteTemplate(' + idx + ')" title="Delete">✕</button>' +
-    '</div>';
+    // Resolve category: prefer stored t.category, fall back to live map lookup
+    var cat = t.category || serviceCategoryMap[t.type] || '';
+
+    var pillsHtml = '';
+    if (t.type)  pillsHtml += '<span class="template-item-type">'     + esc(t.type) + '</span>';
+    if (cat)     pillsHtml += '<span class="template-item-category">' + esc(cat)    + '</span>';
+
+    return '<div class="template-item ' + (activeTemplateIdx === idx ? 'active' : '') + '" onclick="loadTemplate(' + idx + ')">'
+      + (pillsHtml ? '<div class="template-item-pills">' + pillsHtml + '</div>' : '')
+      + '<div class="template-item-name">' + esc(t.name) + '</div>'
+      + '<button class="template-delete" onclick="event.stopPropagation();deleteTemplate(' + idx + ')" title="Delete">✕</button>'
+      + '</div>';
   }).join('');
 }
 
@@ -898,17 +842,20 @@ function saveTemplate() {
   var rowSnapshot = rows.map(function(r) {
     var tr = document.getElementById('row-' + r.id);
     return {
-      step:   tr ? tr.querySelector('.f-step').value : r.step,
-      desc:   tr ? tr.querySelector('.f-desc').value : r.desc,
+      step:   tr ? tr.querySelector('.f-step').value   : r.step,
+      desc:   tr ? tr.querySelector('.f-desc').value   : r.desc,
       effort: tr ? parseFloat(tr.querySelector('.f-effort').value)||0 : r.effort,
       unit:   'hours',
-      rate:   tr ? parseFloat(tr.querySelector('.f-rate').value)||0 : r.rate
+      rate:   tr ? parseFloat(tr.querySelector('.f-rate').value)||0   : r.rate
     };
   });
 
+  var selectedType = document.getElementById('templateTypeInput').value;
+
   var tmpl = {
     name:        name,
-    type:        document.getElementById('templateTypeInput').value,
+    type:        selectedType,
+    category:    serviceCategoryMap[selectedType] || '',  // stored so renderTemplates can use it without a live lookup
     rows:        rowSnapshot,
     scopeDesc:   document.getElementById('scopeDesc').value,
     addlNotes:   document.getElementById('addlNotes').value,
@@ -917,32 +864,26 @@ function saveTemplate() {
 
   var existingIdx = templates.findIndex(function(t){ return t.name === tmpl.name; });
   if (existingIdx >= 0) { templates[existingIdx] = tmpl; } else { templates.unshift(tmpl); }
+  lsWriteTemplates(templates);
   renderTemplates();
   closeSaveModal();
   showStatus('Template "' + name + '" saved!');
-  lsWriteTemplates(templates);
-
-  saveTemplatesToServer(tmpl, function(success) {});
+  saveTemplatesToServer(tmpl, null);
 }
 
 function loadTemplate(idx) {
   if (!confirm('Load this template? Current items will be replaced.')) return;
   var t = templates[idx];
   activeTemplateIdx = idx;
-
   rows = []; rowId = 0;
   document.getElementById('itemsBody').innerHTML = '';
-
   if (t.serviceType) document.getElementById('serviceType').value = t.serviceType;
   if (t.scopeDesc)   document.getElementById('scopeDesc').value   = t.scopeDesc;
   document.getElementById('addlNotes').value   = t.addlNotes || DEFAULT_NOTES;
   document.getElementById('discountPct').value = t.discountPct || 0;
-
   (t.rows || []).forEach(function(r) { addRow(r); });
   if (!rows.length) addRow();
-
-  recalc();
-  renderTemplates();
+  recalc(); renderTemplates();
   showStatus('Template loaded: ' + t.name);
 }
 
@@ -955,15 +896,14 @@ function deleteTemplate(idx) {
   lsWriteTemplates(templates);
   renderTemplates();
   showStatus('Template deleted.');
-  deleteTemplateFromServer(name, null);
+  deleteTemplateFromServer(name);
 }
 
 // ── NEW QUOTATION ─────────────────────────────────────────────
 function newQuotation() {
   if (!confirm('Start a new quotation? Unsaved changes will be lost.')) return;
   activeTemplateIdx = -1;
-  ['clientName','hrUrl','payrollCodes','csm','jiraRef',
-   'scopeDesc','preparedBy','preparedByRole'].forEach(function(id) {
+  ['clientName','hrUrl','payrollCodes','csm','jiraRef','scopeDesc','preparedBy','preparedByRole'].forEach(function(id) {
     document.getElementById(id).value = '';
   });
   document.getElementById('addlNotes').value   = DEFAULT_NOTES;
@@ -972,25 +912,21 @@ function newQuotation() {
   rows = []; rowId = 0;
   document.getElementById('itemsBody').innerHTML = '';
   addRow(); addRow(); addRow();
-  setToday();
-  recalc();
-  renderTemplates();
+  setToday(); recalc(); renderTemplates();
 }
 
 // ── PDF EXPORT ────────────────────────────────────────────────
 function exportPDF() {
   var qn = document.getElementById('quotNum').value || 'PSRV-—';
   var qd = document.getElementById('quotDate').value;
-  document.getElementById('printQuotNum').textContent = qn;
-  document.getElementById('printDate').textContent    = qd ? 'Date: ' + formatDateDisplay(qd) : '';
+  document.getElementById('printQuotNum').textContent        = qn;
+  document.getElementById('printDate').textContent           = qd ? 'Date: ' + formatDateDisplay(qd) : '';
   document.getElementById('printPreparedBy').textContent     = document.getElementById('preparedBy').value || '—';
   document.getElementById('printPreparedByRole').textContent = document.getElementById('preparedByRole').value || '—';
   document.getElementById('printFooterQuot').textContent     = qn;
-
   var svcType  = document.getElementById('serviceType').value || '—';
   var clientNm = document.getElementById('clientName').value  || '—';
   document.getElementById('printCostTitle').textContent = 'Cost Summary for ' + svcType + ' : ' + clientNm;
-
   syncPrintValues();
   window.print();
 }
@@ -1011,26 +947,18 @@ function syncPrintValues() {
     pv.textContent = val;
     el.parentNode.insertBefore(pv, el.nextSibling);
   });
-
   document.querySelectorAll('#itemsBody tr').forEach(function(tr) {
-    var stepInput   = tr.querySelector('.f-step');
-    var effortInput = tr.querySelector('.f-effort');
+    var stepInput = tr.querySelector('.f-step'), effortInput = tr.querySelector('.f-effort');
     if (stepInput) {
-      var td = stepInput.closest('td');
-      var existing = td.querySelector('.print-value');
-      if (existing) existing.remove();
-      var pv = document.createElement('span');
-      pv.className = 'print-value';
-      pv.textContent = stepInput.value || '—';
+      var td = stepInput.closest('td'), ex = td.querySelector('.print-value');
+      if (ex) ex.remove();
+      var pv = document.createElement('span'); pv.className = 'print-value'; pv.textContent = stepInput.value || '—';
       td.appendChild(pv);
     }
     if (effortInput) {
-      var td2 = effortInput.closest('td');
-      var existing2 = td2.querySelector('.print-value');
-      if (existing2) existing2.remove();
-      var pv2 = document.createElement('span');
-      pv2.className = 'print-value';
-      pv2.textContent = effortInput.value || '0';
+      var td2 = effortInput.closest('td'), ex2 = td2.querySelector('.print-value');
+      if (ex2) ex2.remove();
+      var pv2 = document.createElement('span'); pv2.className = 'print-value'; pv2.textContent = effortInput.value || '0';
       td2.appendChild(pv2);
     }
   });
@@ -1043,7 +971,6 @@ function formatDateDisplay(d) {
   return months[parseInt(p[1])-1] + ' ' + p[2] + ', ' + p[0];
 }
 
-// ── UTILS ─────────────────────────────────────────────────────
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -1055,13 +982,8 @@ function showStatus(msg) {
   setTimeout(function(){ bar.classList.remove('show'); }, 3000);
 }
 
-document.getElementById('saveModal').addEventListener('click', function(e) {
-  if (e.target === this) closeSaveModal();
-});
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeSaveModal();
-});
+document.getElementById('saveModal').addEventListener('click', function(e) { if (e.target === this) closeSaveModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSaveModal(); });
 </script>
 </body>
 </html>
