@@ -27,8 +27,6 @@
   font-family:'Rubik',sans-serif;
 }
 html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text)}
-
-/* ── GATE ── */
 .gate{position:fixed;inset:0;background:var(--k800);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;transition:opacity 0.4s}
 .gate.out{opacity:0;pointer-events:none}
 .gate-card{background:var(--surface);border-radius:14px;padding:2.75rem 2.25rem;width:100%;max-width:400px;text-align:center}
@@ -48,8 +46,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .gate-loading-spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite}
 .gate-loading p{font-size:0.8rem;color:var(--muted)}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── SHELL ── */
 .app{display:none;flex-direction:column;height:100vh;overflow:hidden}
 .app.on{display:flex}
 .shell-header{background:var(--k800);padding:0 1.75rem;height:52px;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.25)}
@@ -62,20 +58,14 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sh-user{font-size:0.75rem;color:var(--k300);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px}
 .sh-logout{font-family:'Rubik',sans-serif;font-size:0.75rem;color:var(--k300);background:none;border:1px solid rgba(125,212,154,0.25);border-radius:6px;padding:5px 11px;cursor:pointer;transition:all 0.15s}
 .sh-logout:hover{border-color:var(--k300);color:#fff}
-
-/* ── TABS ── */
 .tab-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;flex-shrink:0}
 .tab{font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--muted);padding:0.75rem 1.125rem;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;display:flex;align-items:center;gap:7px;transition:color 0.15s,border-color 0.15s;white-space:nowrap}
 .tab svg{width:14px;height:14px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:500}
-
-/* ── VIEWS ── */
 .views{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .view{display:none;flex:1;overflow:hidden;flex-direction:column}
 .view.on{display:flex}
-
-/* ── LANDING ── */
 .landing{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:1.5rem 1.5rem 2rem}
 .landing::-webkit-scrollbar{width:4px}
 .landing::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -89,8 +79,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .lcard-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .lcard h3{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:4px}
 .lcard p{font-size:0.76rem;color:var(--muted);line-height:1.55}
-
-/* ── ANALYTICS STRIP (tracker inline) ── */
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
 .analytics.on{display:flex}
 .analytics-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -102,28 +90,22 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc-sub{font-size:0.62rem;color:var(--muted);margin-top:2px}
 .sc.active .sc-label,.sc.active .sc-sub{color:var(--k600)}
 .sc.active .sc-value{color:var(--primary-dk)}
-.sc[data-lc="Rejected"].active{border-color:var(--tomato);background:var(--tomato-lt)}
-.sc[data-lc="Rejected"].active .sc-label,.sc[data-lc="Rejected"].active .sc-sub{color:#7a1010}
-.sc[data-lc="Rejected"].active .sc-value{color:var(--tomato)}
-.sc[data-lc="On Hold"].active{border-color:var(--mango);background:var(--mango-lt)}
-.sc[data-lc="On Hold"].active .sc-label,.sc[data-lc="On Hold"].active .sc-sub{color:#7a4800}
-.sc[data-lc="On Hold"].active .sc-value{color:var(--mango)}
+.sc[data-lc="Closed"].active{border-color:var(--tomato);background:var(--tomato-lt)}
+.sc[data-lc="Closed"].active .sc-label,.sc[data-lc="Closed"].active .sc-sub{color:#7a1010}
+.sc[data-lc="Closed"].active .sc-value{color:var(--tomato)}
+.sc[data-lc="For Team Assessment"].active{border-color:var(--mango);background:var(--mango-lt)}
+.sc[data-lc="For Team Assessment"].active .sc-label,.sc[data-lc="For Team Assessment"].active .sc-sub{color:#7a4800}
+.sc[data-lc="For Team Assessment"].active .sc-value{color:var(--mango)}
 .analytics-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .meta-pill span{color:var(--text);font-weight:600}
-
-/* ── LAYOUT ── */
 .body{display:flex;flex:1;overflow:hidden}
-
-/* ── SIDEBAR ── */
 .sidebar{width:var(--sw);flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
 .sb-search{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center}
 .sb-search input{flex:1;font-family:'Rubik',sans-serif;font-size:0.8rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s}
 .sb-search input:focus{border-color:var(--primary)}
 .sb-refresh{font-family:'Rubik',sans-serif;font-size:0.75rem;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:6px 9px;cursor:pointer;flex-shrink:0;transition:all 0.15s}
 .sb-refresh:hover{border-color:var(--k300)}
-
-/* ── TRACKER CATEGORY FILTER ── */
 .sb-cat-section{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
 .sb-cat-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .sb-cat-pills{display:flex;gap:5px;flex-wrap:wrap}
@@ -133,8 +115,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sb-list{flex:1;overflow-y:auto}
 .sb-list::-webkit-scrollbar{width:3px}
 .sb-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-/* ── REQUEST CARD ── */
 .rcard{padding:11px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
 .rcard:hover{background:var(--bg)}
 .rcard.on{background:var(--primary-lt);border-left:3px solid var(--primary)}
@@ -145,8 +125,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .rc-date{font-size:0.67rem;color:var(--muted)}
 .rc-key{font-size:0.67rem;color:var(--primary);font-weight:600}
 .empty-sb{padding:2rem;text-align:center;color:var(--muted);font-size:0.8rem}
-
-/* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:0.62rem;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:0.04em}
 .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .b-green{background:#d4f5df;color:#0d5a24}.b-green::before{background:#2a9e50}
@@ -161,8 +139,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .cost-waived{background:#ede9ff;color:#3b1d9e}
 .cost-pending{background:#f4f5f4;color:#4a4b4a}
 .cost-withdrawn{background:#fff3cd;color:#7a4800}
-
-/* ── DETAIL ── */
 .detail{flex:1;overflow-y:auto;padding:1.75rem}
 .detail::-webkit-scrollbar{width:4px}
 .detail::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -182,8 +158,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .iitem label{display:block;font-size:0.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px}
 .iitem span{font-size:0.8125rem;color:var(--text)}
 .iitem.full{grid-column:1/-1}
-
-/* ── STEPPER ── */
 .stepper{display:flex;align-items:flex-start;gap:0;margin:4px 0 0;overflow-x:auto;padding-bottom:4px}
 .step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px;position:relative}
 .step:not(:last-child)::after{content:'';position:absolute;top:10px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
@@ -195,8 +169,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .step.current .step-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary)}
 .step-label{font-size:0.6rem;text-align:center;color:var(--muted);margin-top:6px;line-height:1.3;padding:0 2px}
 .step.done .step-label,.step.current .step-label{color:var(--primary-dk);font-weight:600}
-
-/* ── TICKET CARDS ── */
 .tcard{border:1.5px solid var(--border);border-radius:8px;margin-bottom:9px;overflow:hidden}
 .tcard:last-child{margin-bottom:0}
 .tc-hd{padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;background:var(--bg);cursor:pointer;transition:background 0.12s}
@@ -221,14 +193,10 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .ci-body{font-size:0.78rem;color:var(--text);line-height:1.5}
 .no-c{font-size:0.78rem;color:var(--muted);font-style:italic;margin-top:8px}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
-
-/* ── REJECTED BANNER ── */
 .rejected-banner{background:var(--tomato-lt);border:1.5px solid #fbbdbd;border-radius:8px;padding:12px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px}
 .rejected-banner svg{flex-shrink:0;color:var(--tomato)}
 .rejected-banner p{font-size:0.8125rem;color:#7a1010;line-height:1.5}
 .rejected-banner strong{font-weight:600}
-
-/* ── CSM COMMENT BOX ── */
 .csm-comment-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
 .csm-comment-box .dsh{padding:9px 14px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
 .csm-comment-box .dsh h3{font-size:0.67rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted)}
@@ -243,8 +211,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .csm-comment-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
 .csm-comment-ok{color:var(--primary-dk);font-weight:500}
 .csm-comment-err{color:var(--tomato)}
-
-/* ── ENHANCEMENT TAB ── */
 .enh-shell{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .enh-scroll{flex:1;overflow-y:auto;padding:0}
 .enh-scroll::-webkit-scrollbar{width:4px}
@@ -287,8 +253,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .enh-vote-btn:hover{border-color:var(--primary);color:var(--primary)}
 .enh-vote-btn.voted{border-color:var(--primary);background:var(--primary-lt);color:var(--primary-dk)}
 .enh-sort-pills{display:flex;gap:5px;flex-wrap:wrap}
-
-/* ── ANALYTICS PAGE ── */
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .toolbar h2{font-size:1.25rem;font-weight:600;color:var(--text)}
 .toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -337,8 +301,6 @@ tr:hover td{background:var(--bg)}
 .analytics-view-scroll{flex:1;overflow-y:auto;padding:1.75rem}
 .analytics-view-scroll::-webkit-scrollbar{width:4px}
 .analytics-view-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-/* ── SERVICES VIEW ── */
 .sv-shell{display:flex;flex:1;overflow:hidden}
 .sv-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
 .sv-sidebar-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
@@ -369,13 +331,9 @@ tr:hover td{background:var(--bg)}
 .sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
 .sv-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;flex:1}
-.sv-card-meta{display:flex;flex-direction:column;gap:4px;margin-top:2px}
-.sv-card-meta-row{display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--muted)}
-.sv-card-meta-row svg{flex-shrink:0;opacity:0.6}
 .sv-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px}
 .sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
 .sv-card-actions{display:flex;gap:6px}
-.sv-card-actions button{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
 .sv-btn-edit,.sv-btn-del{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
 .sv-btn-edit{background:var(--bg);border:1.5px solid var(--border);color:var(--muted)}
 .sv-btn-edit:hover{border-color:var(--primary);color:var(--primary)}
@@ -383,7 +341,6 @@ tr:hover td{background:var(--bg)}
 .sv-btn-del:hover{background:#ffd0d0}
 .sv-btn-submit{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s;white-space:nowrap}
 .sv-btn-submit:hover{background:var(--primary-dk)}
-.sv-card{cursor:pointer}
 .sv-card-expand{display:none;margin-top:8px;padding-top:12px;border-top:1px solid var(--border);animation:svExpand 0.18s ease}
 .sv-card-expand.open{display:block}
 @keyframes svExpand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
@@ -395,16 +352,12 @@ tr:hover td{background:var(--bg)}
 .sv-card.expanded .sv-card-chevron{transform:rotate(180deg)}
 .sv-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.875rem;grid-column:1/-1}
 .sv-empty p{margin-top:8px}
-
-/* ── FORM IFRAME VIEW ── */
 .form-iframe-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .form-iframe-loader{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;transition:opacity 0.35s}
 .form-iframe-loader.hidden{opacity:0;pointer-events:none}
 .form-iframe-loader p{font-size:0.8rem;color:var(--muted)}
 .form-iframe-fallback{position:absolute;top:12px;right:16px;z-index:15;font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .form-iframe-fallback a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
-
-/* ── SERVICE MODAL ── */
 .svc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;padding:1.5rem}
 .svc-modal-overlay.open{display:flex}
 .svc-modal{background:var(--surface);border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.18);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
@@ -420,12 +373,8 @@ tr:hover td{background:var(--bg)}
 .svc-modal-actions .btn-save{font-family:'Rubik',sans-serif;font-size:0.8125rem;font-weight:500;padding:7px 20px;border-radius:7px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s}
 .svc-modal-actions .btn-save:hover{background:var(--primary-dk)}
 .svc-modal-actions .btn-save:disabled{opacity:0.6;cursor:not-allowed}
-
-/* ── TOAST ── */
 .toast{position:fixed;bottom:20px;right:28px;background:var(--k800);color:#fff;padding:10px 16px;border-radius:8px;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;box-shadow:0 6px 32px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:9999;display:flex;align-items:center;gap:8px}
 .toast.show{transform:translateY(0);opacity:1}
-
-/* ── PROCESS VIEW ── */
 .process-scroll{flex:1;overflow-y:auto;padding:0}
 .process-scroll::-webkit-scrollbar{width:4px}
 .process-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -613,18 +562,20 @@ tr:hover td{background:var(--bg)}
             <div class="proc-section-label">02 — Request Lifecycle</div>
             <div class="proc-section-title">From submission to completion</div>
             <div class="proc-lifecycle" style="margin-bottom:1rem">
-              <div class="proc-step"><div class="proc-step-num">1</div><div class="proc-step-label">Quotation<br>Request</div><div class="proc-step-sub">You submit this form</div></div>
-              <div class="proc-step"><div class="proc-step-num">2</div><div class="proc-step-label">Assessment &amp;<br>Coordination</div><div class="proc-step-sub">Ops reviews &amp; estimates</div></div>
-              <div class="proc-step"><div class="proc-step-num">3</div><div class="proc-step-label">Scheduling</div><div class="proc-step-sub">If downtime is required</div></div>
-              <div class="proc-step"><div class="proc-step-num">4</div><div class="proc-step-label">CRF + Signed<br>Work Order</div><div class="proc-step-sub">Required to proceed</div></div>
-              <div class="proc-step"><div class="proc-step-num">5</div><div class="proc-step-label">Activity<br>Execution</div><div class="proc-step-sub">Work is carried out</div></div>
+              <div class="proc-step"><div class="proc-step-num">1</div><div class="proc-step-label">Request<br>Logged</div><div class="proc-step-sub">You submit this form</div></div>
+              <div class="proc-step"><div class="proc-step-num">2</div><div class="proc-step-label">For<br>Scoping</div><div class="proc-step-sub">Ops reviews &amp; estimates</div></div>
+              <div class="proc-step"><div class="proc-step-num">3</div><div class="proc-step-label">For<br>Quotation</div><div class="proc-step-sub">Quotation in progress</div></div>
+              <div class="proc-step"><div class="proc-step-num">4</div><div class="proc-step-label">Quotation<br>Done</div><div class="proc-step-sub">CRF + Work Order</div></div>
+              <div class="proc-step"><div class="proc-step-num">5</div><div class="proc-step-label">For<br>Execution</div><div class="proc-step-sub">CRF raised</div></div>
+              <div class="proc-step"><div class="proc-step-num">6</div><div class="proc-step-label">Execution<br>Done</div><div class="proc-step-sub">Work completed</div></div>
             </div>
             <div class="proc-step-notes">
-              <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>Quotation Request</strong><span>Submit through this portal with client details, service needed, target date, and known constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>Assessment &amp; Coordination</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>Scheduling <span style="font-weight:400;color:var(--muted)">(if downtime is required)</span></strong><span>For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>CRF + Signed Work Order</strong><span>Must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without these documents.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">5</div><div class="proc-step-note-body"><strong>Activity Execution</strong><span>The service is executed by the assigned Platform Ops team member. Results are validated and the request is updated in the tracker. The requester and CSM are notified upon completion.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>Request Logged</strong><span>Submit through this portal with client details, service needed, target date, and known constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Quotation Done</strong><span>Must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order attached to the CRF.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">5</div><div class="proc-step-note-body"><strong>For Execution</strong><span>The CRF has been raised and execution is scheduled. The assigned Platform Ops team member is preparing to carry out the work.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">6</div><div class="proc-step-note-body"><strong>Execution Done</strong><span>The service has been executed, results validated, and the request updated in the tracker. The requester and CSM are notified upon completion.</span></div></div>
             </div>
           </div>
           <div class="proc-section">
@@ -654,7 +605,7 @@ tr:hover td{background:var(--bg)}
                   <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
                   <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
                   <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
-                  <tr><td>4</td><td>Tracker updated and request marked as <strong>Request Done</strong>.</td></tr>
+                  <tr><td>4</td><td>Tracker updated and request marked as <strong>Execution Done</strong>.</td></tr>
                   <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
                 </tbody>
               </table>
@@ -707,15 +658,14 @@ tr:hover td{background:var(--bg)}
       <div class="analytics" id="analytics">
         <div class="analytics-row" id="scRow">
           <div class="sc" data-lc="all" onclick="scFilter(this)"><div class="sc-label">Total</div><div class="sc-value" id="sc-total">—</div><div class="sc-sub">All requests</div></div>
-          <div class="sc" data-lc="For Quotation" onclick="scFilter(this)"><div class="sc-label">For Quotation</div><div class="sc-value" id="sc-fq">—</div><div class="sc-sub">Awaiting review</div></div>
-          <div class="sc" data-lc="Ongoing Review" onclick="scFilter(this)"><div class="sc-label">Ongoing Review</div><div class="sc-value" id="sc-or">—</div><div class="sc-sub">Being reviewed</div></div>
-          <div class="sc" data-lc="On Hold" onclick="scFilter(this)"><div class="sc-label">On Hold</div><div class="sc-value" id="sc-oh">—</div><div class="sc-sub">Pending clarification</div></div>
-          <div class="sc" data-lc="Quotation Provided" onclick="scFilter(this)"><div class="sc-label">Quotation Provided</div><div class="sc-value" id="sc-qp">—</div><div class="sc-sub">Awaiting CRF</div></div>
-          <div class="sc" data-lc="For Execution / Schedule" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
-          <div class="sc" data-lc="Ongoing Execution / Activity" onclick="scFilter(this)"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="sc-oe">—</div><div class="sc-sub">In execution</div></div>
-          <div class="sc" data-lc="Request Done" onclick="scFilter(this)"><div class="sc-label">Done</div><div class="sc-value" id="sc-rd">—</div><div class="sc-sub">Completed</div></div>
+          <div class="sc" data-lc="Request Logged" onclick="scFilter(this)"><div class="sc-label">Request Logged</div><div class="sc-value" id="sc-rl">—</div><div class="sc-sub">Backlog</div></div>
+          <div class="sc" data-lc="For Scoping" onclick="scFilter(this)"><div class="sc-label">For Scoping</div><div class="sc-value" id="sc-fs">—</div><div class="sc-sub">Under review</div></div>
+          <div class="sc" data-lc="For Quotation" onclick="scFilter(this)"><div class="sc-label">For Quotation</div><div class="sc-value" id="sc-fq">—</div><div class="sc-sub">Active quotation</div></div>
+          <div class="sc" data-lc="For Team Assessment" onclick="scFilter(this)"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="sc-ta">—</div><div class="sc-sub">Pending clarification</div></div>
           <div class="sc" data-lc="Quotation Done" onclick="scFilter(this)"><div class="sc-label">Quotation Done</div><div class="sc-value" id="sc-qd">—</div><div class="sc-sub">No execution</div></div>
-          <div class="sc" data-lc="Rejected" onclick="scFilter(this)"><div class="sc-label">Rejected / Cancelled</div><div class="sc-value" id="sc-rej">—</div><div class="sc-sub">Request closed</div></div>
+          <div class="sc" data-lc="For Execution" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
+          <div class="sc" data-lc="Execution Done" onclick="scFilter(this)"><div class="sc-label">Execution Done</div><div class="sc-value" id="sc-ed">—</div><div class="sc-sub">Completed</div></div>
+          <div class="sc" data-lc="Closed" onclick="scFilter(this)"><div class="sc-label">Closed</div><div class="sc-value" id="sc-cl">—</div><div class="sc-sub">Request closed</div></div>
         </div>
         <div class="analytics-meta" id="analyticsMeta"></div>
       </div>
@@ -794,15 +744,14 @@ tr:hover td{background:var(--bg)}
           </div>
           <div class="sc-grid">
             <div class="sc-an highlight"><div class="sc-label">Total Requests</div><div class="sc-value" id="an-total">—</div><div class="sc-sub">In selected period</div></div>
-            <div class="sc-an"><div class="sc-label">For Quotation</div><div class="sc-value" id="an-fq">—</div><div class="sc-sub">Awaiting review</div></div>
-            <div class="sc-an"><div class="sc-label">Ongoing Review</div><div class="sc-value" id="an-or">—</div><div class="sc-sub">Being reviewed</div></div>
-            <div class="sc-an on-hold"><div class="sc-label">On Hold</div><div class="sc-value" id="an-oh">—</div><div class="sc-sub">Pending clarification</div></div>
-            <div class="sc-an"><div class="sc-label">Quotation Provided</div><div class="sc-value" id="an-qp">—</div><div class="sc-sub">Awaiting CRF</div></div>
-            <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
-            <div class="sc-an"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="an-oe">—</div><div class="sc-sub">In execution</div></div>
-            <div class="sc-an"><div class="sc-label">Request Done</div><div class="sc-value" id="an-rd">—</div><div class="sc-sub">Completed</div></div>
+            <div class="sc-an"><div class="sc-label">Request Logged</div><div class="sc-value" id="an-rl">—</div><div class="sc-sub">Backlog</div></div>
+            <div class="sc-an"><div class="sc-label">For Scoping</div><div class="sc-value" id="an-fs">—</div><div class="sc-sub">Under review</div></div>
+            <div class="sc-an"><div class="sc-label">For Quotation</div><div class="sc-value" id="an-fq">—</div><div class="sc-sub">Active quotation</div></div>
+            <div class="sc-an on-hold"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="an-ta">—</div><div class="sc-sub">Pending clarification</div></div>
             <div class="sc-an"><div class="sc-label">Quotation Done</div><div class="sc-value" id="an-qd">—</div><div class="sc-sub">No execution ticket</div></div>
-            <div class="sc-an rejected"><div class="sc-label">Rejected / Cancelled</div><div class="sc-value" id="an-rej">—</div><div class="sc-sub">Request closed</div></div>
+            <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
+            <div class="sc-an"><div class="sc-label">Execution Done</div><div class="sc-value" id="an-ed">—</div><div class="sc-sub">Completed</div></div>
+            <div class="sc-an rejected"><div class="sc-label">Closed</div><div class="sc-value" id="an-cl">—</div><div class="sc-sub">Request closed</div></div>
             <div class="sc-an"><div class="sc-label">Avg. Resolution</div><div class="sc-value" id="an-avg">—</div><div class="sc-sub">Days to complete</div></div>
             <div class="sc-an revenue-in"><div class="sc-label">Revenue Received</div><div class="sc-value" id="an-rev-in">—</div><div class="sc-sub">Paid requests total</div></div>
             <div class="sc-an revenue-out"><div class="sc-label">Revenue Lost</div><div class="sc-value" id="an-rev-out">—</div><div class="sc-sub">Waived requests total</div></div>
@@ -850,7 +799,6 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
           <div class="enh-body">
-            <!-- List column -->
             <div class="enh-list-col">
               <div class="enh-list-header">
                 <h3>Logged Requests</h3>
@@ -861,7 +809,6 @@ tr:hover td{background:var(--bg)}
               </div>
               <div id="enhList"><div class="enh-empty"><span class="spinner"></span></div></div>
             </div>
-            <!-- Form column -->
             <div class="enh-form-col">
               <div class="enh-form-card">
                 <h3>Submit an Idea</h3>
@@ -922,12 +869,10 @@ tr:hover td{background:var(--bg)}
 </div>
 
 <script>
-// ── CONFIG ─────────────────────────────────────────────────
 var GAS_URL     = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
 var SESSION_KEY = 'platops_v2';
 var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false, enhInit=false;
 
-// ── GOOGLE SIGN-IN ─────────────────────────────────────────
 var GOOGLE_CLIENT_ID = '32164233896-7us7hgll8adt8hooclcmk4ugrab12rp5.apps.googleusercontent.com';
 var ALLOWED_DOMAIN   = 'sprout.ph';
 
@@ -1002,7 +947,6 @@ function logout() {
   location.reload();
 }
 
-// ── APP INIT ───────────────────────────────────────────────
 function initApp(email, role) {
   userEmail = email; userRole = role || 'client';
   isAdmin    = userRole === 'admin';
@@ -1026,7 +970,6 @@ function initApp(email, role) {
   loadServicesData();
 }
 
-// ── NAVIGATION ─────────────────────────────────────────────
 var formIframeLoaded = false;
 
 function openView(name) {
@@ -1088,9 +1031,6 @@ if (saved) {
   } catch(e) { sessionStorage.removeItem(SESSION_KEY); }
 }
 
-// ═══════════════════════════════════════════════════════════
-// ── SERVICES MODULE ────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════
 var SVC_LS_KEY = 'platops_services_cache';
 var servicesList = [];
 
@@ -1233,11 +1173,9 @@ function showToast(msg) { var t = document.getElementById('toast'); document.get
 document.getElementById('svcModal').addEventListener('click', function(e) { if (e.target === this) closeSvcModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSvcModal(); });
 
-// ═══════════════════════════════════════════════════════════
-// ── TRACKER GLOBALS ─────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════
 var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
-var LIFECYCLE_STEPS = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Quotation Done','Request Done'];
+// ── UPDATED: new lifecycle steps ──────────────────────────────────────────────
+var LIFECYCLE_STEPS = ['Request Logged','For Scoping','For Quotation','Quotation Done','For Execution','Execution Done'];
 var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
 
 function renderCatPills() {
@@ -1275,10 +1213,10 @@ function matches(s) {
     if (activeCat === '__uncategorized__') { if (sCat) return false; }
     else { if (sCat.toLowerCase() !== activeCat.toLowerCase()) return false; }
   }
-  // Clicking the Rejected/Cancelled scorecard shows both statuses
-  if (activeSC === 'Rejected') {
+  // Closed scorecard groups both terminal states
+  if (activeSC === 'Closed') {
     var slc = s.lifecycle || '';
-    if (slc !== 'Rejected' && slc !== 'Cancelled') return false;
+    if (slc !== 'Not doable or out of scope' && slc !== 'Request no longer needed') return false;
   } else if (activeSC !== 'all' && (s.lifecycle || '') !== activeSC) return false;
   var q = document.getElementById('srch').value.toLowerCase();
   if (!q) return true;
@@ -1296,10 +1234,7 @@ var _listLoading = false;
 
 async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
   var SLOW_THRESHOLD = 20000;
-  var slowTimer = setTimeout(function() {
-    if (onSlowCallback) onSlowCallback();
-  }, SLOW_THRESHOLD);
-
+  var slowTimer = setTimeout(function() { if (onSlowCallback) onSlowCallback(); }, SLOW_THRESHOLD);
   var lastErr;
   var delays = [0, 5000, 10000];
   for (var i = 0; i < maxAttempts; i++) {
@@ -1308,9 +1243,7 @@ async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
       var res = await fetch(url);
       clearTimeout(slowTimer);
       return await res.json();
-    } catch(err) {
-      lastErr = err;
-    }
+    } catch(err) { lastErr = err; }
   }
   clearTimeout(slowTimer);
   throw lastErr;
@@ -1323,24 +1256,15 @@ async function loadList() {
   var cached   = sessionStorage.getItem(cacheKey);
   var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
   var url = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
-
   if (cached) {
-    try {
-      var cd = JSON.parse(cached);
-      all = cd.data.submissions || [];
-      renderCatPills(); render();
-    } catch(e) {}
+    try { var cd = JSON.parse(cached); all = cd.data.submissions || []; renderCatPills(); render(); } catch(e) {}
   } else {
     document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
   }
-
   var onSlow = function() {
     var el = document.getElementById('sbList');
-    if (el && (!all || !all.length)) {
-      el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Still extracting latest data — hang tight…</span></div>';
-    }
+    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Still extracting latest data — hang tight…</span></div>';
   };
-
   try {
     var d = await fetchListWithRetry(url, 3, onSlow);
     sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
@@ -1348,13 +1272,9 @@ async function loadList() {
     renderCatPills(); render();
   } catch(e) {
     var el = document.getElementById('sbList');
-    if (el && (!all || !all.length)) {
-      el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
-    }
+    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
     console.warn('loadList: all retries exhausted', e);
-  } finally {
-    _listLoading = false;
-  }
+  } finally { _listLoading = false; }
 }
 
 async function refresh() {
@@ -1374,15 +1294,14 @@ async function loadAnalytics() {
     if (!data || data.error) return;
     var lc = data.lifecycleCounts || {};
     document.getElementById('sc-total').textContent = data.total != null ? data.total : '—';
-    document.getElementById('sc-fq').textContent  = lc['For Quotation']                  != null ? lc['For Quotation']                  : '—';
-    document.getElementById('sc-or').textContent  = lc['Ongoing Review']                 != null ? lc['Ongoing Review']                 : '—';
-    document.getElementById('sc-oh').textContent  = lc['On Hold']                        != null ? lc['On Hold']                        : '—';
-    document.getElementById('sc-qp').textContent  = lc['Quotation Provided']             != null ? lc['Quotation Provided']             : '—';
-    document.getElementById('sc-fe').textContent  = lc['For Execution / Schedule']       != null ? lc['For Execution / Schedule']       : '—';
-    document.getElementById('sc-oe').textContent  = lc['Ongoing Execution / Activity']   != null ? lc['Ongoing Execution / Activity']   : '—';
-    document.getElementById('sc-rd').textContent  = lc['Request Done']                   != null ? lc['Request Done']                   : '—';
-    document.getElementById('sc-qd').textContent  = lc['Quotation Done']                 != null ? lc['Quotation Done']                 : '—';
-    document.getElementById('sc-rej').textContent = ((lc['Rejected'] || 0) + (lc['Cancelled'] || 0)) || '—';
+    document.getElementById('sc-rl').textContent  = lc['Request Logged']              != null ? lc['Request Logged']              : '—';
+    document.getElementById('sc-fs').textContent  = lc['For Scoping']                 != null ? lc['For Scoping']                 : '—';
+    document.getElementById('sc-fq').textContent  = lc['For Quotation']               != null ? lc['For Quotation']               : '—';
+    document.getElementById('sc-ta').textContent  = lc['For Team Assessment']         != null ? lc['For Team Assessment']         : '—';
+    document.getElementById('sc-qd').textContent  = lc['Quotation Done']              != null ? lc['Quotation Done']              : '—';
+    document.getElementById('sc-fe').textContent  = lc['For Execution']               != null ? lc['For Execution']               : '—';
+    document.getElementById('sc-ed').textContent  = lc['Execution Done']              != null ? lc['Execution Done']              : '—';
+    document.getElementById('sc-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
     var meta = document.getElementById('analyticsMeta');
     var pills = [];
     if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Withdrawn: <span>' + (data.byCost['Withdrawn']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
@@ -1395,13 +1314,12 @@ async function loadAnalytics() {
   } catch(e) {}
 }
 
-// ── RENDER LIST ────────────────────────────────────────────
 function render() {
   var filtered = all.filter(matches);
   var list = document.getElementById('sbList');
   if (!filtered.length) { list.innerHTML = '<div class="empty-sb">No requests found.</div>'; return; }
   list.innerHTML = filtered.map(function(s) {
-    var lc = s.lifecycle || 'For Quotation';
+    var lc = s.lifecycle || 'Request Logged';
     var bcls = lcBadge(lc);
     var dateStr = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
     var isOn = s.jiraKey === activeKey ? 'on' : '';
@@ -1413,7 +1331,6 @@ function render() {
   }).join('');
 }
 
-// ── SELECT & DETAIL ────────────────────────────────────────
 async function select(jiraKey, el) {
   activeKey = jiraKey;
   document.querySelectorAll('.rcard').forEach(c => c.classList.remove('on'));
@@ -1444,9 +1361,9 @@ function renderDetail(s, d) {
     + (s && s.urgency ? '<span>·</span><span>' + esc(s.urgency) + ' urgency</span>' : '')
     + '</div></div>';
 
-  if (lc === 'Rejected' || lc === 'Cancelled') {
-    var closedLabel = lc === 'Cancelled' ? 'This request has been cancelled.' : 'This request has been rejected.';
-    var closedDetail = lc === 'Cancelled'
+  if (lc === 'Not doable or out of scope' || lc === 'Request no longer needed') {
+    var closedLabel = lc === 'Request no longer needed' ? 'This request has been cancelled.' : 'This request has been rejected or is out of scope.';
+    var closedDetail = lc === 'Request no longer needed'
       ? 'Check the Jira ticket comments for context. If you believe this was in error, please contact the Platform Operations team.'
       : 'Check the Jira ticket comments below for the reason provided by Platform Operations. If you believe this was in error, please resubmit or contact the team directly.';
     html += '<div class="rejected-banner">'
@@ -1454,10 +1371,10 @@ function renderDetail(s, d) {
       + '<p><strong>' + closedLabel + '</strong> ' + closedDetail + '</p>'
       + '</div>';
   }
-  if (lc === 'On Hold') {
+  if (lc === 'For Team Assessment') {
     html += '<div style="background:var(--mango-lt);border:1.5px solid #fde8b0;border-radius:8px;padding:12px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px">'
       + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--mango)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-      + '<p style="font-size:0.8125rem;color:#7a4800;line-height:1.5"><strong style="font-weight:600">This request is on hold.</strong> Further clarification or dev assessment is needed before it can proceed. Check the Jira ticket comments for details or reach out to Platform Operations.</p>'
+      + '<p style="font-size:0.8125rem;color:#7a4800;line-height:1.5"><strong style="font-weight:600">This request is pending team assessment.</strong> Further clarification or dev assessment is needed before it can proceed. Check the Jira ticket comments for details or reach out to Platform Operations.</p>'
       + '</div>';
   }
 
@@ -1516,8 +1433,8 @@ function renderDetail(s, d) {
       html += renderComments(t.comments) + '</div></div>';
     });
     html += '</div></div>';
-  } else if (lc !== 'Rejected' && lc !== 'Cancelled') {
-    var noST = ['For Quotation','Ongoing Review','Quotation Provided'].includes(lc);
+  } else if (lc !== 'Not doable or out of scope' && lc !== 'Request no longer needed') {
+    var noST = ['Request Logged','For Scoping','For Quotation'].includes(lc);
     if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
   }
   if (userRole === 'client' && s && s.jiraKey && s.jiraKey !== 'ERROR') {
@@ -1536,27 +1453,24 @@ function renderDetail(s, d) {
 }
 
 function renderStepper(currentLc) {
-  if (currentLc === 'Rejected' || currentLc === 'Cancelled') {
+  if (currentLc === 'Not doable or out of scope' || currentLc === 'Request no longer needed') {
     var label = currentLc;
     return LIFECYCLE_STEPS.map(function(lc) {
-      var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
-      return '<div class="step"><div class="step-dot" style="border-color:#fbbdbd;background:var(--tomato-lt)"></div><div class="step-label" style="color:var(--tomato)">' + esc(short) + '</div></div>';
+      return '<div class="step"><div class="step-dot" style="border-color:#fbbdbd;background:var(--tomato-lt)"></div><div class="step-label" style="color:var(--tomato)">' + esc(lc) + '</div></div>';
     }).join('')
       + '<div class="step current"><div class="step-dot" style="border-color:var(--tomato);background:var(--tomato);box-shadow:0 0 0 3px rgba(201,42,42,0.15)"></div><div class="step-label" style="color:var(--tomato);font-weight:700">' + esc(label) + '</div></div>';
   }
-  if (currentLc === 'On Hold') {
+  if (currentLc === 'For Team Assessment') {
     return LIFECYCLE_STEPS.map(function(lc) {
-      var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
-      return '<div class="step"><div class="step-dot" style="border-color:var(--mango-lt);background:var(--mango-lt)"></div><div class="step-label" style="color:var(--muted)">' + esc(short) + '</div></div>';
+      return '<div class="step"><div class="step-dot" style="border-color:var(--mango-lt);background:var(--mango-lt)"></div><div class="step-label" style="color:var(--muted)">' + esc(lc) + '</div></div>';
     }).join('')
-      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">On Hold</div></div>';
+      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">For Team Assessment</div></div>';
   }
   return LIFECYCLE_STEPS.map(function(lc) {
     var cIdx = LIFECYCLE_STEPS.indexOf(currentLc);
     var lIdx = LIFECYCLE_STEPS.indexOf(lc);
     var cls = lIdx < cIdx ? 'done' : lIdx === cIdx ? 'current' : '';
-    var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
-    return '<div class="step ' + cls + '"><div class="step-dot"></div><div class="step-label">' + esc(short) + '</div></div>';
+    return '<div class="step ' + cls + '"><div class="step-dot"></div><div class="step-label">' + esc(lc) + '</div></div>';
   }).join('');
 }
 
@@ -1571,16 +1485,15 @@ function tog(id) { document.getElementById(id).classList.toggle('on'); }
 
 function lcBadge(lc) {
   var map = {
-    'For Quotation':'b-gray',
-    'Ongoing Review':'b-amber',
-    'On Hold':'b-amber',
-    'Quotation Provided':'b-blue',
-    'For Execution / Schedule':'b-purple',
-    'Ongoing Execution / Activity':'b-teal',
-    'Quotation Done':'b-blue',
-    'Request Done':'b-green',
-    'Rejected':'b-red',
-    'Cancelled':'b-red'
+    'Request Logged':'b-gray',
+    'For Scoping':'b-blue',
+    'For Quotation':'b-teal',
+    'For Team Assessment':'b-amber',
+    'Quotation Done':'b-purple',
+    'For Execution':'b-amber',
+    'Execution Done':'b-green',
+    'Not doable or out of scope':'b-red',
+    'Request no longer needed':'b-red'
   };
   return map[lc] || 'b-gray';
 }
@@ -1597,7 +1510,6 @@ function lcBadgeFromJira(status) {
 
 function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ── ANALYTICS PAGE ─────────────────────────────────────────
 var charts = {};
 var COLORS = { green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8' };
 
@@ -1630,15 +1542,14 @@ function render_analytics(data) {
   var lc = data.lifecycleCounts || {}; var svc = data.byService || {}; var cost = data.byCost || {}; var urg = data.byUrgency || {};
   var svcKeys = Object.keys(svc).sort((a,b) => svc[b]-svc[a]);
   document.getElementById('an-total').textContent = data.total ?? '—';
-  document.getElementById('an-fq').textContent  = lc['For Quotation']                != null ? lc['For Quotation']                : '—';
-  document.getElementById('an-or').textContent  = lc['Ongoing Review']               != null ? lc['Ongoing Review']               : '—';
-  document.getElementById('an-oh').textContent  = lc['On Hold']                      != null ? lc['On Hold']                      : '—';
-  document.getElementById('an-qp').textContent  = lc['Quotation Provided']           != null ? lc['Quotation Provided']           : '—';
-  document.getElementById('an-fe').textContent  = lc['For Execution / Schedule']     != null ? lc['For Execution / Schedule']     : '—';
-  document.getElementById('an-oe').textContent  = lc['Ongoing Execution / Activity'] != null ? lc['Ongoing Execution / Activity'] : '—';
-  document.getElementById('an-rd').textContent  = lc['Request Done']                 != null ? lc['Request Done']                 : '—';
-  document.getElementById('an-qd').textContent  = lc['Quotation Done']               != null ? lc['Quotation Done']               : '—';
-  document.getElementById('an-rej').textContent = ((lc['Rejected'] || 0) + (lc['Cancelled'] || 0)) || '—';
+  document.getElementById('an-rl').textContent  = lc['Request Logged']              != null ? lc['Request Logged']              : '—';
+  document.getElementById('an-fs').textContent  = lc['For Scoping']                 != null ? lc['For Scoping']                 : '—';
+  document.getElementById('an-fq').textContent  = lc['For Quotation']               != null ? lc['For Quotation']               : '—';
+  document.getElementById('an-ta').textContent  = lc['For Team Assessment']         != null ? lc['For Team Assessment']         : '—';
+  document.getElementById('an-qd').textContent  = lc['Quotation Done']              != null ? lc['Quotation Done']              : '—';
+  document.getElementById('an-fe').textContent  = lc['For Execution']               != null ? lc['For Execution']               : '—';
+  document.getElementById('an-ed').textContent  = lc['Execution Done']              != null ? lc['Execution Done']              : '—';
+  document.getElementById('an-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
   document.getElementById('an-avg').textContent = data.avgDays != null ? data.avgDays + 'd' : '—';
   document.getElementById('an-rev-in').textContent  = fmtPhp(data.revenueReceived ?? null);
   document.getElementById('an-rev-out').textContent = fmtPhp(data.revenueLost ?? null);
@@ -1654,14 +1565,14 @@ function render_analytics(data) {
   setTimeout(function() {
     if (typeof Chart === 'undefined') return;
     var monthly = data.monthlyArr || [];
-    var lcLabels = ['For Quotation','Ongoing Review','On Hold','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Quotation Done','Request Done','Rejected'];
-    var lcShort  = ['For Quotation','Ongoing Review','On Hold','Quotation Provided','For Execution','Ongoing Activity','Quotation Done','Request Done','Rej / Cancel'];
+    var lcLabels = ['Request Logged','For Scoping','For Quotation','For Team Assessment','Quotation Done','For Execution','Execution Done','Closed'];
+    var lcShort  = lcLabels;
     var lcValues = lcLabels.map(function(l) {
-      // Merge Cancelled into the Rejected bar
-      return (lc[l] || 0) + (l === 'Rejected' ? (lc['Cancelled'] || 0) : 0);
+      if (l === 'Closed') return (lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0);
+      return lc[l] || 0;
     });
-    var LC_COLORS_CHART  = [COLORS.grayL,COLORS.amberL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.blueL,COLORS.greenL,COLORS.redL];
-    var LC_BORDERS_CHART = [COLORS.gray, COLORS.amber, COLORS.amber, COLORS.blue, COLORS.purple, COLORS.teal, COLORS.blue, COLORS.green, COLORS.red];
+    var LC_COLORS_CHART  = [COLORS.grayL,COLORS.blueL,COLORS.tealL,COLORS.amberL,COLORS.purpleL,COLORS.amberL,COLORS.greenL,COLORS.redL];
+    var LC_BORDERS_CHART = [COLORS.gray, COLORS.blue, COLORS.teal, COLORS.amber, COLORS.purple, COLORS.amber, COLORS.green, COLORS.red];
     var svcColors = [COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
     buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
     buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcValues,backgroundColor:LC_COLORS_CHART,borderColor:LC_BORDERS_CHART,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
@@ -1686,7 +1597,6 @@ function applyFilter() { load_analytics(document.getElementById('an-fromDate').v
 function clearFilter() { document.getElementById('an-fromDate').value = ''; document.getElementById('an-toDate').value = ''; load_analytics(); }
 function fmtMonth(ym) { if (!ym) return ''; var p = ym.split('-'); var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return (names[parseInt(p[1],10)-1]||p[1]) + ' ' + p[0]; }
 
-// ── OPERATIONAL DETAILS CARD ────────────────────────────────
 function renderOpCard(s) {
   if (!IS_INTERNAL || !isAdmin) return '';
   var cost  = s && s.serviceCost != null ? s.serviceCost : '';
@@ -1698,7 +1608,6 @@ function renderOpCard(s) {
   var quotFile = s && s.quotationFilename   ? s.quotationFilename   : '';
   var quotBy   = s && s.quotationUploadedBy ? s.quotationUploadedBy : '';
   var quotAt   = s && s.quotationUploadedAt ? s.quotationUploadedAt : '';
-
   var quotSection = '<div class="iitem full" style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px"><label style="margin-bottom:8px;display:block">Quotation Document</label>';
   if (quotUrl) {
     quotSection += '<div style="margin-bottom:8px"><a href="' + esc(quotUrl) + '" target="_blank" class="quot-link">'
@@ -1716,7 +1625,6 @@ function renderOpCard(s) {
     + '</div>'
     + '<button class="upload-send-btn" id="uploadBtn" onclick="uploadQuotation(\'' + jk + '\')" style="display:none">Upload &amp; Notify CSM</button>'
     + '<div class="upload-msg" id="uploadMsg"></div></div>';
-
   return '<div class="dsec" id="opCard">'
     + '<div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>'
     + '<div class="dsb"><div class="igrid">'
@@ -1762,11 +1670,7 @@ async function sendCsmComment(jiraKey) {
   btn.disabled = true; btn.textContent = 'Posting…';
   if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; }
   try {
-    await fetch(GAS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'addComment', jiraKey: jiraKey, comment: body, email: userEmail })
-    });
+    await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'addComment', jiraKey: jiraKey, comment: body, email: userEmail }) });
     textarea.value = '';
     if (msgEl) { msgEl.textContent = 'Comment posted to Jira ✓'; msgEl.className = 'csm-comment-msg csm-comment-ok'; }
     setTimeout(function() { if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; } }, 4000);
@@ -1777,97 +1681,41 @@ async function sendCsmComment(jiraKey) {
 }
 
 var _uploadFile = null;
-
-function handleFileSelect(input) {
-  if (input.files && input.files[0]) setUploadFile(input.files[0]);
-}
-
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('drag');
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) setUploadFile(e.dataTransfer.files[0]);
-}
-
+function handleFileSelect(input) { if (input.files && input.files[0]) setUploadFile(input.files[0]); }
+function handleDrop(e) { e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag'); if (e.dataTransfer.files && e.dataTransfer.files[0]) setUploadFile(e.dataTransfer.files[0]); }
 function setUploadFile(file) {
   _uploadFile = file;
-  var preview = document.getElementById('uploadPreview');
-  var name    = document.getElementById('uploadFileName');
-  var btn     = document.getElementById('uploadBtn');
-  if (preview) preview.classList.add('show');
-  if (name)    name.textContent = file.name;
-  if (btn)     btn.style.display = 'block';
-  var msg = document.getElementById('uploadMsg');
-  if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+  var preview = document.getElementById('uploadPreview'); var name = document.getElementById('uploadFileName'); var btn = document.getElementById('uploadBtn');
+  if (preview) preview.classList.add('show'); if (name) name.textContent = file.name; if (btn) btn.style.display = 'block';
+  var msg = document.getElementById('uploadMsg'); if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
 }
-
 function clearUpload() {
   _uploadFile = null;
-  var preview = document.getElementById('uploadPreview');
-  var btn     = document.getElementById('uploadBtn');
-  var input   = document.getElementById('quotFile');
-  if (preview) preview.classList.remove('show');
-  if (btn)     btn.style.display = 'none';
-  if (input)   input.value = '';
+  var preview = document.getElementById('uploadPreview'); var btn = document.getElementById('uploadBtn'); var input = document.getElementById('quotFile');
+  if (preview) preview.classList.remove('show'); if (btn) btn.style.display = 'none'; if (input) input.value = '';
 }
-
 async function uploadQuotation(jiraKey) {
   if (!_uploadFile) return;
-  var btn = document.getElementById('uploadBtn');
-  var msg = document.getElementById('uploadMsg');
+  var btn = document.getElementById('uploadBtn'); var msg = document.getElementById('uploadMsg');
   btn.disabled = true; btn.textContent = 'Uploading…';
   if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
   try {
-    var b64 = await new Promise(function(resolve, reject) {
-      var reader = new FileReader();
-      reader.onload  = function(e) { resolve(e.target.result.split(',')[1]); };
-      reader.onerror = reject;
-      reader.readAsDataURL(_uploadFile);
-    });
-    var payload = {
-      action:     'uploadCostDocument',
-      jiraKey:    jiraKey,
-      fileData:   b64,
-      filename:   _uploadFile.name,
-      mimeType:   _uploadFile.type || 'application/octet-stream',
-      uploadedBy: userEmail,
-    };
-    var res  = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    var b64 = await new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { resolve(e.target.result.split(',')[1]); }; reader.onerror = reject; reader.readAsDataURL(_uploadFile); });
+    var payload = { action:'uploadCostDocument', jiraKey:jiraKey, fileData:b64, filename:_uploadFile.name, mimeType:_uploadFile.type||'application/octet-stream', uploadedBy:userEmail };
+    var res = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
     var data = await res.json();
     if (data.success) {
       if (msg) { msg.textContent = 'Uploaded and CSM notified ✓'; msg.className = 'upload-msg upload-ok'; }
       clearUpload();
       var entry = all.find(function(x) { return x.jiraKey === jiraKey; });
-      if (entry) {
-        entry.quotationUrl        = data.fileUrl;
-        entry.quotationFilename   = data.filename;
-        entry.quotationUploadedBy = userEmail;
-        entry.quotationUploadedAt = data.uploadedAt;
-        try {
-          var cacheKey = 'tracker_cache_' + USER_EMAIL;
-          var existing = sessionStorage.getItem(cacheKey);
-          if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); }
-        } catch(ce) {}
-      }
-      var s = all.find(function(x) { return x.jiraKey === jiraKey; });
-      if (s) renderDetail(s, null);
-    } else {
-      if (msg) { msg.textContent = 'Upload failed: ' + (data.error || 'Unknown error'); msg.className = 'upload-msg upload-err'; }
-    }
-  } catch(e) {
-    if (msg) { msg.textContent = 'Upload failed. Please try again.'; msg.className = 'upload-msg upload-err'; }
-    console.error('uploadQuotation error:', e);
-  }
+      if (entry) { entry.quotationUrl = data.fileUrl; entry.quotationFilename = data.filename; entry.quotationUploadedBy = userEmail; entry.quotationUploadedAt = data.uploadedAt; try { var cacheKey = 'tracker_cache_' + USER_EMAIL; var existing = sessionStorage.getItem(cacheKey); if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); } } catch(ce) {} }
+      var s = all.find(function(x) { return x.jiraKey === jiraKey; }); if (s) renderDetail(s, null);
+    } else { if (msg) { msg.textContent = 'Upload failed: ' + (data.error || 'Unknown error'); msg.className = 'upload-msg upload-err'; } }
+  } catch(e) { if (msg) { msg.textContent = 'Upload failed. Please try again.'; msg.className = 'upload-msg upload-err'; } console.error('uploadQuotation error:', e); }
   btn.disabled = false; btn.textContent = 'Upload & Notify CSM';
 }
 
-// ═══════════════════════════════════════════════════════════
-// ── ENHANCEMENTS MODULE ─────────────────────────────────────
-// ═══════════════════════════════════════════════════════════
-var ENH_KEY   = 'platops_enhancements';
-var enhList   = [];
-var enhSort   = 'newest';
-var ENH_VOTED = 'platops_enh_voted';
-
+var ENH_KEY = 'platops_enhancements', enhList = [], enhSort = 'newest', ENH_VOTED = 'platops_enh_voted';
 function lsReadEnh()   { try { return JSON.parse(localStorage.getItem(ENH_KEY) || '[]'); } catch(e) { return []; } }
 function lsWriteEnh(a) { try { localStorage.setItem(ENH_KEY, JSON.stringify(a)); } catch(e) {} }
 function getVoted()    { try { return JSON.parse(localStorage.getItem(ENH_VOTED) || '{}'); } catch(e) { return {}; } }
@@ -1877,132 +1725,63 @@ async function loadEnhancements() {
   var cached = lsReadEnh();
   if (cached.length) { enhList = cached; renderEnhList(); }
   try {
-    var res = await fetch(GAS_URL + '?action=getEnhancements');
-    var d   = await res.json();
-    if (d.enhancements) {
-      enhList = d.enhancements;
-      lsWriteEnh(enhList);
-      renderEnhList();
-    }
+    var res = await fetch(GAS_URL + '?action=getEnhancements'); var d = await res.json();
+    if (d.enhancements) { enhList = d.enhancements; lsWriteEnh(enhList); renderEnhList(); }
   } catch(e) {
-    if (!cached.length) {
-      document.getElementById('enhList').innerHTML = '<div class="enh-empty">Could not load enhancements. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadEnhancements()">Retry</span></div>';
-    }
+    if (!cached.length) document.getElementById('enhList').innerHTML = '<div class="enh-empty">Could not load enhancements. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadEnhancements()">Retry</span></div>';
   }
 }
 
-function setEnhSort(el) {
-  document.querySelectorAll('.enh-sort-pills .pill').forEach(function(p) { p.classList.remove('on'); });
-  el.classList.add('on');
-  enhSort = el.dataset.esort;
-  renderEnhList();
-}
+function setEnhSort(el) { document.querySelectorAll('.enh-sort-pills .pill').forEach(function(p) { p.classList.remove('on'); }); el.classList.add('on'); enhSort = el.dataset.esort; renderEnhList(); }
 
 function renderEnhList() {
   var container = document.getElementById('enhList');
   if (!container) return;
   if (!enhList.length) { container.innerHTML = '<div class="enh-empty">No enhancement requests yet.<br>Be the first to submit one!</div>'; return; }
-
-  var sorted = enhList.slice().sort(function(a, b) {
-    if (enhSort === 'votes') return (b.votes || 0) - (a.votes || 0);
-    return new Date(b.timestamp) - new Date(a.timestamp);
-  });
-
-  var voted = getVoted();
-  var typeClass = { 'Feature':'enh-type-feature', 'UI':'enh-type-ui', 'Performance':'enh-type-perf', 'Other':'enh-type-other' };
-
+  var sorted = enhList.slice().sort(function(a, b) { if (enhSort === 'votes') return (b.votes || 0) - (a.votes || 0); return new Date(b.timestamp) - new Date(a.timestamp); });
+  var voted = getVoted(); var typeClass = { 'Feature':'enh-type-feature', 'UI':'enh-type-ui', 'Performance':'enh-type-perf', 'Other':'enh-type-other' };
   container.innerHTML = sorted.map(function(e) {
-    var tc   = typeClass[e.type] || 'enh-type-other';
-    var isV  = !!voted[e.id];
+    var tc = typeClass[e.type] || 'enh-type-other'; var isV = !!voted[e.id];
     var dateStr = e.timestamp ? new Date(e.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
     var expandId = 'enh-expand-' + e.id;
     return '<div class="enh-item" onclick="toggleEnh(\'' + expandId + '\')">'
-      + '<div class="enh-item-top">'
-      + '<span class="enh-item-title">' + esc(e.title) + '</span>'
-      + '<span class="enh-type-badge ' + tc + '">' + esc(e.type) + '</span>'
-      + '</div>'
-      + '<div class="enh-item-meta">'
-      + '<span class="enh-item-by">by ' + esc(e.submittedBy || '—') + '</span>'
-      + '<span class="enh-item-by">·</span>'
-      + '<span class="enh-item-by">' + dateStr + '</span>'
-      + '</div>'
+      + '<div class="enh-item-top"><span class="enh-item-title">' + esc(e.title) + '</span><span class="enh-type-badge ' + tc + '">' + esc(e.type) + '</span></div>'
+      + '<div class="enh-item-meta"><span class="enh-item-by">by ' + esc(e.submittedBy || '—') + '</span><span class="enh-item-by">·</span><span class="enh-item-by">' + dateStr + '</span></div>'
       + '<div class="enh-item-desc">' + esc(e.description) + '</div>'
-      + '<div class="enh-item-expand" id="' + expandId + '">'
-      + (e.benefit ? '<p style="font-size:0.78rem;color:var(--muted);margin-top:4px"><strong style="color:var(--text)">Expected benefit:</strong> ' + esc(e.benefit) + '</p>' : '')
-      + '</div>'
+      + '<div class="enh-item-expand" id="' + expandId + '">' + (e.benefit ? '<p style="font-size:0.78rem;color:var(--muted);margin-top:4px"><strong style="color:var(--text)">Expected benefit:</strong> ' + esc(e.benefit) + '</p>' : '') + '</div>'
       + '<button class="enh-vote-btn' + (isV ? ' voted' : '') + '" onclick="event.stopPropagation();voteEnh(\'' + e.id + '\')" title="' + (isV ? 'You voted for this' : 'Upvote') + '">'
       + '<svg width="11" height="11" viewBox="0 0 24 24" fill="' + (isV ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>'
-      + (e.votes || 0) + ' ' + ((e.votes || 0) === 1 ? 'vote' : 'votes')
-      + '</button>'
-      + '</div>';
+      + (e.votes || 0) + ' ' + ((e.votes || 0) === 1 ? 'vote' : 'votes') + '</button></div>';
   }).join('');
 }
 
-function toggleEnh(expandId) {
-  var el = document.getElementById(expandId);
-  if (el) el.classList.toggle('open');
-}
+function toggleEnh(expandId) { var el = document.getElementById(expandId); if (el) el.classList.toggle('open'); }
 
 async function voteEnh(id) {
-  var voted = getVoted();
-  if (voted[id]) return;
-  var entry = enhList.find(function(e) { return e.id === id; });
-  if (!entry) return;
-  entry.votes = (entry.votes || 0) + 1;
-  setVoted(id);
-  lsWriteEnh(enhList);
-  renderEnhList();
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'voteEnhancement', id: id })
-    });
-  } catch(e) {}
+  var voted = getVoted(); if (voted[id]) return;
+  var entry = enhList.find(function(e) { return e.id === id; }); if (!entry) return;
+  entry.votes = (entry.votes || 0) + 1; setVoted(id); lsWriteEnh(enhList); renderEnhList();
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ action:'voteEnhancement', id:id }) }); } catch(e) {}
 }
 
 async function submitEnhancement() {
-  var title   = (document.getElementById('enh-title').value   || '').trim();
-  var type    = (document.getElementById('enh-type').value    || 'Feature');
-  var desc    = (document.getElementById('enh-desc').value    || '').trim();
+  var title = (document.getElementById('enh-title').value || '').trim();
+  var type  = (document.getElementById('enh-type').value  || 'Feature');
+  var desc  = (document.getElementById('enh-desc').value  || '').trim();
   var benefit = (document.getElementById('enh-benefit').value || '').trim();
-  var msgEl   = document.getElementById('enhFormMsg');
-  var btn     = document.getElementById('enhSubmitBtn');
-
+  var msgEl = document.getElementById('enhFormMsg'); var btn = document.getElementById('enhSubmitBtn');
   if (!title) { document.getElementById('enh-title').focus(); return; }
   if (!desc)  { document.getElementById('enh-desc').focus();  return; }
-
   btn.disabled = true; btn.textContent = 'Submitting…';
   if (msgEl) { msgEl.textContent = ''; msgEl.style.color = ''; }
-
-  var entry = {
-    id:          'enh_' + Date.now(),
-    title:       title,
-    type:        type,
-    description: desc,
-    benefit:     benefit,
-    submittedBy: userEmail,
-    timestamp:   new Date().toISOString(),
-    votes:       0,
-  };
-
-  enhList.unshift(entry);
-  lsWriteEnh(enhList);
-  renderEnhList();
-
+  var entry = { id:'enh_'+Date.now(), title, type, description:desc, benefit, submittedBy:userEmail, timestamp:new Date().toISOString(), votes:0 };
+  enhList.unshift(entry); lsWriteEnh(enhList); renderEnhList();
   ['enh-title','enh-desc','enh-benefit'].forEach(function(id) { document.getElementById(id).value = ''; });
   document.getElementById('enh-type').value = 'Feature';
-
   try {
-    await fetch(GAS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'saveEnhancement', enhancement: entry })
-    });
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ action:'saveEnhancement', enhancement:entry }) });
     if (msgEl) { msgEl.textContent = 'Submitted! ✓'; msgEl.style.color = 'var(--primary-dk)'; }
-  } catch(e) {
-    if (msgEl) { msgEl.textContent = 'Saved locally — will sync when online.'; msgEl.style.color = 'var(--muted)'; }
-  }
+  } catch(e) { if (msgEl) { msgEl.textContent = 'Saved locally — will sync when online.'; msgEl.style.color = 'var(--muted)'; } }
   btn.disabled = false; btn.textContent = 'Submit Request';
   setTimeout(function() { if (msgEl) { msgEl.textContent = ''; } }, 4000);
 }

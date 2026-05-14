@@ -1028,10 +1028,8 @@
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
 
-// ── NOTICES that require acknowledgement ────────────────────────────────────
 const NOTICE_SERVICES = ['Data Migration', 'Change HR URL', 'Rename Database'];
 
-// ── DYNAMIC SERVICE TILES ────────────────────────────────────────────────────
 const DEFAULT_SERVICES = [
   'Data Migration', 'Data Extraction', 'Change HR URL',
   'Rename Database', 'Database Backup', 'Others'
@@ -1102,17 +1100,13 @@ function renderServiceTiles() {
   });
 }
 
-// ── Pre-select service from URL param (?service=Data+Migration) ──────────────
-// Called after tiles are rendered. Polls briefly if GAS fetch is still in flight.
 function tryPreSelectService(serviceName) {
-  // Exact match first
   var radio = document.querySelector('input[name="serviceType"][value="' + serviceName.replace(/"/g, '&quot;') + '"]');
   if (radio) {
     radio.checked = true;
     radio.dispatchEvent(new Event('change'));
     return true;
   }
-  // Service may not be in the visible 6 tiles — inject it temporarily
   var grid = document.getElementById('serviceGrid');
   if (!grid) return false;
   var tempId = 'svc-url-preselect';
@@ -1138,29 +1132,22 @@ function initUrlPreSelect() {
   var params = new URLSearchParams(window.location.search);
   var preService = params.get('service');
   if (!preService) return;
-
-  // Try immediately (tiles already rendered from cache/defaults)
   if (tryPreSelectService(preService)) return;
-
-  // Poll while GAS fetch is in flight (max ~4 seconds)
   var attempts = 0;
   var poll = setInterval(function() {
     if (tryPreSelectService(preService) || ++attempts > 20) clearInterval(poll);
   }, 200);
 }
 
-// ── SERVICES PREVIEW MODAL ────────────────────────────────────────────────────
 function openServicesPreview() {
   var overlay = document.getElementById('svcPreviewOverlay');
   var list    = document.getElementById('svcPreviewList');
   if (!overlay || !list) return;
-
   var services = [];
   try {
     var raw = localStorage.getItem('platops_services_cache');
     if (raw) services = JSON.parse(raw);
   } catch(e) {}
-
   if (!services.length) {
     var names = getServiceNames();
     list.innerHTML = names.map(function(n) {
@@ -1181,7 +1168,6 @@ function openServicesPreview() {
         + '</div>';
     }).join('');
   }
-
   overlay.classList.add('open');
 }
 
@@ -1230,7 +1216,6 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') { closeServicesPreview(); closeProcDrawer(); }
 });
 
-/* ── Proper casing ── */
 function toProperCase(str) {
   return str.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
 }
@@ -1242,17 +1227,12 @@ function toProperCase(str) {
   });
 });
 
-/* ── Pre-fill today's date ── */
 document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
 
-/* ── Render service tiles then check for URL pre-selection ── */
 renderServiceTiles();
 fetchServicesFromGAS();
-
-// ── CHANGED: Init URL param pre-selection after tiles are rendered ──
 initUrlPreSelect();
 
-/* ── Signature canvas ── */
 const canvas = document.getElementById('sigCanvas');
 const ctx = canvas.getContext('2d');
 const wrap = document.getElementById('sigWrap');
@@ -1318,7 +1298,6 @@ document.getElementById('clearSigBtn').addEventListener('click', function() {
   sigNote.textContent = '';
 });
 
-/* ── Migration / notice logic ── */
 function hideAllNotices() {
   document.getElementById('migrationNotice').classList.remove('visible');
   document.getElementById('hrUrlNotice').classList.remove('visible');
@@ -1345,7 +1324,6 @@ function showNoticeFor(value) {
   }
 }
 
-/* ── Validation helper ── */
 function validateField(id, test) {
   const el = document.getElementById(id);
   const wrapper = el ? el.closest('.field') : null;
@@ -1354,7 +1332,6 @@ function validateField(id, test) {
   wrapper.classList.remove('invalid'); return true;
 }
 
-/* ── Validation toast ── */
 var toastTimer = null;
 
 function showValidationToast(fields) {
@@ -1365,7 +1342,6 @@ function showValidationToast(fields) {
     return '<span class="validation-toast-field">' + f + '</span>';
   }).join('');
   toast.classList.add('visible');
-  // Auto-dismiss after 6 seconds
   clearTimeout(toastTimer);
   toastTimer = setTimeout(dismissToast, 6000);
 }
@@ -1376,7 +1352,6 @@ function dismissToast() {
   clearTimeout(toastTimer);
 }
 
-/* ── Submit with auto-retry on failure ── */
 document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
@@ -1388,7 +1363,6 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     return ok && valid ? true : (valid = ok && valid, ok);
   }
 
-  // Run all field validations, collecting friendly labels for failed ones
   valid = vf('requestorName',    document.getElementById('requestorName').value.trim() !== '',   'Requester name')    && valid;
   const email = document.getElementById('requestorEmail').value.trim();
   valid = vf('requestorEmail',   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),                       'Requester email')   && valid;
@@ -1454,7 +1428,6 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
 
   if (!valid) {
     showValidationToast(invalidFields);
-    // Scroll to first invalid field
     var first = document.querySelector('.field.invalid, .sig-canvas-wrap.invalid-sig');
     if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
@@ -1470,9 +1443,6 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     ? 'Others: ' + (document.getElementById('othersSpecify').value.trim() || 'unspecified')
     : serviceSelected.value;
 
-  // Look up category from services cache.
-  // If cache is empty (e.g. direct URL access without going through the portal),
-  // fetch from GAS first so the category is always populated.
   let serviceCategory = '';
   try {
     let svcs = [];
@@ -1480,7 +1450,6 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     if (cached) {
       svcs = JSON.parse(cached);
     } else {
-      // Cache miss — fetch directly before submitting
       btn.textContent = 'Preparing…';
       try {
         const r = await fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' });
@@ -1524,14 +1493,13 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     signatureImage:        canvas.toDataURL('image/png'),
   };
 
-  // ── AUTO-RETRY: attempt up to 3 times with exponential backoff ──────────────
   const MAX_ATTEMPTS = 3;
   let attempt = 0;
   let lastError = null;
 
   async function doSubmit() {
     attempt++;
-    const delayMs = attempt > 1 ? Math.pow(2, attempt - 1) * 1500 : 0; // 0, 1.5s, 3s
+    const delayMs = attempt > 1 ? Math.pow(2, attempt - 1) * 1500 : 0;
     if (delayMs > 0) {
       btn.textContent = 'Retrying in ' + (delayMs / 1000).toFixed(0) + 's…';
       await new Promise(r => setTimeout(r, delayMs));
@@ -1549,12 +1517,10 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     while (attempt < MAX_ATTEMPTS) {
       try {
         await doSubmit();
-        // no-cors always resolves — treat as success after final attempt or first non-throw
         break;
       } catch (err) {
         lastError = err;
         if (attempt >= MAX_ATTEMPTS) throw err;
-        // loop continues for retry
       }
     }
     document.getElementById('inquiryForm').style.display = 'none';
@@ -1589,7 +1555,6 @@ function resetForm() {
   sigNote.textContent = '';
 }
 
-// ── PROCESS DRAWER ─────────────────────────────────────────
 function openProcDrawer() {
   var overlay = document.getElementById('procOverlay');
   var drawer  = document.getElementById('procDrawer');
@@ -1641,18 +1606,20 @@ function closeProcDrawer() {
       <div class="pd-section-label">02 — Request Lifecycle</div>
       <div class="pd-section-title">From submission to completion</div>
       <div class="pd-stepper">
-        <div class="pd-step"><div class="pd-step-num">1</div><div class="pd-step-label">Quotation<br>Request</div><div class="pd-step-sub">You submit this form</div></div>
-        <div class="pd-step"><div class="pd-step-num">2</div><div class="pd-step-label">Assessment &amp;<br>Coordination</div><div class="pd-step-sub">Ops reviews &amp; estimates</div></div>
-        <div class="pd-step"><div class="pd-step-num">3</div><div class="pd-step-label">Scheduling</div><div class="pd-step-sub">If downtime required</div></div>
-        <div class="pd-step"><div class="pd-step-num">4</div><div class="pd-step-label">CRF + Signed<br>Work Order</div><div class="pd-step-sub">Required to proceed</div></div>
-        <div class="pd-step"><div class="pd-step-num">5</div><div class="pd-step-label">Activity<br>Execution</div><div class="pd-step-sub">Work is carried out</div></div>
+        <div class="pd-step"><div class="pd-step-num">1</div><div class="pd-step-label">Request<br>Logged</div><div class="pd-step-sub">You submit this form</div></div>
+        <div class="pd-step"><div class="pd-step-num">2</div><div class="pd-step-label">For<br>Scoping</div><div class="pd-step-sub">Ops reviews &amp; estimates</div></div>
+        <div class="pd-step"><div class="pd-step-num">3</div><div class="pd-step-label">For<br>Quotation</div><div class="pd-step-sub">Quotation in progress</div></div>
+        <div class="pd-step"><div class="pd-step-num">4</div><div class="pd-step-label">Quotation<br>Done</div><div class="pd-step-sub">CRF + Work Order</div></div>
+        <div class="pd-step"><div class="pd-step-num">5</div><div class="pd-step-label">For<br>Execution</div><div class="pd-step-sub">CRF raised</div></div>
+        <div class="pd-step"><div class="pd-step-num">6</div><div class="pd-step-label">Execution<br>Done</div><div class="pd-step-sub">Work completed</div></div>
       </div>
       <div class="pd-step-notes">
-        <div class="pd-step-note"><div class="pd-step-note-num">1</div><div class="pd-step-note-body"><strong>Quotation Request</strong><span>You submit this form with client details, service needed, target date, and constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">2</div><div class="pd-step-note-body"><strong>Assessment &amp; Coordination</strong><span>Platform Ops assesses feasibility, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">3</div><div class="pd-step-note-body"><strong>Scheduling <span style="font-weight:400;color:var(--ink-muted)">(if downtime required)</span></strong><span>For Change HR URL, Rename Database, and similar — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">4</div><div class="pd-step-note-body"><strong>CRF + Signed Work Order</strong><span>Must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without these.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">5</div><div class="pd-step-note-body"><strong>Activity Execution</strong><span>Work is executed and results validated. The requester and CSM are notified upon completion and the tracker is updated.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">1</div><div class="pd-step-note-body"><strong>Request Logged</strong><span>You submit this form with client details, service needed, target date, and constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">2</div><div class="pd-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">3</div><div class="pd-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For Change HR URL, Rename Database, and similar — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">4</div><div class="pd-step-note-body"><strong>Quotation Done</strong><span>Must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order attached to the CRF.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">5</div><div class="pd-step-note-body"><strong>For Execution</strong><span>The CRF has been raised and execution is scheduled. The assigned Platform Ops team member is preparing to carry out the work.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">6</div><div class="pd-step-note-body"><strong>Execution Done</strong><span>Work is executed and results validated. The requester and CSM are notified upon completion and the tracker is updated.</span></div></div>
       </div>
     </div>
     <div class="pd-section">
@@ -1682,7 +1649,7 @@ function closeProcDrawer() {
             <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
             <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
             <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
-            <tr><td>4</td><td>Tracker updated and request marked as <strong>Request Done</strong>.</td></tr>
+            <tr><td>4</td><td>Tracker updated and request marked as <strong>Execution Done</strong>.</td></tr>
             <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
           </tbody>
         </table>
