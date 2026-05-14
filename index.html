@@ -76,16 +76,19 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .view.on{display:flex}
 
 /* ── LANDING ── */
-.landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem}
-.landing h2{font-size:1.75rem;font-weight:600;color:var(--text);margin-bottom:6px;text-align:center}
-.landing-sub{font-size:0.875rem;color:var(--muted);margin-bottom:3rem;text-align:center}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:680px;width:100%}
-.lcard{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:2rem 1.5rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s,transform 0.15s;text-align:center}
+.landing{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:1.5rem 1.5rem 2rem}
+.landing::-webkit-scrollbar{width:4px}
+.landing::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.landing-inner{width:100%;max-width:680px;display:flex;flex-direction:column;align-items:center}
+.landing h2{font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:4px;text-align:center;margin-top:1.25rem}
+.landing-sub{font-size:0.875rem;color:var(--muted);margin-bottom:1.5rem;text-align:center}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%}
+.lcard{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:1.25rem 1.25rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s,transform 0.15s;text-align:center}
 .lcard:hover{border-color:var(--primary);box-shadow:0 6px 24px rgba(33,122,61,0.1);transform:translateY(-2px)}
-.lcard-icon{width:48px;height:48px;border-radius:10px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
-.lcard-icon svg{width:22px;height:22px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.lcard h3{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:6px}
-.lcard p{font-size:0.8rem;color:var(--muted);line-height:1.6}
+.lcard-icon{width:40px;height:40px;border-radius:10px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem}
+.lcard-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.lcard h3{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.lcard p{font-size:0.76rem;color:var(--muted);line-height:1.55}
 
 /* ── ANALYTICS STRIP (tracker inline) ── */
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
@@ -99,7 +102,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc-sub{font-size:0.62rem;color:var(--muted);margin-top:2px}
 .sc.active .sc-label,.sc.active .sc-sub{color:var(--k600)}
 .sc.active .sc-value{color:var(--primary-dk)}
-/* Rejected scorecard gets a red tint when active */
 .sc[data-lc="Rejected"].active{border-color:var(--tomato);background:var(--tomato-lt)}
 .sc[data-lc="Rejected"].active .sc-label,.sc[data-lc="Rejected"].active .sc-sub{color:#7a1010}
 .sc[data-lc="Rejected"].active .sc-value{color:var(--tomato)}
@@ -548,33 +550,35 @@ tr:hover td{background:var(--bg)}
     <!-- LANDING -->
     <div class="view on" id="view-landing">
       <div class="landing">
-        <h2>What would you like to do?</h2>
-        <p class="landing-sub">Select an option to get started.</p>
-        <div class="cards" style="grid-template-columns:repeat(2,1fr);max-width:680px" id="landingCards">
-          <div class="lcard" onclick="switchTab('process')">
-            <div class="lcard-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
-            <h3>How It Works</h3>
-            <p>Learn about the request process, lifecycle stages, guardrails, and escalation paths.</p>
-          </div>
-          <div class="lcard" onclick="switchTab('services')">
-            <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg></div>
-            <h3>List of Services</h3>
-            <p>Browse all available Platform Operations services and what they cover.</p>
-          </div>
-          <div class="lcard" onclick="switchTab('form')">
-            <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg></div>
-            <h3>Submit a Request</h3>
-            <p>Log a new paid service request for review and quotation.</p>
-          </div>
-          <div class="lcard" id="trackerCard" onclick="switchTab('tracker')">
-            <div class="lcard-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
-            <h3>View Tracker</h3>
-            <p id="trackerCardDesc">Monitor the status of service requests and activity tickets.</p>
-          </div>
-          <div class="lcard" onclick="switchTab('enhancements')" style="grid-column:1/-1">
-            <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-            <h3>Portal Enhancements</h3>
-            <p>Submit ideas or improvements for this portal. Vote on existing requests to help prioritise what gets built.</p>
+        <div class="landing-inner">
+          <h2>What would you like to do?</h2>
+          <p class="landing-sub">Select an option to get started.</p>
+          <div class="cards" id="landingCards">
+            <div class="lcard" onclick="switchTab('process')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+              <h3>How It Works</h3>
+              <p>Learn about the request process, lifecycle stages, guardrails, and escalation paths.</p>
+            </div>
+            <div class="lcard" onclick="switchTab('services')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg></div>
+              <h3>List of Services</h3>
+              <p>Browse all available Platform Operations services and what they cover.</p>
+            </div>
+            <div class="lcard" onclick="switchTab('form')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg></div>
+              <h3>Submit a Request</h3>
+              <p>Log a new paid service request for review and quotation.</p>
+            </div>
+            <div class="lcard" id="trackerCard" onclick="switchTab('tracker')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+              <h3>View Tracker</h3>
+              <p id="trackerCardDesc">Monitor the status of service requests and activity tickets.</p>
+            </div>
+            <div class="lcard" onclick="switchTab('enhancements')" style="grid-column:1/-1">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+              <h3>Portal Enhancements</h3>
+              <p>Submit ideas or improvements for this portal. Vote on existing requests to help prioritise what gets built.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -704,7 +708,6 @@ tr:hover td{background:var(--bg)}
           <div class="sc" data-lc="Ongoing Execution / Activity" onclick="scFilter(this)"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="sc-oe">—</div><div class="sc-sub">In execution</div></div>
           <div class="sc" data-lc="Request Done" onclick="scFilter(this)"><div class="sc-label">Done</div><div class="sc-value" id="sc-rd">—</div><div class="sc-sub">Completed</div></div>
           <div class="sc" data-lc="Quotation Done" onclick="scFilter(this)"><div class="sc-label">Quotation Done</div><div class="sc-value" id="sc-qd">—</div><div class="sc-sub">No execution</div></div>
-          <!-- ── NEW: Rejected scorecard ── -->
           <div class="sc" data-lc="Rejected" onclick="scFilter(this)"><div class="sc-label">Rejected</div><div class="sc-value" id="sc-rej">—</div><div class="sc-sub">Request rejected</div></div>
         </div>
         <div class="analytics-meta" id="analyticsMeta"></div>
@@ -791,7 +794,6 @@ tr:hover td{background:var(--bg)}
             <div class="sc-an"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="an-oe">—</div><div class="sc-sub">In execution</div></div>
             <div class="sc-an"><div class="sc-label">Request Done</div><div class="sc-value" id="an-rd">—</div><div class="sc-sub">Completed</div></div>
             <div class="sc-an"><div class="sc-label">Quotation Done</div><div class="sc-value" id="an-qd">—</div><div class="sc-sub">No execution ticket</div></div>
-            <!-- ── NEW: Rejected scorecard in analytics page ── -->
             <div class="sc-an rejected"><div class="sc-label">Rejected</div><div class="sc-value" id="an-rej">—</div><div class="sc-sub">Request rejected</div></div>
             <div class="sc-an"><div class="sc-label">Avg. Resolution</div><div class="sc-value" id="an-avg">—</div><div class="sc-sub">Days to complete</div></div>
             <div class="sc-an revenue-in"><div class="sc-label">Revenue Received</div><div class="sc-value" id="an-rev-in">—</div><div class="sc-sub">Paid requests total</div></div>
@@ -1227,7 +1229,6 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 // ── TRACKER GLOBALS ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
 var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
-// ── CHANGE: Rejected is a terminal branch, not a linear step — kept separate
 var LIFECYCLE_STEPS = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Quotation Done','Request Done'];
 var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
 
@@ -1279,22 +1280,16 @@ async function init_tracker() {
   await loadList();
 }
 
-// ── loadList ─────────────────────────────────────────────────────────────────
-// Strategy: always try the network. If we have a cache, render it immediately
-// while the network request runs in the background (stale-while-revalidate).
-// If no cache and network takes > 20s, show a "still extracting" message —
-// never show a hard failure or a user-facing retry button.
-// Internal retries (up to 3) happen silently with exponential backoff.
 var _listLoading = false;
 
 async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
-  var SLOW_THRESHOLD = 20000; // 20 seconds before showing the "still extracting" message
+  var SLOW_THRESHOLD = 20000;
   var slowTimer = setTimeout(function() {
     if (onSlowCallback) onSlowCallback();
   }, SLOW_THRESHOLD);
 
   var lastErr;
-  var delays = [0, 5000, 10000]; // attempt 1 immediately, 2 after 5s, 3 after 10s
+  var delays = [0, 5000, 10000];
   for (var i = 0; i < maxAttempts; i++) {
     if (delays[i] > 0) await new Promise(function(r) { setTimeout(r, delays[i]); });
     try {
@@ -1303,7 +1298,6 @@ async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
       return await res.json();
     } catch(err) {
       lastErr = err;
-      Logger && Logger.log && Logger.log('loadList attempt ' + (i+1) + ' failed: ' + err);
     }
   }
   clearTimeout(slowTimer);
@@ -1318,7 +1312,6 @@ async function loadList() {
   var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
   var url = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
 
-  // Render stale cache immediately so the user sees something right away
   if (cached) {
     try {
       var cd = JSON.parse(cached);
@@ -1330,7 +1323,6 @@ async function loadList() {
   }
 
   var onSlow = function() {
-    // Only show the slow message if we haven't rendered real data yet
     var el = document.getElementById('sbList');
     if (el && (!all || !all.length)) {
       el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Still extracting latest data — hang tight…</span></div>';
@@ -1343,8 +1335,6 @@ async function loadList() {
     all = d.submissions || [];
     renderCatPills(); render();
   } catch(e) {
-    // All 3 attempts failed. If we have stale cache, keep showing it silently.
-    // Only show a message if the list is still empty.
     var el = document.getElementById('sbList');
     if (el && (!all || !all.length)) {
       el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
@@ -1356,7 +1346,7 @@ async function loadList() {
 }
 
 async function refresh() {
-  if (_listLoading) return; // debounce double-clicks
+  if (_listLoading) return;
   sessionStorage.removeItem('tracker_cache_' + USER_EMAIL);
   all = []; activeKey = null;
   document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Refreshing…</span></div>';
@@ -1379,7 +1369,6 @@ async function loadAnalytics() {
     document.getElementById('sc-oe').textContent  = lc['Ongoing Execution / Activity']   != null ? lc['Ongoing Execution / Activity']   : '—';
     document.getElementById('sc-rd').textContent  = lc['Request Done']                   != null ? lc['Request Done']                   : '—';
     document.getElementById('sc-qd').textContent  = lc['Quotation Done']                 != null ? lc['Quotation Done']                 : '—';
-    // ── NEW: populate Rejected scorecard
     document.getElementById('sc-rej').textContent = lc['Rejected']                       != null ? lc['Rejected']                       : '—';
     var meta = document.getElementById('analyticsMeta');
     var pills = [];
@@ -1442,7 +1431,6 @@ function renderDetail(s, d) {
     + (s && s.urgency ? '<span>·</span><span>' + esc(s.urgency) + ' urgency</span>' : '')
     + '</div></div>';
 
-  // ── NEW: Rejected banner shown before the stepper when request is rejected
   if (lc === 'Rejected') {
     html += '<div class="rejected-banner">'
       + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
@@ -1509,7 +1497,6 @@ function renderDetail(s, d) {
     var noST = ['For Quotation','Ongoing Review','Quotation Provided'].includes(lc);
     if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
   }
-  // ── CSM COMMENT BOX — visible to CSM role only (not admin/lead, not client)
   if (userRole === 'client' && s && s.jiraKey && s.jiraKey !== 'ERROR') {
     html += '<div class="csm-comment-box">'
       + '<div class="dsh"><h3>Add a comment</h3></div>'
@@ -1525,10 +1512,8 @@ function renderDetail(s, d) {
   panel.innerHTML = html;
 }
 
-// ── STEPPER — Rejected is a terminal branch, not a linear step ──
 function renderStepper(currentLc) {
   if (currentLc === 'Rejected') {
-    // All steps shown greyed out with red Rejected appended at the end
     return LIFECYCLE_STEPS.map(function(lc) {
       var short = lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');
       return '<div class="step"><div class="step-dot" style="border-color:#fbbdbd;background:var(--tomato-lt)"></div><div class="step-label" style="color:var(--tomato)">' + esc(short) + '</div></div>';
@@ -1582,8 +1567,6 @@ function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,
 // ── ANALYTICS PAGE ─────────────────────────────────────────
 var charts = {};
 var COLORS = { green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8' };
-var LC_COLORS  = [COLORS.grayL,COLORS.amberL,COLORS.blueL,COLORS.purpleL,COLORS.tealL,COLORS.greenL,COLORS.redL];
-var LC_BORDERS = [COLORS.gray,COLORS.amber,COLORS.blue,COLORS.purple,COLORS.teal,COLORS.green,COLORS.red];
 
 function fmtPhp(n) {
   if (n === null || n === undefined) return '—';
@@ -1621,7 +1604,6 @@ function render_analytics(data) {
   document.getElementById('an-oe').textContent  = lc['Ongoing Execution / Activity'] != null ? lc['Ongoing Execution / Activity'] : '—';
   document.getElementById('an-rd').textContent  = lc['Request Done']                 != null ? lc['Request Done']                 : '—';
   document.getElementById('an-qd').textContent  = lc['Quotation Done']               != null ? lc['Quotation Done']               : '—';
-  // ── NEW: Rejected scorecard in analytics page
   document.getElementById('an-rej').textContent = lc['Rejected']                     != null ? lc['Rejected']                     : '—';
   document.getElementById('an-avg').textContent = data.avgDays != null ? data.avgDays + 'd' : '—';
   document.getElementById('an-rev-in').textContent  = fmtPhp(data.revenueReceived ?? null);
@@ -1730,7 +1712,6 @@ async function saveOpDetails(jiraKey) {
   } catch(e) { alert('Save failed: ' + e.message); }
 }
 
-// ── CSM COMMENT TO JIRA ────────────────────────────────────────────────────
 async function sendCsmComment(jiraKey) {
   var textarea = document.getElementById('csmCommentText');
   var msgEl    = document.getElementById('csmCommentMsg');
@@ -1757,7 +1738,6 @@ async function sendCsmComment(jiraKey) {
   btn.disabled = false; btn.textContent = 'Post Comment';
 }
 
-// ── QUOTATION UPLOAD ─────────────────────────────────────────────────────────
 var _uploadFile = null;
 
 function handleFileSelect(input) {
@@ -1856,10 +1836,8 @@ function getVoted()    { try { return JSON.parse(localStorage.getItem(ENH_VOTED)
 function setVoted(id)  { var v = getVoted(); v[id] = true; try { localStorage.setItem(ENH_VOTED, JSON.stringify(v)); } catch(e) {} }
 
 async function loadEnhancements() {
-  // Try cache first
   var cached = lsReadEnh();
   if (cached.length) { enhList = cached; renderEnhList(); }
-  // Fetch fresh from GAS
   try {
     var res = await fetch(GAS_URL + '?action=getEnhancements');
     var d   = await res.json();
@@ -1929,14 +1907,13 @@ function toggleEnh(expandId) {
 
 async function voteEnh(id) {
   var voted = getVoted();
-  if (voted[id]) return; // already voted
+  if (voted[id]) return;
   var entry = enhList.find(function(e) { return e.id === id; });
   if (!entry) return;
   entry.votes = (entry.votes || 0) + 1;
   setVoted(id);
   lsWriteEnh(enhList);
   renderEnhList();
-  // Persist vote to GAS async
   try {
     await fetch(GAS_URL, {
       method: 'POST', mode: 'no-cors',
@@ -1971,16 +1948,13 @@ async function submitEnhancement() {
     votes:       0,
   };
 
-  // Optimistic local update
   enhList.unshift(entry);
   lsWriteEnh(enhList);
   renderEnhList();
 
-  // Reset form
   ['enh-title','enh-desc','enh-benefit'].forEach(function(id) { document.getElementById(id).value = ''; });
   document.getElementById('enh-type').value = 'Feature';
 
-  // Sync to GAS
   try {
     await fetch(GAS_URL, {
       method: 'POST', mode: 'no-cors',
