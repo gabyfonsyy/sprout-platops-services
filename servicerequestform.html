@@ -762,15 +762,15 @@
       <div class="two-col">
         <div class="field" id="f-mrr">
           <label for="accountMrr">Account MRR <span class="req">*</span></label>
-          <div class="field-hint">Monthly Recurring Revenue of the client account.</div>
-          <input type="text" id="accountMrr" name="accountMrr" placeholder="e.g. ₱ 25,000"/>
-          <div class="error-msg">Please enter the account MRR.</div>
+          <div class="field-hint">Monthly Recurring Revenue in Philippine Peso. Numbers only.</div>
+          <input type="number" id="accountMrr" name="accountMrr" placeholder="e.g. 25000" min="0" step="1" inputmode="numeric"/>
+          <div class="error-msg" id="mrr-error">Please enter a valid account MRR (numbers only).</div>
         </div>
         <div class="field" id="f-headcount">
           <label for="accountHeadcount">Account headcount <span class="req">*</span></label>
-          <div class="field-hint">Total number of active employees in the account.</div>
-          <input type="text" id="accountHeadcount" name="accountHeadcount" placeholder="e.g. 150"/>
-          <div class="error-msg">Please enter the account headcount.</div>
+          <div class="field-hint">Total number of active employees. Numbers only.</div>
+          <input type="number" id="accountHeadcount" name="accountHeadcount" placeholder="e.g. 150" min="1" step="1" inputmode="numeric"/>
+          <div class="error-msg" id="headcount-error">Please enter a valid headcount (numbers only).</div>
         </div>
       </div>
     </div>
@@ -1383,8 +1383,10 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
   valid = vf('csm',              document.getElementById('csm').value.trim() !== '',              'CSM name')          && valid;
   const csmEmail = document.getElementById('csmEmail').value.trim();
   valid = vf('csmEmail',         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(csmEmail),                    'CSM email')         && valid;
-  valid = vf('accountMrr',       document.getElementById('accountMrr').value.trim() !== '',       'Account MRR')       && valid;
-  valid = vf('accountHeadcount', document.getElementById('accountHeadcount').value.trim() !== '', 'Account headcount') && valid;
+  var mrrVal       = document.getElementById('accountMrr').value.trim();
+  var headcountVal = document.getElementById('accountHeadcount').value.trim();
+  valid = vf('accountMrr',       mrrVal !== '' && !isNaN(mrrVal) && parseFloat(mrrVal) >= 0,        'Account MRR')       && valid;
+  valid = vf('accountHeadcount', headcountVal !== '' && !isNaN(headcountVal) && parseInt(headcountVal) >= 1, 'Account headcount') && valid;
   valid = vf('hrUrl',            document.getElementById('hrUrl').value.trim() !== '',            'HR URL')            && valid;
   valid = vf('payrollCodes',     document.getElementById('payrollCodes').value.trim() !== '',     'Payroll code/s')    && valid;
 
