@@ -60,6 +60,45 @@ tr:hover td{background:var(--cream)}
 .spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--green-mid);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ── SECTION DIVIDERS ── */
+.section-head{display:flex;align-items:center;gap:12px;margin:2rem 0 1.125rem}
+.section-head h3{font-family:var(--serif);font-size:1.0625rem;font-weight:400;color:var(--ink);white-space:nowrap}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── SCORECARD VARIANTS ── */
+.sc.rev-in{border-color:#0F6E56;background:#E1F5EE}
+.sc.rev-in .sc-label,.sc.rev-in .sc-sub,.sc.rev-in .sc-value{color:#0F6E56}
+.sc.rev-out{border-color:#534AB7;background:#EEEDFE}
+.sc.rev-out .sc-label,.sc.rev-out .sc-sub,.sc.rev-out .sc-value{color:#534AB7}
+.sc.warn{border-color:#854F0B;background:#FAEEDA}
+.sc.warn .sc-label,.sc.warn .sc-sub,.sc.warn .sc-value{color:#854F0B}
+.sc.closed{border-color:#A32D2D;background:#FCEBEB}
+.sc.closed .sc-label,.sc.closed .sc-sub,.sc.closed .sc-value{color:#A32D2D}
+.sc.free{border-color:#0F6E56;background:#E1F5EE}
+.sc.free .sc-label,.sc.free .sc-sub,.sc.free .sc-value{color:#0F6E56}
+
+/* ── WAIVE FUNNEL ── */
+.waive-funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.wf{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.wf-label{font-size:0.63rem;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-muted);margin-bottom:6px}
+.wf-value{font-family:var(--serif);font-size:1.875rem;font-weight:400;color:var(--ink);line-height:1}
+.wf-sub{font-size:0.67rem;color:var(--ink-muted);margin-top:4px}
+.wf.wf-sent{border-color:#185FA5;background:#E6F1FB}
+.wf.wf-sent .wf-label,.wf.wf-sent .wf-sub,.wf.wf-sent .wf-value{color:#185FA5}
+.wf.wf-approved{border-color:#0F6E56;background:#E1F5EE}
+.wf.wf-approved .wf-label,.wf.wf-approved .wf-sub,.wf.wf-approved .wf-value{color:#0F6E56}
+.wf.wf-rejected{border-color:#A32D2D;background:#FCEBEB}
+.wf.wf-rejected .wf-label,.wf.wf-rejected .wf-sub,.wf.wf-rejected .wf-value{color:#A32D2D}
+.wf.wf-clarify{border-color:#854F0B;background:#FAEEDA}
+.wf.wf-clarify .wf-label,.wf.wf-clarify .wf-sub,.wf.wf-clarify .wf-value{color:#854F0B}
+
+/* ── KEY INSIGHTS ── */
+.insight-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:1.5rem}
+.insight{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.insight-label{font-size:0.63rem;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-muted);margin-bottom:5px}
+.insight-value{font-family:var(--serif);font-size:1.375rem;color:var(--ink);margin-bottom:3px}
+.insight-sub{font-size:0.72rem;color:var(--ink-muted);line-height:1.55}
+
 /* ── BADGE ── */
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:0.65rem;font-weight:500;padding:2px 8px;border-radius:20px}
 .b-green{background:#D8F3DC;color:#085041}
@@ -70,10 +109,15 @@ tr:hover td{background:var(--cream)}
 .b-purple{background:#EEEDFE;color:#3C3489}
 .b-teal{background:#E1F5EE;color:#085041}
 
-@media(max-width:640px){
+@media(max-width:780px){
   .chart-grid{grid-template-columns:1fr}
-  .sc-grid{grid-template-columns:repeat(2,1fr)}
+  .waive-funnel{grid-template-columns:repeat(2,1fr)}
+  .insight-strip{grid-template-columns:repeat(2,1fr)}
   body{padding:1rem}
+}
+@media(max-width:640px){
+  .sc-grid{grid-template-columns:repeat(2,1fr)}
+  .waive-funnel{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -85,24 +129,20 @@ tr:hover td{background:var(--cream)}
 </div>
 
 <div id="content" style="display:none">
+
   <!-- TOOLBAR -->
   <div class="toolbar">
     <h2>Analytics &amp; Reports</h2>
     <div class="toolbar-right">
-      <div class="date-group">
-        <label>From</label>
-        <input type="date" id="fromDate"/>
-      </div>
-      <div class="date-group">
-        <label>To</label>
-        <input type="date" id="toDate"/>
-      </div>
+      <div class="date-group"><label>From</label><input type="date" id="fromDate"/></div>
+      <div class="date-group"><label>To</label><input type="date" id="toDate"/></div>
       <button class="btn btn-primary" onclick="applyFilter()">Apply</button>
       <button class="btn" onclick="clearFilter()">All time</button>
     </div>
   </div>
 
-  <!-- SCORECARDS -->
+  <!-- ── SECTION 1: OVERVIEW ─────────────────────────────────────────────── -->
+  <div class="section-head"><h3>Overview</h3></div>
   <div class="sc-grid">
     <div class="sc highlight">
       <div class="sc-label">Total Requests</div>
@@ -110,18 +150,28 @@ tr:hover td{background:var(--cream)}
       <div class="sc-sub">In selected period</div>
     </div>
     <div class="sc">
+      <div class="sc-label">Request Logged</div>
+      <div class="sc-value" id="sc-rl">—</div>
+      <div class="sc-sub">Backlog</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">For Scoping</div>
+      <div class="sc-value" id="sc-fs">—</div>
+      <div class="sc-sub">Under review</div>
+    </div>
+    <div class="sc">
       <div class="sc-label">For Quotation</div>
       <div class="sc-value" id="sc-fq">—</div>
-      <div class="sc-sub">Awaiting review</div>
+      <div class="sc-sub">Active quotation</div>
+    </div>
+    <div class="sc warn">
+      <div class="sc-label">For Team Assessment</div>
+      <div class="sc-value" id="sc-ta">—</div>
+      <div class="sc-sub">Pending clarification</div>
     </div>
     <div class="sc">
-      <div class="sc-label">Ongoing Review</div>
-      <div class="sc-value" id="sc-or">—</div>
-      <div class="sc-sub">Being reviewed</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Quotation Provided</div>
-      <div class="sc-value" id="sc-qp">—</div>
+      <div class="sc-label">Quotation Done</div>
+      <div class="sc-value" id="sc-qd">—</div>
       <div class="sc-sub">Awaiting CRF</div>
     </div>
     <div class="sc">
@@ -129,15 +179,15 @@ tr:hover td{background:var(--cream)}
       <div class="sc-value" id="sc-fe">—</div>
       <div class="sc-sub">CRF raised</div>
     </div>
-    <div class="sc">
-      <div class="sc-label">Ongoing Activity</div>
-      <div class="sc-value" id="sc-oe">—</div>
-      <div class="sc-sub">In execution</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Request Done</div>
-      <div class="sc-value" id="sc-rd">—</div>
+    <div class="sc highlight">
+      <div class="sc-label">Execution Done</div>
+      <div class="sc-value" id="sc-ed">—</div>
       <div class="sc-sub">Completed</div>
+    </div>
+    <div class="sc closed">
+      <div class="sc-label">Closed</div>
+      <div class="sc-value" id="sc-cl">—</div>
+      <div class="sc-sub">Rejected / cancelled</div>
     </div>
     <div class="sc">
       <div class="sc-label">Avg. Resolution</div>
@@ -146,7 +196,6 @@ tr:hover td{background:var(--cream)}
     </div>
   </div>
 
-  <!-- ROW 1: Monthly trend + Lifecycle -->
   <div class="chart-grid">
     <div class="chart-card">
       <h3>Requests over time</h3>
@@ -158,33 +207,145 @@ tr:hover td{background:var(--cream)}
     </div>
   </div>
 
-  <!-- ROW 2: By service + Cost + Urgency -->
+  <!-- ── SECTION 2: REVENUE ──────────────────────────────────────────────── -->
+  <div class="section-head"><h3>Revenue</h3></div>
+  <div class="sc-grid">
+    <div class="sc rev-in">
+      <div class="sc-label">Revenue Received</div>
+      <div class="sc-value" id="sc-rev-in">—</div>
+      <div class="sc-sub">From paid requests</div>
+    </div>
+    <div class="sc rev-out">
+      <div class="sc-label">Revenue Lost</div>
+      <div class="sc-value" id="sc-rev-out">—</div>
+      <div class="sc-sub">Waived requests</div>
+    </div>
+    <div class="sc free">
+      <div class="sc-label">Free Services</div>
+      <div class="sc-value" id="sc-free">—</div>
+      <div class="sc-sub">No charge to client</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Paid Requests</div>
+      <div class="sc-value" id="sc-paid">—</div>
+      <div class="sc-sub">Cost settled</div>
+    </div>
+    <div class="sc warn">
+      <div class="sc-label">Waived Requests</div>
+      <div class="sc-value" id="sc-waived">—</div>
+      <div class="sc-sub">Fee waived</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Withdrawn</div>
+      <div class="sc-value" id="sc-withdrawn">—</div>
+      <div class="sc-sub">Request withdrawn</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Cost TBD</div>
+      <div class="sc-value" id="sc-pending">—</div>
+      <div class="sc-sub">Pending quotation</div>
+    </div>
+    <div class="sc warn">
+      <div class="sc-label">Waive Rate</div>
+      <div class="sc-value" id="sc-waive-rate">—</div>
+      <div class="sc-sub">Of resolved requests</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Revenue over time — received vs. lost</h3>
+      <div class="chart-wrap tall"><canvas id="chartRevTime"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Revenue by service type</h3>
+      <div class="chart-wrap tall"><canvas id="chartRevService"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Cost status breakdown</h3>
+      <div class="chart-wrap"><canvas id="chartCost"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Free vs. With Cost — request mix</h3>
+      <div class="chart-wrap"><canvas id="chartFreePaid"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: WAIVER REQUESTS ─────────────────────────────────────── -->
+  <div class="section-head"><h3>Waiver Requests</h3></div>
+
+  <div class="waive-funnel">
+    <div class="wf wf-sent">
+      <div class="wf-label">Total Sent</div>
+      <div class="wf-value" id="wf-total">—</div>
+      <div class="wf-sub" id="wf-total-sub">—</div>
+    </div>
+    <div class="wf wf-approved">
+      <div class="wf-label">Approved</div>
+      <div class="wf-value" id="wf-approved">—</div>
+      <div class="wf-sub" id="wf-approved-sub">—</div>
+    </div>
+    <div class="wf wf-rejected">
+      <div class="wf-label">Rejected</div>
+      <div class="wf-value" id="wf-rejected">—</div>
+      <div class="wf-sub" id="wf-rejected-sub">—</div>
+    </div>
+    <div class="wf wf-clarify">
+      <div class="wf-label">Clarification Requested</div>
+      <div class="wf-value" id="wf-clarify">—</div>
+      <div class="wf-sub" id="wf-clarify-sub">—</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Waiver outcomes</h3>
+      <div class="chart-wrap"><canvas id="chartWaive"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Revenue recovered vs. waived over time</h3>
+      <div class="chart-wrap"><canvas id="chartWaiveTime"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: SERVICES ─────────────────────────────────────────────── -->
+  <div class="section-head"><h3>Services</h3></div>
+
   <div class="chart-grid">
     <div class="chart-card">
       <h3>By service type</h3>
       <div class="chart-wrap"><canvas id="chartService"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Cost status</h3>
-      <div class="chart-wrap"><canvas id="chartCost"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-card">
       <h3>By urgency</h3>
       <div class="chart-wrap"><canvas id="chartUrgency"></canvas></div>
     </div>
-    <div class="chart-card">
-      <h3>Service type breakdown</h3>
-      <div class="table-card" style="border:none;padding:0;margin:0">
-        <table id="serviceTable">
-          <thead><tr><th>Service Type</th><th>Count</th><th>Share</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
   </div>
+
+  <div class="table-card">
+    <h3>Service type breakdown</h3>
+    <table id="serviceTable">
+      <thead>
+        <tr>
+          <th>Service Type</th>
+          <th>Requests</th>
+          <th>Share</th>
+          <th style="text-align:right">Revenue Received</th>
+          <th style="text-align:right">Revenue Lost</th>
+          <th>Waive Rate</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5: KEY INSIGHTS ─────────────────────────────────────────── -->
+  <div class="section-head"><h3>Key Insights</h3></div>
+  <div class="insight-strip" id="insightStrip"></div>
+
 </div>
 
 <script>
@@ -193,29 +354,22 @@ var params     = new URLSearchParams(location.search);
 var USER_EMAIL = params.get('email') || '';
 var charts     = {};
 
-var COLORS = {
-  green:  '#1D9E75', blue: '#185FA5', amber: '#854F0B',
-  red:    '#A32D2D', gray: '#888780', purple:'#534AB7', teal:'#0F6E56',
-  greenL: '#D8F3DC', blueL:'#E6F1FB', amberL:'#FAEEDA',
-  redL:   '#FCEBEB', grayL:'#F1EFE8', purpleL:'#EEEDFE', tealL:'#E1F5EE',
+var C = {
+  green:   '#1D9E75', blue:    '#185FA5', amber:   '#854F0B',
+  red:     '#A32D2D', gray:    '#888780', purple:  '#534AB7', teal:    '#0F6E56',
+  greenL:  '#D8F3DC', blueL:   '#E6F1FB', amberL:  '#FAEEDA',
+  redL:    '#FCEBEB', grayL:   '#F1EFE8', purpleL: '#EEEDFE', tealL:   '#E1F5EE',
 };
-
-var LC_COLORS = [
-  COLORS.grayL, COLORS.amberL, COLORS.blueL, COLORS.purpleL, COLORS.tealL, COLORS.greenL
-];
-var LC_BORDERS = [
-  COLORS.gray, COLORS.amber, COLORS.blue, COLORS.purple, COLORS.teal, COLORS.green
-];
 
 async function load(from, to) {
   document.getElementById('loadingState').style.display = 'flex';
   document.getElementById('content').style.display = 'none';
   try {
-    let url = GAS_URL + '?action=analytics';
+    var url = GAS_URL + '?action=analytics';
     if (from) url += '&from=' + from;
     if (to)   url += '&to='   + to;
-    const res  = await fetch(url);
-    const data = await res.json();
+    var res  = await fetch(url);
+    var data = await res.json();
     render(data);
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('content').style.display = 'block';
@@ -226,101 +380,263 @@ async function load(from, to) {
 }
 
 function render(data) {
-  // Scorecards
-  const lc = data.lifecycleCounts || {};
-  document.getElementById('sc-total').textContent = data.total ?? '—';
-  document.getElementById('sc-fq').textContent    = lc['For Quotation']               ?? '—';
-  document.getElementById('sc-or').textContent    = lc['Ongoing Review']              ?? '—';
-  document.getElementById('sc-qp').textContent    = lc['Quotation Provided']          ?? '—';
-  document.getElementById('sc-fe').textContent    = lc['For Execution / Schedule']    ?? '—';
-  document.getElementById('sc-oe').textContent    = lc['Ongoing Execution / Activity']?? '—';
-  document.getElementById('sc-rd').textContent    = lc['Request Done']                ?? '—';
-  document.getElementById('sc-avg').textContent   = data.avgDays != null ? data.avgDays + 'd' : '—';
+  var lc     = data.lifecycleCounts  || {};
+  var cost   = data.byCost           || {};
+  var svc    = data.byService        || {};
+  var urg    = data.byUrgency        || {};
+  var waive  = data.byWaiveStatus    || {};   // { Sent, Approved, Rejected, 'Clarification Requested' }
+  var revSvc = data.revenueByService || {};
+  var revMo  = data.revenueByMonth   || [];
+  var monthly= data.monthlyArr       || [];
+  var svcKeys= Object.keys(svc).sort(function(a,b){ return svc[b]-svc[a]; });
 
-  // Monthly trend (bar)
-  const monthly = data.monthlyArr || [];
+  // ── Section 1: Overview ──────────────────────────────────────────────────
+  set('sc-total', data.total);
+  set('sc-rl', lc['Request Logged']);
+  set('sc-fs', lc['For Scoping']);
+  set('sc-fq', lc['For Quotation']);
+  set('sc-ta', lc['For Team Assessment']);
+  set('sc-qd', lc['Quotation Done']);
+  set('sc-fe', lc['For Execution']);
+  set('sc-ed', lc['Execution Done']);
+  var closed = (lc['Not doable or out of scope']||0) + (lc['Request no longer needed']||0);
+  set('sc-cl', closed || null);
+  set('sc-avg', data.avgDays != null ? data.avgDays + 'd' : null);
+
+  // Monthly trend
   buildChart('chartMonthly', 'bar', {
-    labels: monthly.map(m => fmtMonth(m.month)),
-    datasets: [{
-      label: 'Requests',
-      data:  monthly.map(m => m.count),
-      backgroundColor: COLORS.greenL,
-      borderColor:     COLORS.green,
-      borderWidth: 1.5,
-      borderRadius: 4,
-    }]
+    labels: monthly.map(function(m){ return fmtMonth(m.month); }),
+    datasets: [{ label: 'Requests', data: monthly.map(function(m){ return m.count; }),
+      backgroundColor: C.greenL, borderColor: C.green, borderWidth: 1.5, borderRadius: 4 }]
   }, { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } });
 
-  // Lifecycle (horizontal bar)
-  const lcLabels = ['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
-  const lcShort  = ['For Quotation','Ongoing Review','Quotation Provided','For Execution','Ongoing Activity','Request Done'];
+  // Lifecycle horizontal bar — updated stage names
+  var lcLabels = ['Request Logged','For Scoping','For Quotation','For Team Assessment','Quotation Done','For Execution','Execution Done','Closed'];
+  var lcValues = lcLabels.map(function(l){
+    return l === 'Closed' ? closed : (lc[l] || 0);
+  });
   buildChart('chartLifecycle', 'bar', {
-    labels: lcShort,
-    datasets: [{
-      label: 'Requests',
-      data:  lcLabels.map(l => lc[l] || 0),
-      backgroundColor: LC_COLORS,
-      borderColor:     LC_BORDERS,
-      borderWidth: 1.5,
-      borderRadius: 4,
-    }]
+    labels: lcLabels,
+    datasets: [{ label: 'Requests', data: lcValues,
+      backgroundColor: [C.grayL,C.blueL,C.tealL,C.amberL,C.purpleL,C.amberL,C.greenL,C.redL],
+      borderColor:     [C.gray, C.blue, C.teal, C.amber, C.purple, C.amber, C.green, C.red],
+      borderWidth: 1.5, borderRadius: 4 }]
   }, { indexAxis: 'y', scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } });
 
-  // By service (doughnut)
-  const svc    = data.byService || {};
-  const svcKeys= Object.keys(svc).sort((a,b) => svc[b]-svc[a]);
-  const svcColors = [COLORS.green, COLORS.blue, COLORS.amber, COLORS.purple, COLORS.teal, COLORS.red, COLORS.gray];
+  // ── Section 2: Revenue ───────────────────────────────────────────────────
+  set('sc-rev-in',  fmtPhp(data.revenueReceived));
+  set('sc-rev-out', fmtPhp(data.revenueLost));
+  set('sc-free',    cost['Free']      != null ? cost['Free']      : null);
+  set('sc-paid',    cost['Paid']       != null ? cost['Paid']      : null);
+  set('sc-waived',  cost['Waived']     != null ? cost['Waived']    : null);
+  set('sc-withdrawn', cost['Withdrawn'] != null ? cost['Withdrawn'] : null);
+  set('sc-pending', cost['Pending']    != null ? cost['Pending']   : null);
+  var resolved = (cost['Paid']||0) + (cost['Waived']||0);
+  set('sc-waive-rate', resolved > 0 ? pct(cost['Waived']||0, resolved) : null);
+
+  // Revenue over time
+  buildChart('chartRevTime', 'bar', {
+    labels: revMo.map(function(m){ return fmtMonth(m.month); }),
+    datasets: [
+      { label: 'Received',     data: revMo.map(function(m){ return m.received||0; }), backgroundColor: C.tealL,   borderColor: C.teal,   borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Lost (Waived)',data: revMo.map(function(m){ return m.lost||0; }),     backgroundColor: C.purpleL, borderColor: C.purple, borderWidth: 1.5, borderRadius: 4 },
+    ]
+  }, { scales: { y: { beginAtZero: true, ticks: { callback: fmtPhpShort } } },
+       plugins: { legend: { display: true, labels: { font: { family:"'DM Sans'" }, boxWidth: 12 } } } });
+
+  // Revenue by service
+  var rsk = Object.keys(revSvc).sort(function(a,b){
+    return ((revSvc[b].received||0)+(revSvc[b].lost||0)) - ((revSvc[a].received||0)+(revSvc[a].lost||0));
+  });
+  buildChart('chartRevService', 'bar', {
+    labels: rsk,
+    datasets: [
+      { label: 'Received',     data: rsk.map(function(k){ return revSvc[k].received||0; }), backgroundColor: C.tealL,   borderColor: C.teal,   borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Lost (Waived)',data: rsk.map(function(k){ return revSvc[k].lost||0; }),     backgroundColor: C.purpleL, borderColor: C.purple, borderWidth: 1.5, borderRadius: 4 },
+    ]
+  }, { indexAxis: 'y', scales: { x: { beginAtZero: true, ticks: { callback: fmtPhpShort } } },
+       plugins: { legend: { display: true, labels: { font: { family:"'DM Sans'" }, boxWidth: 12 } } } });
+
+  // Cost status — now includes Free + Withdrawn
+  buildChart('chartCost', 'doughnut', {
+    labels: ['Paid', 'Waived', 'Free', 'Withdrawn', 'Cost TBD'],
+    datasets: [{ data: [cost.Paid||0, cost.Waived||0, cost.Free||0, cost.Withdrawn||0, cost.Pending||0],
+      backgroundColor: [C.teal, C.purple, '#0F6E56', C.amber, C.gray],
+      borderWidth: 2, borderColor: '#fff' }]
+  }, { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } } });
+
+  // Free vs With Cost mix
+  var paidMix = (cost['Paid']||0) + (cost['Waived']||0) + (cost['Withdrawn']||0) + (cost['Pending']||0);
+  buildChart('chartFreePaid', 'doughnut', {
+    labels: ['With Cost', 'Free Service'],
+    datasets: [{ data: [paidMix, cost['Free']||0], backgroundColor: [C.amberL, C.tealL], borderColor: [C.amber, C.teal], borderWidth: 2 }]
+  }, { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } } });
+
+  // ── Section 3: Waiver requests ───────────────────────────────────────────
+  var wSent     = waive['Sent']                    || 0;
+  var wApproved = waive['Approved']                || 0;
+  var wRejected = waive['Rejected']                || 0;
+  var wClarify  = waive['Clarification Requested'] || 0;
+  var wTotal    = wSent + wApproved + wRejected + wClarify;
+
+  set('wf-total',    wTotal);
+  set('wf-approved', wApproved);
+  set('wf-rejected', wRejected);
+  set('wf-clarify',  wClarify);
+  setText('wf-total-sub',    wTotal > 0 ? pct(wTotal, data.total||1)    + ' of all requests'          : 'no waiver requests yet');
+  setText('wf-approved-sub', wTotal > 0 ? pct(wApproved, wTotal)        + ' approval rate'            : '—');
+  setText('wf-rejected-sub', wTotal > 0 ? pct(wRejected, wTotal)        + ' rejection rate'           : '—');
+  setText('wf-clarify-sub',  wTotal > 0 ? pct(wClarify, wTotal)         + ' pending clarification'    : '—');
+
+  buildChart('chartWaive', 'doughnut', {
+    labels: ['Approved', 'Rejected', 'Clarification Requested', 'Pending (Sent)'],
+    datasets: [{ data: [wApproved, wRejected, wClarify, wSent],
+      backgroundColor: [C.tealL, C.redL, C.amberL, C.blueL],
+      borderColor:     [C.teal,  C.red,  C.amber,  C.blue], borderWidth: 2 }]
+  }, { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } } });
+
+  buildChart('chartWaiveTime', 'bar', {
+    labels: revMo.map(function(m){ return fmtMonth(m.month); }),
+    datasets: [
+      { label: 'Recovered (Paid)', data: revMo.map(function(m){ return m.received||0; }), backgroundColor: C.greenL, borderColor: C.green, borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Waived',           data: revMo.map(function(m){ return m.lost||0; }),     backgroundColor: C.redL,   borderColor: C.red,   borderWidth: 1.5, borderRadius: 4 },
+    ]
+  }, { scales: { y: { beginAtZero: true, ticks: { callback: fmtPhpShort } } },
+       plugins: { legend: { display: true, labels: { font: { family:"'DM Sans'" }, boxWidth: 12 } } } });
+
+  // ── Section 4: Services ──────────────────────────────────────────────────
+  var svcColors = [C.green, C.blue, C.amber, C.purple, C.teal, C.red, C.gray];
   buildChart('chartService', 'doughnut', {
     labels: svcKeys,
-    datasets: [{ data: svcKeys.map(k => svc[k]), backgroundColor: svcColors.slice(0, svcKeys.length), borderWidth: 2, borderColor: '#fff' }]
+    datasets: [{ data: svcKeys.map(function(k){ return svc[k]; }),
+      backgroundColor: svcColors.slice(0, svcKeys.length), borderWidth: 2, borderColor: '#fff' }]
   }, { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } } });
 
-  // Cost status (doughnut)
-  const cost = data.byCost || {};
-  buildChart('chartCost', 'doughnut', {
-    labels: ['Paid', 'Waived', 'Pending'],
-    datasets: [{ data: [cost.Paid||0, cost.Waived||0, cost.Pending||0], backgroundColor: [COLORS.blue, COLORS.purple, COLORS.gray], borderWidth: 2, borderColor: '#fff' }]
-  }, { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } } });
-
-  // Urgency (bar)
-  const urg = data.byUrgency || {};
   buildChart('chartUrgency', 'bar', {
     labels: ['High', 'Medium', 'Low'],
-    datasets: [{
-      label: 'Requests',
-      data:  [urg.High||0, urg.Medium||0, urg.Low||0],
-      backgroundColor: [COLORS.redL, COLORS.amberL, COLORS.greenL],
-      borderColor:     [COLORS.red,  COLORS.amber,  COLORS.green],
-      borderWidth: 1.5, borderRadius: 4,
-    }]
+    datasets: [{ label: 'Requests', data: [urg.High||0, urg.Medium||0, urg.Low||0],
+      backgroundColor: [C.redL, C.amberL, C.greenL], borderColor: [C.red, C.amber, C.green],
+      borderWidth: 1.5, borderRadius: 4 }]
   }, { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } });
 
-  // Service table
-  const tbody = document.querySelector('#serviceTable tbody');
+  // Service table — extended with revenue + waive rate columns
+  var tbody = document.querySelector('#serviceTable tbody');
   tbody.innerHTML = '';
-  const total = Object.values(svc).reduce((a,b) => a+b, 0) || 1;
-  svcKeys.forEach(k => {
-    const pct = Math.round((svc[k] / total) * 100);
-    tbody.innerHTML += `<tr><td>${k}</td><td>${svc[k]}</td><td>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:6px;background:var(--border);border-radius:3px">
-          <div style="width:${pct}%;height:100%;background:var(--green-mid);border-radius:3px"></div>
-        </div>
-        <span style="font-size:0.72rem;color:var(--ink-muted);min-width:30px">${pct}%</span>
-      </div>
-    </td></tr>`;
+  var svcTotal = Object.values(svc).reduce(function(a,b){ return a+b; }, 0) || 1;
+  svcKeys.forEach(function(k) {
+    var share  = Math.round((svc[k] / svcTotal) * 100);
+    var revIn  = revSvc[k] ? (revSvc[k].received || 0) : 0;
+    var revOut = revSvc[k] ? (revSvc[k].lost     || 0) : 0;
+    var wBasis = revIn + revOut;
+    var wRate  = wBasis > 0 ? pct(revOut, wBasis) : '—';
+    var wHigh  = wBasis > 0 && (revOut / wBasis) > 0.3;
+    tbody.innerHTML +=
+      '<tr>'
+      + '<td>' + esc(k) + '</td>'
+      + '<td>' + svc[k] + '</td>'
+      + '<td><div style="display:flex;align-items:center;gap:8px">'
+      +   '<div style="flex:1;height:6px;background:var(--border);border-radius:3px">'
+      +     '<div style="width:' + share + '%;height:100%;background:var(--green-mid);border-radius:3px"></div>'
+      +   '</div>'
+      +   '<span style="font-size:0.72rem;color:var(--ink-muted);min-width:30px">' + share + '%</span>'
+      + '</div></td>'
+      + '<td style="text-align:right">' + (revIn  > 0 ? fmtPhp(revIn)  : '<span style="color:var(--ink-muted)">—</span>') + '</td>'
+      + '<td style="text-align:right;color:' + (revOut > 0 ? '#534AB7' : '') + '">' + (revOut > 0 ? fmtPhp(revOut) : '<span style="color:var(--ink-muted)">—</span>') + '</td>'
+      + '<td>' + (wRate !== '—' ? '<span class="badge ' + (wHigh ? 'b-red' : 'b-gray') + '">' + wRate + '</span>' : '<span style="color:var(--ink-muted)">—</span>') + '</td>'
+      + '</tr>';
   });
+
+  // ── Section 5: Key Insights ──────────────────────────────────────────────
+  var insights = [];
+
+  var done     = lc['Execution Done'] || 0;
+  var compRate = (data.total||0) > 0 ? Math.round((done / data.total) * 100) : 0;
+  insights.push({ label: 'Completion Rate', value: compRate + '%',
+    sub: done + ' of ' + (data.total||0) + ' requests fully executed' });
+
+  var pipeline = (lc['Request Logged']||0) + (lc['For Scoping']||0) + (lc['For Quotation']||0)
+    + (lc['For Team Assessment']||0) + (lc['Quotation Done']||0) + (lc['For Execution']||0);
+  insights.push({ label: 'Active Pipeline', value: pipeline,
+    sub: 'Requests currently in progress' });
+
+  var revPot = (data.revenueReceived||0) + (data.revenueLost||0);
+  if (revPot > 0) {
+    insights.push({ label: 'Revenue Capture Rate', value: pct(data.revenueReceived||0, revPot),
+      sub: fmtPhp(data.revenueReceived) + ' of ' + fmtPhp(revPot) + ' potential' });
+  }
+
+  if (wTotal > 0) {
+    insights.push({ label: 'Waiver Approval Rate', value: pct(wApproved, wTotal),
+      sub: wApproved + ' approved of ' + wTotal + ' waiver requests submitted' });
+  }
+
+  if (svcKeys.length) {
+    insights.push({ label: 'Top Service', value: svcKeys[0],
+      sub: svc[svcKeys[0]] + ' requests — ' + Math.round((svc[svcKeys[0]] / svcTotal) * 100) + '% of volume' });
+  }
+
+  if (monthly.length > 0) {
+    var avgMo = Math.round((data.total||0) / monthly.length * 10) / 10;
+    insights.push({ label: 'Avg. Requests / Month', value: avgMo,
+      sub: 'Over ' + monthly.length + ' month' + (monthly.length !== 1 ? 's' : '') });
+  }
+
+  var freeCount = cost['Free'] || 0;
+  insights.push({ label: 'Free Service Share', value: (data.total||0) > 0 ? pct(freeCount, data.total) : '—',
+    sub: freeCount + ' free-service requests of ' + (data.total||0) + ' total' });
+
+  var blocked = lc['For Team Assessment'] || 0;
+  if (blocked > 0) {
+    insights.push({ label: 'Blocked — Needs Assessment', value: blocked,
+      sub: 'Requests pending clarification or dev review' });
+  }
+
+  document.getElementById('insightStrip').innerHTML = insights.map(function(ins) {
+    return '<div class="insight"><div class="insight-label">' + esc(ins.label) + '</div>'
+      + '<div class="insight-value">' + esc(String(ins.value)) + '</div>'
+      + '<div class="insight-sub">' + esc(ins.sub) + '</div></div>';
+  }).join('');
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function set(id, val) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = (val != null && val !== '') ? val : '—';
+}
+function setText(id, val) { set(id, val); }
+
+function pct(num, denom) {
+  if (!denom) return '—';
+  return Math.round((num / denom) * 100) + '%';
+}
+
+function fmtPhp(n) {
+  if (n == null) return '—';
+  if (n === 0)   return '₱0';
+  if (n >= 1000000) return '₱' + (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return '₱' + (n / 1000).toFixed(0)    + 'K';
+  return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function fmtPhpShort(v) {
+  if (!v) return '₱0';
+  if (v >= 1000000) return '₱' + (v / 1000000).toFixed(1) + 'M';
+  if (v >= 1000)    return '₱' + (v / 1000).toFixed(0)    + 'K';
+  return '₱' + v;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function buildChart(id, type, data, options) {
   if (charts[id]) charts[id].destroy();
-  const ctx = document.getElementById(id).getContext('2d');
+  var ctx = document.getElementById(id).getContext('2d');
   charts[id] = new Chart(ctx, {
-    type,
-    data,
+    type: type, data: data,
     options: Object.assign({
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: type === 'doughnut', labels: { font: { family: "'DM Sans'" } } } },
       scales: type === 'doughnut' ? {} : {
         x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { family: "'DM Sans'", size: 11 } } },
@@ -330,32 +646,19 @@ function buildChart(id, type, data, options) {
   });
 }
 
-function applyFilter() {
-  const from = document.getElementById('fromDate').value;
-  const to   = document.getElementById('toDate').value;
-  load(from, to);
-}
-
-function clearFilter() {
-  document.getElementById('fromDate').value = '';
-  document.getElementById('toDate').value   = '';
-  load();
-}
-
 function fmtMonth(ym) {
   if (!ym) return '';
-  const [y, m] = ym.split('-');
-  const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return (names[parseInt(m,10)-1] || m) + ' ' + y;
+  var parts = ym.split('-');
+  var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return (names[parseInt(parts[1], 10) - 1] || parts[1]) + ' ' + parts[0];
 }
 
-// Set default date range to current month
-const now   = new Date();
-const y     = now.getFullYear();
-const m     = String(now.getMonth()+1).padStart(2,'0');
-document.getElementById('fromDate').value = y + '-' + m + '-01';
-document.getElementById('toDate').value   = now.toISOString().split('T')[0];
+function applyFilter() { load(document.getElementById('fromDate').value, document.getElementById('toDate').value); }
+function clearFilter() { document.getElementById('fromDate').value = ''; document.getElementById('toDate').value = ''; load(); }
 
+var _now = new Date(), _y = _now.getFullYear(), _mo = String(_now.getMonth()+1).padStart(2,'0');
+document.getElementById('fromDate').value = _y + '-' + _mo + '-01';
+document.getElementById('toDate').value   = _now.toISOString().split('T')[0];
 load(document.getElementById('fromDate').value, document.getElementById('toDate').value);
 </script>
 </body>

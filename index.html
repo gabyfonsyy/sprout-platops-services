@@ -101,9 +101,23 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc[data-lc="For Team Assessment"].active{border-color:var(--mango);background:var(--mango-lt)}
 .sc[data-lc="For Team Assessment"].active .sc-label,.sc[data-lc="For Team Assessment"].active .sc-sub{color:#7a4800}
 .sc[data-lc="For Team Assessment"].active .sc-value{color:var(--mango)}
-.analytics-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.analytics-meta{display:flex;gap:6px;flex-wrap:wrap;flex-direction:column}
+.analytics-meta-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:20px}
 .meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .meta-pill span{color:var(--text);font-weight:600}
+.meta-pill-paid{background:#e8ecfd;border-color:#b8c9f9;color:#1c3a9e}
+.meta-pill-paid span{color:#1c3a9e;font-weight:700}
+.meta-pill-waived{background:#ede9ff;border-color:#c5b8f5;color:#3b1d9e}
+.meta-pill-waived span{color:#3b1d9e;font-weight:700}
+.meta-pill-free{background:#e0f5f8;border-color:#9dd8e2;color:#074f5a}
+.meta-pill-free span{color:#074f5a;font-weight:700}
+.meta-pill-withdrawn{background:#fff3cd;border-color:#f0c040;color:#7a4800}
+.meta-pill-withdrawn span{color:#7a4800;font-weight:700}
+.meta-pill-rev-in{background:#d4f5df;border-color:#7dd49a;color:#0d5a24;font-weight:500}
+.meta-pill-rev-in span{color:#0d5a24;font-weight:700}
+.meta-pill-rev-out{background:#ffe0e0;border-color:#fbbdbd;color:#7a1010;font-weight:500}
+.meta-pill-rev-out span{color:#7a1010;font-weight:700}
+.meta-pill-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);padding:3px 6px 3px 0;white-space:nowrap;align-self:center}
 .body{display:flex;flex:1;overflow:hidden}
 .sidebar{width:var(--sw);flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
 .sb-search{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center}
@@ -335,6 +349,55 @@ tr:hover td{background:var(--bg)}
 .sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+/* Free badge on service cards */
+.sv-cost-free{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:#e0f5f8;color:#074f5a;white-space:nowrap;flex-shrink:0}
+.sv-cost-paid{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:var(--mango-lt);color:#7a4800;white-space:nowrap;flex-shrink:0}
+/* Services section divider */
+.sv-section-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:8px 2px 6px;grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.sv-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Waive request panel */
+.waive-panel{background:var(--lavender-lt);border:1.5px solid #c5b8f5;border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.waive-panel .dsh{background:#ede9ff;border-bottom:1px solid #c5b8f5}
+.waive-panel .dsh h3{color:#3b1d9e}
+.waive-inner{padding:14px}
+.waive-status-badge{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.waive-status-pending{background:#fff3cd;color:#7a4800;border:1px solid #f08c00}
+.waive-status-sent{background:#e0f5f8;color:#074f5a;border:1px solid #0c8599}
+.waive-status-approved{background:#d4f5df;color:#0d5a24;border:1px solid #2a9e50}
+.waive-status-rejected{background:#ffe0e0;color:#7a1010;border:1px solid #c92a2a}
+.waive-status-clarify{background:#fff3cd;color:#7a4800;border:1px solid #f08c00}
+.waive-field{margin-bottom:10px}
+.waive-field label{display:block;font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:4px}
+.waive-field input,.waive-field textarea,.waive-field select{width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--surface);border:1.5px solid #c5b8f5;border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s}
+.waive-field input:focus,.waive-field textarea:focus,.waive-field select:focus{border-color:var(--lavender)}
+.waive-field textarea{resize:vertical;min-height:90px;line-height:1.6}
+.waive-send-btn{font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;background:var(--lavender);border:none;color:#fff;transition:background 0.15s;width:100%;margin-top:4px}
+.waive-send-btn:hover{background:#5c3dd8}
+.waive-send-btn:disabled{opacity:0.55;cursor:not-allowed}
+.waive-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
+.waive-msg-ok{color:#3b1d9e;font-weight:500}
+.waive-msg-err{color:var(--tomato)}
+/* Config panel inside waive section */
+.waive-config{background:var(--surface);border:1px solid #c5b8f5;border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.waive-config-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.waive-config-head span{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e}
+.waive-config-toggle{font-family:'Rubik',sans-serif;font-size:0.7rem;color:#3b1d9e;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.waive-config-body{display:none;padding-top:8px;border-top:1px solid #c5b8f5;margin-top:8px}
+.waive-config-body.open{display:block}
+.waive-config-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.waive-config-row .waive-field{margin-bottom:0}
+.waive-config-save{font-family:'Rubik',sans-serif;font-size:0.75rem;font-weight:500;padding:5px 14px;border-radius:6px;cursor:pointer;background:var(--lavender);border:none;color:#fff;transition:background 0.15s}
+.waive-config-save:hover{background:#5c3dd8}
+.waive-config-preview{font-size:0.72rem;color:var(--muted);line-height:1.6}
+.waive-config-preview strong{color:var(--text);font-weight:500}
+/* Test email button */
+.waive-test-btn{font-family:'Rubik',sans-serif;font-size:0.75rem;font-weight:500;padding:5px 14px;border-radius:6px;cursor:pointer;background:var(--surface);border:1.5px solid #c5b8f5;color:#3b1d9e;transition:all 0.15s;margin-top:6px;width:100%}
+.waive-test-btn:hover{background:#ede9ff}
+.waive-test-btn:disabled{opacity:0.55;cursor:not-allowed}
+.waive-history{margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5}
+.waive-history-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:6px}
+.waive-hist-item{background:var(--surface);border-radius:6px;padding:8px 10px;margin-bottom:5px;font-size:0.78rem;color:var(--text);border-left:2px solid var(--lavender)}
+.waive-hist-meta{font-size:0.67rem;color:var(--muted);margin-bottom:2px}
 .sv-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;flex:1}
 .sv-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px}
 .sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
@@ -558,8 +621,9 @@ tr:hover td{background:var(--bg)}
             <div class="proc-section-label">01 — Overview</div>
             <div class="proc-section-title">What qualifies as a Platform Operations service request?</div>
             <div class="proc-overview-card">
-              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies.</p>
-              <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
+              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations.</p>
+              <p>Services are classified into two types: <strong>With Cost</strong> — which carry a service fee and require a signed Work Order before execution — and <strong>Free Services</strong>, which are provided at no charge to the client. Browse the <a href="#" onclick="switchTab('services');return false;" style="color:var(--primary)">List of Services</a> to see which type applies.</p>
+              <p>Fee waivers for With Cost services require written approval from the CTO and COO. Waiver requests are submitted directly through the Tracker — no side-channel emails needed.</p>
               <p>If you are unsure whether your request falls under this portal, reach out to the Platform Operations team before submitting.</p>
             </div>
           </div>
@@ -576,15 +640,39 @@ tr:hover td{background:var(--bg)}
             </div>
             <div class="proc-step-notes">
               <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>Request Logged</strong><span>Submit through this portal with client details, service needed, target date, and known constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Quotation Done</strong><span>Must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order attached to the CRF.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate if applicable, and coordinates next steps. Additional information may be requested.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised. Free services skip this step.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Quotation Done</strong><span>The CRF and Work Order must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order.</span></div></div>
               <div class="proc-step-note"><div class="proc-step-note-num">5</div><div class="proc-step-note-body"><strong>For Execution</strong><span>The CRF has been raised and execution is scheduled. The assigned Platform Ops team member is preparing to carry out the work.</span></div></div>
               <div class="proc-step-note"><div class="proc-step-note-num">6</div><div class="proc-step-note-body"><strong>Execution Done</strong><span>The service has been executed, results validated, and the request updated in the tracker. The requester and CSM are notified upon completion.</span></div></div>
             </div>
+            <div style="margin-top:1rem;padding:12px 16px;background:var(--mango-lt);border:1px solid var(--mango);border-radius:8px;font-size:0.8125rem;color:#7a4800;line-height:1.6">
+              <strong>Team Assessment</strong> — A request may be paused at any stage if additional technical review is needed. This shows as <em>Team Assessment</em> in the tracker. The CSM will be contacted for clarification or additional details.
+            </div>
           </div>
           <div class="proc-section">
-            <div class="proc-section-label">03 — Scope &amp; Quality Safeguards</div>
+            <div class="proc-section-label">03 — Service Cost Types</div>
+            <div class="proc-section-title">With Cost vs Free Services</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>Type</th><th>What it means</th><th>Waiver applies?</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><span style="display:inline-block;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:12px;background:var(--mango-lt);color:#7a4800">With Cost</span></td>
+                    <td class="td-muted">Carries a service fee. A signed Work Order is required before execution. Fee can be waived only with written CTO + COO approval.</td>
+                    <td class="td-muted">Yes — submit a waiver request through the Tracker. The CSM provides reason and justification; the admin sends it to CTO and COO for approval.</td>
+                  </tr>
+                  <tr>
+                    <td><span style="display:inline-block;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:12px;background:#e0f5f8;color:#074f5a">Free Service</span></td>
+                    <td class="td-muted">No charge to the client. Still goes through the standard request and execution lifecycle.</td>
+                    <td class="td-muted">Not applicable.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">04 — Scope &amp; Quality Safeguards</div>
             <div class="proc-section-title">Guardrails that apply to all requests</div>
             <div class="proc-table-wrap">
               <table class="proc-table">
@@ -592,8 +680,8 @@ tr:hover td{background:var(--bg)}
                 <tbody>
                   <tr><td>All requests through this portal</td><td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs.</td><td class="td-muted">Redirect requester to submit via this form.</td></tr>
                   <tr><td>Assessment before execution</td><td class="td-muted">No work begins without completed review of scope, cost, and timeline.</td><td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td></tr>
-                  <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
-                  <tr><td>All services subject to fees</td><td class="td-muted">Fee waivers are not granted by default. To request a waiver, email the CTO, Gian Dela Rama (<a href="mailto:gdelarama@sprout.ph" style="color:var(--primary)">gdelarama@sprout.ph</a>) with CC to: DJ (<a href="mailto:diane@sprout.ph" style="color:var(--primary)">diane@sprout.ph</a>), Danica (<a href="mailto:afrancisco@sprout.ph" style="color:var(--primary)">afrancisco@sprout.ph</a>), Gaby (<a href="mailto:gabriellef@sprout.ph" style="color:var(--primary)">gabriellef@sprout.ph</a>).</td><td class="td-muted">Written CTO approval required. No exceptions.</td></tr>
+                  <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date. Applies to With Cost services.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
+                  <tr><td>Fee waivers require approval</td><td class="td-muted">Waivers for With Cost services are not granted by default. Request via the Tracker — admin submits to CTO (<a href="mailto:gdelarama@sprout.ph" style="color:var(--primary)">gdelarama@sprout.ph</a>) with COO CC (<a href="mailto:kislayc@sprout.ph" style="color:var(--primary)">kislayc@sprout.ph</a>).</td><td class="td-muted">Written CTO + COO approval required. No exceptions.</td></tr>
                   <tr><td>No unapproved scope changes</td><td class="td-muted">New requirements mid-execution are treated as a separate request.</td><td class="td-muted">Log a new request. Re-assess and re-estimate.</td></tr>
                   <tr><td>Downtime must be confirmed</td><td class="td-muted">No CRF raised until schedule is confirmed with client.</td><td class="td-muted">Platform Ops coordinates with CSM to lock window.</td></tr>
                 </tbody>
@@ -601,7 +689,17 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
           <div class="proc-section">
-            <div class="proc-section-label">04 — Exit Criteria</div>
+            <div class="proc-section-label">05 — Fee Waiver Process</div>
+            <div class="proc-section-title">How to request a fee waiver</div>
+            <div class="proc-step-notes">
+              <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>CSM contacts PlatOps Lead</strong><span>The CSM reaches out to the Platform Operations Lead to request a waiver and explains why.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>CSM provides justification</strong><span>The CSM submits a detailed defense: waiver reason, business justification, and the client impact if the fee were charged. This is done through the Tracker — no side-channel emails.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>Admin sends for approval</strong><span>The admin clicks "Send Waiver Request" in the Tracker. This automatically emails the CTO (To) and COO (CC) with full request details and one-click Approve / Reject / Request Clarification links.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Decision recorded automatically</strong><span>When the CTO or COO clicks a decision link, the tracker is updated instantly and the CSM is notified. No manual follow-up needed.</span></div></div>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">06 — Exit Criteria</div>
             <div class="proc-section-title">When is a request considered complete?</div>
             <div class="proc-table-wrap">
               <table class="proc-table">
@@ -609,7 +707,7 @@ tr:hover td{background:var(--bg)}
                 <tbody>
                   <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
                   <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
-                  <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
+                  <tr><td>3</td><td>Service fee settled, waiver formally approved by CTO + COO, or confirmed Free service.</td></tr>
                   <tr><td>4</td><td>Tracker updated and request marked as <strong>Execution Done</strong>.</td></tr>
                   <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
                 </tbody>
@@ -617,7 +715,7 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
           <div class="proc-section">
-            <div class="proc-section-label">05 — Escalation</div>
+            <div class="proc-section-label">07 — Escalation</div>
             <div class="proc-section-title">When things get stuck</div>
             <div class="proc-table-wrap">
               <table class="proc-table">
@@ -626,7 +724,7 @@ tr:hover td{background:var(--bg)}
                   <tr><td>Request stalled with no response</td><td class="td-muted">CSM → Platform Ops Lead</td><td class="td-muted">Status update within 2 business days</td></tr>
                   <tr><td>Scope or feasibility unclear</td><td class="td-muted">Platform Ops → Engineering Manager</td><td class="td-muted">Joint assessment within 2 business days</td></tr>
                   <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-muted">CSM → Lead CSM</td><td class="td-muted">Resolution or cancellation of request</td></tr>
-                  <tr><td>Fee waiver without CTO approval</td><td class="td-muted">CSM → CTO</td><td class="td-muted">Written approval or denial before request proceeds</td></tr>
+                  <tr><td>Fee waiver without CTO + COO approval</td><td class="td-muted">Submit through Tracker → CTO + COO via portal</td><td class="td-muted">Written approval or denial before request proceeds</td></tr>
                   <tr><td>Scope change mid-execution</td><td class="td-muted">Platform Ops Tech Lead → Platform Ops Lead</td><td class="td-muted">Scope frozen; new items logged separately</td></tr>
                   <tr><td>Downtime window not agreed in time</td><td class="td-muted">CSM → Lead CSM → Platform Ops Lead</td><td class="td-muted">Schedule confirmed or request deferred</td></tr>
                 </tbody>
@@ -666,13 +764,16 @@ tr:hover td{background:var(--bg)}
           <div class="sc" data-lc="Request Logged" onclick="scFilter(this)"><div class="sc-label">Request Logged</div><div class="sc-value" id="sc-rl">—</div><div class="sc-sub">Backlog</div></div>
           <div class="sc" data-lc="For Scoping" onclick="scFilter(this)"><div class="sc-label">For Scoping</div><div class="sc-value" id="sc-fs">—</div><div class="sc-sub">Under review</div></div>
           <div class="sc" data-lc="For Quotation" onclick="scFilter(this)"><div class="sc-label">For Quotation</div><div class="sc-value" id="sc-fq">—</div><div class="sc-sub">Active quotation</div></div>
-          <div class="sc" data-lc="For Team Assessment" onclick="scFilter(this)"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="sc-ta">—</div><div class="sc-sub">Pending clarification</div></div>
+          <div class="sc" data-lc="For Team Assessment" onclick="scFilter(this)"><div class="sc-label">Team Assessment</div><div class="sc-value" id="sc-ta">—</div><div class="sc-sub">Pending clarification</div></div>
           <div class="sc" data-lc="Quotation Done" onclick="scFilter(this)"><div class="sc-label">Quotation Done</div><div class="sc-value" id="sc-qd">—</div><div class="sc-sub">No execution</div></div>
           <div class="sc" data-lc="For Execution" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
           <div class="sc" data-lc="Execution Done" onclick="scFilter(this)"><div class="sc-label">Execution Done</div><div class="sc-value" id="sc-ed">—</div><div class="sc-sub">Completed</div></div>
           <div class="sc" data-lc="Closed" onclick="scFilter(this)"><div class="sc-label">Closed</div><div class="sc-value" id="sc-cl">—</div><div class="sc-sub">Request closed</div></div>
         </div>
-        <div class="analytics-meta" id="analyticsMeta"></div>
+        <div class="analytics-meta" id="analyticsMeta">
+          <div class="analytics-meta-row" id="analyticsMetaCounts"></div>
+          <div class="analytics-meta-row" id="analyticsMetaRevenue"></div>
+        </div>
       </div>
       <div class="body">
         <div class="sidebar">
@@ -752,7 +853,7 @@ tr:hover td{background:var(--bg)}
             <div class="sc-an"><div class="sc-label">Request Logged</div><div class="sc-value" id="an-rl">—</div><div class="sc-sub">Backlog</div></div>
             <div class="sc-an"><div class="sc-label">For Scoping</div><div class="sc-value" id="an-fs">—</div><div class="sc-sub">Under review</div></div>
             <div class="sc-an"><div class="sc-label">For Quotation</div><div class="sc-value" id="an-fq">—</div><div class="sc-sub">Active quotation</div></div>
-            <div class="sc-an on-hold"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="an-ta">—</div><div class="sc-sub">Pending clarification</div></div>
+            <div class="sc-an on-hold"><div class="sc-label">Team Assessment</div><div class="sc-value" id="an-ta">—</div><div class="sc-sub">Pending clarification</div></div>
             <div class="sc-an"><div class="sc-label">Quotation Done</div><div class="sc-value" id="an-qd">—</div><div class="sc-sub">No execution ticket</div></div>
             <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
             <div class="sc-an"><div class="sc-label">Execution Done</div><div class="sc-value" id="an-ed">—</div><div class="sc-sub">Completed</div></div>
@@ -858,7 +959,14 @@ tr:hover td{background:var(--bg)}
     <div class="svc-form-group"><label>Service Name <span style="color:var(--tomato)">*</span></label><input type="text" id="svcName" placeholder="e.g. Data Migration"/></div>
     <div class="svc-form-group"><label>Category <span style="color:var(--tomato)">*</span></label><input type="text" id="svcCategory" placeholder="e.g. Database, Configuration"/></div>
     <div class="svc-form-group"><label>Description / Overview</label><textarea id="svcDesc" rows="3" placeholder="What does this service involve? What's included?"></textarea></div>
-    <div class="svc-form-group"><label>Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
+    <div class="svc-form-group">
+      <label>Cost Type <span style="color:var(--tomato)">*</span></label>
+      <select id="svcCostType" onchange="toggleSvcPriceField()">
+        <option value="With Cost">With Cost — requires CTO/COO approval to waive</option>
+        <option value="Free">Free — no charge to client</option>
+      </select>
+    </div>
+    <div class="svc-form-group" id="svcPriceGroup"><label id="svcPriceLabel">Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
     <div class="svc-form-group"><label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/></div>
     <div class="svc-modal-actions">
       <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
@@ -1095,7 +1203,12 @@ function renderServicesView() {
   var countEl = document.getElementById('svResultCount');
   if (countEl) countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
   if (!filtered.length) { grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>'; return; }
-  grid.innerHTML = filtered.map(function(svc) {
+
+  // Split into Free and With Cost
+  var freeItems   = filtered.filter(function(s) { return s.costType === 'Free'; });
+  var paidItems   = filtered.filter(function(s) { return s.costType !== 'Free'; });
+
+  function renderCard(svc) {
     var cardId = 'svcard-' + svc.id.replace(/[^a-z0-9]/gi, '-');
     var adminActions = '';
     if (isAdmin) {
@@ -1103,20 +1216,39 @@ function renderServicesView() {
         + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
     }
     var chevron = '<svg class="sv-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    var isFree = svc.costType === 'Free';
     var expandRows = '';
-    if (svc.price) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(svc.price) + '</span></div>';
+    // Always show Cost Type
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Cost Type</span><span class="sv-card-expand-value">' + (isFree ? '<span class="sv-cost-free" style="font-size:0.7rem">Free</span>' : '<span class="sv-cost-paid" style="font-size:0.7rem">With Cost</span>') + '</span></div>';
+    // Always show Estimated Cost — "Free" label for free services, price or "Quoted per request" for paid
+    var costDisplay = isFree ? 'Free — no charge to client' : (svc.price || 'Quoted per request');
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(costDisplay) + '</span></div>';
     if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
-    if (!expandRows) expandRows = '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">No additional details available for this service.</p>';
     var expandFooter = '<div class="sv-card-expand-footer"><div style="display:flex;gap:6px">' + adminActions + '</div><button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button></div>';
+    var costBadge = svc.costType === 'Free'
+      ? '<span class="sv-cost-free">Free</span>'
+      : '<span class="sv-cost-paid">With Cost</span>';
     return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')">'
       + '<div class="sv-card-header"><span class="sv-card-name">' + esc(svc.name) + '</span>'
-      + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+      + '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+      + costBadge
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
       + chevron + '</div></div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
       + '<div class="sv-card-expand" id="' + cardId + '-expand">' + expandRows + expandFooter + '</div>'
       + '</div>';
-  }).join('');
+  }
+
+  var html = '';
+  if (paidItems.length) {
+    html += '<div class="sv-section-label">With Cost <span style="font-size:0.6rem;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— requires CTO &amp; COO approval to waive</span></div>';
+    html += paidItems.map(renderCard).join('');
+  }
+  if (freeItems.length) {
+    html += '<div class="sv-section-label">Free Services</div>';
+    html += freeItems.map(renderCard).join('');
+  }
+  grid.innerHTML = html;
 }
 
 var editingServiceId = null;
@@ -1124,6 +1256,8 @@ function openServiceModal(id) {
   editingServiceId = id || null;
   document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
   ['svcName','svcCategory','svcDesc','svcPrice','svcTeams'].forEach(function(f) { document.getElementById(f).value = ''; });
+  document.getElementById('svcCostType').value = 'With Cost';
+  toggleSvcPriceField();
   if (id) {
     var svc = servicesList.find(function(s) { return s.id === id; });
     if (svc) {
@@ -1132,6 +1266,8 @@ function openServiceModal(id) {
       document.getElementById('svcDesc').value     = svc.description || '';
       document.getElementById('svcPrice').value    = svc.price       || '';
       document.getElementById('svcTeams').value    = svc.teams       || '';
+      document.getElementById('svcCostType').value = svc.costType    || 'With Cost';
+      toggleSvcPriceField();
     }
   }
   document.getElementById('svcModal').classList.add('open');
@@ -1139,17 +1275,30 @@ function openServiceModal(id) {
 }
 function closeSvcModal() { document.getElementById('svcModal').classList.remove('open'); editingServiceId = null; }
 
+function toggleSvcPriceField() {
+  var isFree = document.getElementById('svcCostType').value === 'Free';
+  var label = document.getElementById('svcPriceLabel');
+  var input = document.getElementById('svcPrice');
+  if (label) label.innerHTML = isFree
+    ? 'Cost Note <span style="color:var(--muted);font-weight:400">(optional — e.g. "Free for active clients")</span>'
+    : 'Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span>';
+  if (input) input.placeholder = isFree
+    ? 'e.g. Free for all active clients'
+    : 'e.g. ₱5,000 – ₱15,000 or Quoted per request';
+}
+
 async function saveService() {
   var name = document.getElementById('svcName').value.trim();
   var category = document.getElementById('svcCategory').value.trim();
-  var desc  = document.getElementById('svcDesc').value.trim();
-  var price = document.getElementById('svcPrice').value.trim();
-  var teams = document.getElementById('svcTeams').value.trim();
+  var desc     = document.getElementById('svcDesc').value.trim();
+  var costType = document.getElementById('svcCostType').value || 'With Cost';
+  var price    = document.getElementById('svcPrice').value.trim();
+  var teams    = document.getElementById('svcTeams').value.trim();
   if (!name) { document.getElementById('svcName').focus(); return; }
   if (!category) { document.getElementById('svcCategory').focus(); return; }
   var btn = document.getElementById('svcSaveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
-  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, price, teams,
+  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, costType, price, teams,
     sortOrder: editingServiceId ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0 : servicesList.length + 1 };
   if (editingServiceId) { var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; }); if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc); } else servicesList.push(svc);
   lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
@@ -1253,36 +1402,104 @@ async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
   throw lastErr;
 }
 
+// In-memory detail cache: { jiraKey: { data, ts } } — 5 min TTL
+var _detailCache = {};
+var DETAIL_CACHE_TTL = 5 * 60 * 1000;
+
 async function loadList() {
   if (_listLoading) return;
   _listLoading = true;
-  var cacheKey = 'tracker_cache_' + USER_EMAIL;
-  var cached   = sessionStorage.getItem(cacheKey);
+  var cacheKey  = 'tracker_cache_' + USER_EMAIL;
+  var cached    = sessionStorage.getItem(cacheKey);
   var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
-  var url = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
+  var baseUrl   = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
+
+  // ── Step 1: Serve from sessionStorage immediately if available ────────────
   if (cached) {
-    try { var cd = JSON.parse(cached); all = cd.data.submissions || []; renderCatPills(); render(); } catch(e) {}
+    try {
+      var cd = JSON.parse(cached);
+      all = normaliseSubmissions(cd.data.submissions || []);
+      renderCatPills(); render();
+    } catch(e) {}
   } else {
     document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
   }
+
+  // ── Step 2: Shallow fetch (no Jira calls) — instant sheet data ────────────
+  // Uses sheet-cached lifecycle so GAS returns immediately without hitting Jira.
   var onSlow = function() {
     var el = document.getElementById('sbList');
-    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Still extracting latest data — hang tight…</span></div>';
+    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
   };
   try {
-    var d = await fetchListWithRetry(url, 3, onSlow);
+    var shallowUrl = baseUrl + '&shallow=1';
+    var d = await fetchListWithRetry(shallowUrl, 3, onSlow);
     sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
-    all = d.submissions || [];
+    all = normaliseSubmissions(d.submissions || []);
     renderCatPills(); render();
+
+    // ── Step 3: Background refresh — calls Jira and updates lifecycle cache ─
+    // Fires after the sidebar is already visible. Updates come back as a
+    // patch map so only changed tickets re-render, not the whole list.
+    backgroundRefreshLifecycle(baseUrl);
   } catch(e) {
-    var el = document.getElementById('sbList');
-    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
-    console.warn('loadList: all retries exhausted', e);
+    // Shallow failed — fall back to full (Jira-hitting) fetch
+    try {
+      var d2 = await fetchListWithRetry(baseUrl, 2, null);
+      sessionStorage.setItem(cacheKey, JSON.stringify({ data: d2, ts: Date.now() }));
+      all = normaliseSubmissions(d2.submissions || []);
+      renderCatPills(); render();
+    } catch(e2) {
+      var el = document.getElementById('sbList');
+      if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
+      console.warn('loadList: all retries exhausted', e2);
+    }
   } finally { _listLoading = false; }
+}
+
+// Fires after shallow load. Hits GAS refreshLifecycle which calls Jira for
+// non-terminal tickets, updates the sheet cache, and returns changed values.
+// Patches in-memory `all` and re-renders only if something changed.
+async function backgroundRefreshLifecycle(baseUrl) {
+  try {
+    var refreshUrl = GAS_URL + '?action=refreshLifecycle&email=' + encodeURIComponent(USER_EMAIL)
+      + '&role=' + encodeURIComponent(USER_ROLE);
+    var res = await fetch(refreshUrl);
+    var data = await res.json();
+    if (!data || !data.updates) return;
+    var changed = false;
+    Object.keys(data.updates).forEach(function(jiraKey) {
+      var upd   = data.updates[jiraKey];
+      var entry = all.find(function(s) { return s.jiraKey === jiraKey; });
+      if (entry) {
+        if (entry.lifecycle !== upd.lifecycle || entry.stKey !== upd.stKey) {
+          entry.lifecycle = upd.lifecycle;
+          entry.stKey     = upd.stKey;
+          entry.status    = upd.status;
+          changed = true;
+        }
+      }
+    });
+    if (changed) {
+      // Update sessionStorage so next load gets fresh lifecycle
+      try {
+        var cacheKey = 'tracker_cache_' + USER_EMAIL;
+        var ex = sessionStorage.getItem(cacheKey);
+        if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(p)); }
+      } catch(ce) {}
+      // Re-render scorecard counts and list (sidebar cards show lifecycle badges)
+      renderCatPills(); render();
+      // Update analytics meta counts if visible
+      if (IS_INTERNAL) loadAnalytics();
+    }
+  } catch(e) {
+    console.warn('backgroundRefreshLifecycle:', e);
+  }
 }
 
 async function refresh() {
   if (_listLoading) return;
+  _detailCache = {}; // clear detail cache on manual refresh
   sessionStorage.removeItem('tracker_cache_' + USER_EMAIL);
   all = []; activeKey = null;
   document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Refreshing…</span></div>';
@@ -1306,15 +1523,36 @@ async function loadAnalytics() {
     document.getElementById('sc-fe').textContent  = lc['For Execution']               != null ? lc['For Execution']               : '—';
     document.getElementById('sc-ed').textContent  = lc['Execution Done']              != null ? lc['Execution Done']              : '—';
     document.getElementById('sc-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
-    var meta = document.getElementById('analyticsMeta');
-    var pills = [];
-    if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Withdrawn: <span>' + (data.byCost['Withdrawn']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
-    if (data.revenueReceived != null) pills.push('Revenue received: <span>' + fmtPhp(data.revenueReceived) + '</span>');
-    if (data.revenueLost != null) pills.push('Revenue lost: <span>' + fmtPhp(data.revenueLost) + '</span>');
-    if (data.avgDays != null) pills.push('Avg. resolution: <span>' + data.avgDays + 'd</span>');
-    if (data.monthlyArr && data.monthlyArr.length) { var last = data.monthlyArr[data.monthlyArr.length-1]; pills.push('This month: <span>' + last.count + ' request' + (last.count !== 1 ? 's' : '') + '</span>'); }
-    if (data.byService) { var top = Object.entries(data.byService).sort((a,b) => b[1]-a[1])[0]; if (top) pills.push('Top service: <span>' + top[0] + '</span>'); }
-    meta.innerHTML = pills.map(p => '<div class="meta-pill">' + p + '</div>').join('');
+    var countRow   = document.getElementById('analyticsMetaCounts');
+    var revenueRow = document.getElementById('analyticsMetaRevenue');
+
+    // ── Row 1: Service cost status counts + Free services ────────────────────
+    var countPills = [];
+    countPills.push('<span class="meta-pill-label">Requests:</span>');
+    if (data.byCost) {
+      countPills.push('<div class="meta-pill meta-pill-paid">Paid <span>' + (data.byCost['Paid'] || 0) + '</span></div>');
+      countPills.push('<div class="meta-pill meta-pill-waived">Waived <span>' + (data.byCost['Waived'] || 0) + '</span></div>');
+      countPills.push('<div class="meta-pill meta-pill-free">Free Services <span>' + (data.byCost['Free'] || 0) + '</span></div>');
+      if ((data.byCost['Withdrawn'] || 0) > 0) countPills.push('<div class="meta-pill meta-pill-withdrawn">Withdrawn <span>' + data.byCost['Withdrawn'] + '</span></div>');
+      countPills.push('<div class="meta-pill">Cost TBD <span>' + (data.byCost['Pending'] || 0) + '</span></div>');
+    }
+    if (data.avgDays != null) countPills.push('<div class="meta-pill">Avg. resolution <span>' + data.avgDays + 'd</span></div>');
+    if (countRow) countRow.innerHTML = countPills.join('');
+
+    // ── Row 2: Revenue ────────────────────────────────────────────────────────
+    var revPills = [];
+    revPills.push('<span class="meta-pill-label">Revenue:</span>');
+    revPills.push('<div class="meta-pill meta-pill-rev-in">Received <span>' + fmtPhp(data.revenueReceived != null ? data.revenueReceived : 0) + '</span></div>');
+    revPills.push('<div class="meta-pill meta-pill-rev-out">Lost (Waived) <span>' + fmtPhp(data.revenueLost != null ? data.revenueLost : 0) + '</span></div>');
+    if (data.monthlyArr && data.monthlyArr.length) {
+      var last = data.monthlyArr[data.monthlyArr.length - 1];
+      revPills.push('<div class="meta-pill">This month <span>' + last.count + ' request' + (last.count !== 1 ? 's' : '') + '</span></div>');
+    }
+    if (data.byService) {
+      var top = Object.entries(data.byService).sort(function(a,b){ return b[1]-a[1]; })[0];
+      if (top) revPills.push('<div class="meta-pill">Top service <span>' + esc(top[0]) + '</span></div>');
+    }
+    if (revenueRow) revenueRow.innerHTML = revPills.join('');
   } catch(e) {}
 }
 
@@ -1340,14 +1578,26 @@ async function select(jiraKey, el) {
   document.querySelectorAll('.rcard').forEach(c => c.classList.remove('on'));
   if (el) el.classList.add('on');
   var panel = document.getElementById('detail');
-  panel.innerHTML = '<div class="state"><span class="spinner"></span></div>';
   var s = all.find(x => x.jiraKey === jiraKey);
-  if (!jiraKey || jiraKey === 'ERROR') { renderDetail(s, null); return; }
+
+  // Serve from detail cache instantly if fresh (< 5 min)
+  var cached = _detailCache[jiraKey];
+  if (cached && (Date.now() - cached.ts) < DETAIL_CACHE_TTL) {
+    renderDetail(s, cached.data);
+    return;
+  }
+
+  // Show skeleton with sheet data immediately, then load Jira detail
+  renderDetail(s, null);
+  if (!jiraKey || jiraKey === 'ERROR') return;
+
   try {
-    var res = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
+    var res    = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
     var detail = await res.json();
-    renderDetail(s, detail);
-  } catch(e) { renderDetail(s, null); }
+    _detailCache[jiraKey] = { data: detail, ts: Date.now() };
+    // Only update if this ticket is still selected
+    if (activeKey === jiraKey) renderDetail(s, detail);
+  } catch(e) { /* already showing sheet data — silent fail */ }
 }
 
 function renderDetail(s, d) {
@@ -1486,7 +1736,7 @@ function renderStepper(currentLc) {
     return LIFECYCLE_STEPS.map(function(lc) {
       return '<div class="step"><div class="step-dot" style="border-color:var(--mango-lt);background:var(--mango-lt)"></div><div class="step-label" style="color:var(--muted)">' + esc(lc) + '</div></div>';
     }).join('')
-      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">For Team Assessment</div></div>';
+      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">Team Assessment</div></div>';
   }
   // Normal linear stepper
   return LIFECYCLE_STEPS.map(function(lc) {
@@ -1620,10 +1870,73 @@ function applyFilter() { load_analytics(document.getElementById('an-fromDate').v
 function clearFilter() { document.getElementById('an-fromDate').value = ''; document.getElementById('an-toDate').value = ''; load_analytics(); }
 function fmtMonth(ym) { if (!ym) return ''; var p = ym.split('-'); var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return (names[parseInt(p[1],10)-1]||p[1]) + ' ' + p[0]; }
 
+// ── normaliseSubmissions ──────────────────────────────────────────────────────
+// Post-processes the submissions array from GAS to normalise activityDate into
+// YYYY-MM-DD so the <input type="date"> always gets a valid value on first load.
+function normaliseSubmissions(submissions) {
+  return submissions.map(function(s) {
+    if (s.activityDate) s.activityDate = normDateToYMD(s.activityDate) || s.activityDate;
+    return s;
+  });
+}
+
+// ── normDateToYMD ─────────────────────────────────────────────────────────────
+// Converts any date string the sheet might return into YYYY-MM-DD for the
+// <input type="date"> value attribute. Handles:
+//   • Already YYYY-MM-DD (passthrough)
+//   • ISO 8601:  "2025-06-15T00:00:00.000Z"
+//   • Locale strings: "6/15/2025", "Jun 15 2025", "2025-06-15 00:00:00"
+//   • Google Sheets serial numbers (numeric strings like "46020")
+// Returns '' if the input is empty or unparseable.
+function normDateToYMD(raw) {
+  if (!raw) return '';
+  var s = String(raw).trim();
+  if (!s || s === 'null' || s === 'undefined') return '';
+
+  // Already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // ISO with time component — take the date part
+  if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return s.substring(0, 10);
+
+  // YYYY-MM-DD HH:mm:ss (GAS Utilities.formatDate output)
+  if (/^\d{4}-\d{2}-\d{2} /.test(s)) return s.substring(0, 10);
+
+  // Google Sheets numeric serial (days since 1899-12-30)
+  if (/^\d+$/.test(s)) {
+    var serial = parseInt(s);
+    // Plausible sheet serial range: 30000–60000 (roughly 1982–2064)
+    if (serial > 25569 && serial < 80000) {
+      var ms = (serial - 25569) * 86400000; // convert to Unix ms (25569 = days from 1899-12-30 to 1970-01-01)
+      var d  = new Date(ms);
+      if (!isNaN(d)) {
+        var y = d.getUTCFullYear();
+        var m = String(d.getUTCMonth() + 1).padStart(2, '0');
+        var day = String(d.getUTCDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+      }
+    }
+    return '';
+  }
+
+  // Try native Date parsing for everything else (locale strings, RFC strings, etc.)
+  var parsed = new Date(s);
+  if (!isNaN(parsed.getTime())) {
+    var py  = parsed.getFullYear();
+    var pm  = String(parsed.getMonth() + 1).padStart(2, '0');
+    var pd  = String(parsed.getDate()).padStart(2, '0');
+    return py + '-' + pm + '-' + pd;
+  }
+
+  return '';
+}
+
 function renderOpCard(s) {
   if (!IS_INTERNAL || !isAdmin) return '';
   var cost  = s && s.serviceCost != null ? s.serviceCost : '';
-  var adate = s && s.activityDate ? s.activityDate.substring(0,10) : '';
+  // Normalise activityDate from the sheet to YYYY-MM-DD for the date input.
+  // Sheet can return ISO strings, locale strings, Date.toString(), or blank.
+  var adate = s && s.activityDate ? normDateToYMD(s.activityDate) : '';
   var cstat = s && s.costStatus ? s.costStatus : 'Pending';
   var jk    = s && s.jiraKey ? s.jiraKey : '';
   var statusOpts = ['Pending','Paid','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
@@ -1652,11 +1965,12 @@ function renderOpCard(s) {
     + '<div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>'
     + '<div class="dsb"><div class="igrid">'
     + '<div class="iitem"><label>Service / Operational Cost (₱)</label><input type="number" id="op-cost" value="' + esc(String(cost)) + '" min="0" step="100" placeholder="e.g. 5000" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
-    + '<div class="iitem"><label>Activity Date</label><input type="date" id="op-date" value="' + adate + '" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
+    + '<div class="iitem"><label>Activity Date</label><input type="date" id="op-date" value="' + adate + '" placeholder="mm/dd/yyyy" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
     + '<div class="iitem"><label>Cost Status</label><select id="op-status" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">' + statusOpts + '</select></div>'
     + '<div class="iitem" style="display:flex;align-items:flex-end"><button onclick="saveOpDetails(\'' + jk + '\')" style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%" onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">Save</button></div>'
     + quotSection
-    + '</div></div></div>';
+    + '</div></div></div>'
+    + renderWaivePanel(s);
 }
 
 async function saveOpDetails(jiraKey) {
@@ -1679,6 +1993,221 @@ async function saveOpDetails(jiraKey) {
     render();
     if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
   } catch(e) { alert('Save failed: ' + e.message); }
+}
+
+// ── WAIVE REQUEST PANEL ───────────────────────────────────────────────────────
+// Rendered inside renderOpCard for admin view only.
+// Shows the waive request form — CSM reason, business justification, impact.
+// On send: fires GAS action=sendWaiveRequest which emails CTO + COO (configurable).
+// Email includes Approve / Reject / Request Clarification action links.
+
+var WAIVE_CONFIG_KEY = 'platops_waive_config';
+
+function getWaiveConfig() {
+  try { return JSON.parse(localStorage.getItem(WAIVE_CONFIG_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveWaiveConfig(cfg) {
+  try { localStorage.setItem(WAIVE_CONFIG_KEY, JSON.stringify(cfg)); } catch(e) {}
+}
+
+function renderWaivePanel(s) {
+  if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') return '';
+  var jk       = s.jiraKey;
+  var wStatus  = s.waiveStatus  || '';
+  var wReason  = s.waiveReason  || '';
+  var wJustify = s.waiveJustify || '';
+  var wImpact  = s.waiveImpact  || '';
+  var wSentAt  = s.waiveSentAt  || '';
+  var wNote    = s.waiveNote    || '';
+
+  var cfg     = getWaiveConfig();
+  var ctoEmail= cfg.ctoEmail  || 'gdelarama@sprout.ph';
+  var cooEmail= cfg.cooEmail  || 'kislayc@sprout.ph';
+  var ccEmails= cfg.ccEmails  || 'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph';
+
+  // Email config panel — always shown so admin can verify/change before sending
+  var configPanel = '<div class="waive-config">'
+    + '<div class="waive-config-head">'
+    + '<span>Email Recipients</span>'
+    + '<button class="waive-config-toggle" onclick="toggleWaiveConfig()">Edit</button>'
+    + '</div>'
+    + '<div class="waive-config-preview" id="waiveConfigPreview">'
+    + '<strong>To:</strong> ' + esc(ctoEmail) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(cooEmail) + (ccEmails ? ', ' + esc(ccEmails) : '')
+    + '</div>'
+    + '<div class="waive-config-body" id="waiveConfigBody">'
+    + '<div class="waive-config-row">'
+    + '<div class="waive-field"><label>CTO Email (To)</label><input type="email" id="wcto" value="' + esc(ctoEmail) + '" placeholder="cto@sprout.ph"/></div>'
+    + '<div class="waive-field"><label>COO Email (CC)</label><input type="email" id="wcoo" value="' + esc(cooEmail) + '" placeholder="coo@sprout.ph"/></div>'
+    + '</div>'
+    + '<div class="waive-field" style="margin-bottom:8px"><label>Additional CC <span style="font-weight:400;color:var(--muted)">(comma-separated)</span></label>'
+    + '<input type="text" id="wcc" value="' + esc(ccEmails) + '" placeholder="e.g. name@sprout.ph, name2@sprout.ph"/></div>'
+    + '<div style="display:flex;align-items:center;gap:8px">'
+    + '<button class="waive-config-save" onclick="saveWaiveEmailConfig()">Save Recipients</button>'
+    + '<span id="wcSaveMsg" style="font-size:0.72rem;color:#3b1d9e;font-weight:500"></span>'
+    + '</div>'
+    + '</div>'
+    + '</div>';
+
+  var statusBadge = '';
+  if (wStatus === 'Sent')                        statusBadge = '<span class="waive-status-badge waive-status-sent">● Awaiting CTO/COO approval</span>';
+  else if (wStatus === 'Approved')               statusBadge = '<span class="waive-status-badge waive-status-approved">✓ Approved by CTO/COO</span>';
+  else if (wStatus === 'Rejected')               statusBadge = '<span class="waive-status-badge waive-status-rejected">✕ Rejected</span>';
+  else if (wStatus === 'Clarification Requested') statusBadge = '<span class="waive-status-badge waive-status-clarify">⚑ Clarification requested</span>';
+
+  var noteBlock = (wNote && (wStatus === 'Rejected' || wStatus === 'Clarification Requested'))
+    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid '
+      + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
+      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">'
+      + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
+      + '<div style="font-size:0.8rem;color:var(--text)">' + esc(wNote) + '</div>'
+      + '</div>'
+    : '';
+
+  var formOrHistory = '';
+  if (wStatus === 'Sent' || wStatus === 'Approved' || wStatus === 'Rejected') {
+    formOrHistory = '<div class="waive-history">'
+      + (wSentAt ? '<div class="waive-hist-meta">Sent ' + wSentAt + '</div>' : '')
+      + '<div class="waive-hist-item"><strong>CSM Reason:</strong> ' + esc(wReason) + '</div>'
+      + '<div class="waive-hist-item"><strong>Business Justification:</strong> ' + esc(wJustify) + '</div>'
+      + (wImpact ? '<div class="waive-hist-item"><strong>Client Impact if Charged:</strong> ' + esc(wImpact) + '</div>' : '')
+      + noteBlock
+      + '</div>';
+    if (wStatus === 'Clarification Requested') {
+      formOrHistory += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5">'
+        + '<div style="font-size:0.72rem;color:#3b1d9e;font-weight:500;margin-bottom:8px">Update your details and resubmit:</div>'
+        + renderWaiveForm(jk, wReason, wJustify, wImpact, true)
+        + '</div>';
+    }
+  } else {
+    formOrHistory = renderWaiveForm(jk, wReason, wJustify, wImpact, false);
+  }
+
+  return '<div class="waive-panel">'
+    + '<div class="dsh"><h3>Waiver Request</h3>'
+    + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '')
+    + '</div>'
+    + '<div class="waive-inner">'
+    + configPanel
+    + (statusBadge ? '<div style="margin-bottom:10px">' + statusBadge + '</div>' : '')
+    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Provide a detailed defense below. This will be emailed to the CTO for approval with COO on CC. The requesting CSM receives a copy for visibility.</p>'
+    + formOrHistory
+    + '</div></div>';
+}
+
+function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
+  var btnLabel = isResubmit ? 'Resubmit Waiver Request' : 'Send Waiver Request to CTO &amp; COO';
+  return '<div class="waive-field"><label>CSM Reason for Waiver <span style="color:var(--tomato)">*</span></label>'
+    + '<input type="text" id="waive-reason" value="' + esc(reason) + '" placeholder="e.g. Client on paid pilot, goodwill gesture, executive commitment…"/></div>'
+    + '<div class="waive-field"><label>Business Justification &amp; Defense <span style="color:var(--tomato)">*</span></label>'
+    + '<textarea id="waive-justify" rows="4" placeholder="Why should this fee be waived? What is the strategic or commercial rationale? What precedent does this set? What approvals have already been discussed?">' + esc(justify) + '</textarea></div>'
+    + '<div class="waive-field"><label>Client Impact if Charged <span style="color:var(--muted);font-weight:400">(optional but recommended)</span></label>'
+    + '<input type="text" id="waive-impact" value="' + esc(impact) + '" placeholder="e.g. Client may churn, at risk of non-renewal, MRR value…"/></div>'
+    + '<button class="waive-send-btn" id="waiveSendBtn" onclick="sendWaiveRequest(\'' + jk + '\')">' + btnLabel + '</button>'
+    + '<button class="waive-test-btn" id="waiveTestBtn" onclick="sendWaiveRequest(\'' + jk + '\', true)">📧 Send Test Email to Me</button>'
+    + '<div class="waive-msg" id="waiveMsg"></div>';
+}
+
+function toggleWaiveConfig() {
+  var body    = document.getElementById('waiveConfigBody');
+  var preview = document.getElementById('waiveConfigPreview');
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  if (preview) preview.style.display = isOpen ? 'block' : 'none';
+}
+
+function saveWaiveEmailConfig() {
+  var cto = (document.getElementById('wcto') || {}).value || '';
+  var coo = (document.getElementById('wcoo') || {}).value || '';
+  var cc  = (document.getElementById('wcc')  || {}).value || '';
+  saveWaiveConfig({ ctoEmail: cto.trim(), cooEmail: coo.trim(), ccEmails: cc.trim() });
+  // Update preview
+  var preview = document.getElementById('waiveConfigPreview');
+  if (preview) preview.innerHTML = '<strong>To:</strong> ' + esc(cto) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(coo) + (cc ? ', ' + esc(cc) : '');
+  // Close body
+  var body = document.getElementById('waiveConfigBody');
+  if (body) body.classList.remove('open');
+  if (preview) preview.style.display = 'block';
+  var msg = document.getElementById('wcSaveMsg');
+  if (msg) { msg.textContent = 'Saved ✓'; setTimeout(function(){ msg.textContent = ''; }, 2500); }
+}
+
+async function sendWaiveRequest(jiraKey, isTest) {
+  var reason  = (document.getElementById('waive-reason')  || {}).value || '';
+  var justify = (document.getElementById('waive-justify') || {}).value || '';
+  var impact  = (document.getElementById('waive-impact')  || {}).value || '';
+  var msgEl   = document.getElementById('waiveMsg');
+  var btn     = document.getElementById(isTest ? 'waiveTestBtn' : 'waiveSendBtn');
+
+  if (!isTest) {
+    if (!reason.trim())  { if (msgEl) { msgEl.textContent = 'Please provide the CSM reason.';      msgEl.className = 'waive-msg waive-msg-err'; } return; }
+    if (!justify.trim()) { if (msgEl) { msgEl.textContent = 'Business justification is required.'; msgEl.className = 'waive-msg waive-msg-err'; } return; }
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = isTest ? 'Sending test…' : 'Sending…'; }
+  if (msgEl) { msgEl.textContent = ''; msgEl.className = 'waive-msg'; }
+
+  var cfg = getWaiveConfig();
+  var s   = all.find(function(x) { return x.jiraKey === jiraKey; });
+
+  var payload = {
+    action:      'sendWaiveRequest',
+    isTest:      !!isTest,
+    jiraKey:     jiraKey,
+    // Recipient config — passed from portal so GAS doesn't need them hardcoded
+    ctoEmail:    cfg.ctoEmail  || 'gdelarama@sprout.ph',
+    cooEmail:    cfg.cooEmail  || 'kislayc@sprout.ph',
+    ccEmails:    cfg.ccEmails  || 'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph',
+    // Ticket context
+    clientName:  s ? s.clientName  : (isTest ? 'Test Client'    : '—'),
+    serviceType: s ? s.serviceType : (isTest ? 'Test Service'   : '—'),
+    category:    s ? s.category    : (isTest ? 'Database'       : '—'),
+    description: s ? s.description : (isTest ? '[TEST] Sample request description for testing purposes.' : '—'),
+    csmName:     s ? s.csmName     : (isTest ? 'Test CSM'       : '—'),
+    csmEmail:    s ? s.csmEmail    : '',
+    hrUrl:       s ? s.hrUrl       : (isTest ? 'testclient.hrhub.ph' : '—'),
+    serviceCost: s ? s.serviceCost : (isTest ? 5000 : ''),
+    // Waive details
+    reason:      reason.trim()  || (isTest ? '[TEST] This is a test waiver reason'         : ''),
+    justify:     justify.trim() || (isTest ? '[TEST] This is a test business justification' : ''),
+    impact:      impact.trim()  || (isTest ? '[TEST] This is a test client impact note'     : ''),
+    submittedBy: userEmail,
+  };
+
+  try {
+    var res  = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) });
+    var data = await res.json();
+    if (data.success) {
+      if (isTest) {
+        if (msgEl) {
+          msgEl.innerHTML = '📧 Test email sent to <strong>' + esc(userEmail) + '</strong>. Check your inbox to verify the format and links.';
+          msgEl.className = 'waive-msg waive-msg-ok';
+        }
+        if (btn) { btn.disabled = false; btn.textContent = '📧 Send Test Email to Me'; }
+      } else {
+        if (s) {
+          s.waiveStatus  = 'Sent';
+          s.waiveReason  = reason.trim();
+          s.waiveJustify = justify.trim();
+          s.waiveImpact  = impact.trim();
+          s.waiveSentAt  = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+          try {
+            var ck = 'tracker_cache_' + USER_EMAIL;
+            var ex = sessionStorage.getItem(ck);
+            if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(ck, JSON.stringify(p)); }
+          } catch(ce) {}
+        }
+        if (msgEl) { msgEl.textContent = 'Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className = 'waive-msg waive-msg-ok'; }
+        setTimeout(function() { if (s) renderDetail(s, null); }, 1500);
+      }
+    } else {
+      if (msgEl) { msgEl.textContent = 'Failed: ' + (data.error || 'Unknown error'); msgEl.className = 'waive-msg waive-msg-err'; }
+      if (btn) { btn.disabled = false; btn.textContent = isTest ? '📧 Send Test Email to Me' : 'Send Waiver Request to CTO &amp; COO'; }
+    }
+  } catch(e) {
+    if (msgEl) { msgEl.textContent = 'Could not send. Please check your connection.'; msgEl.className = 'waive-msg waive-msg-err'; }
+    if (btn) { btn.disabled = false; btn.textContent = isTest ? '📧 Send Test Email to Me' : 'Send Waiver Request to CTO &amp; COO'; }
+  }
 }
 
 async function sendCsmComment(jiraKey) {

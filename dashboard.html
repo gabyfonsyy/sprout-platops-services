@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Service Request Tracker · Platform Operations</title>
+<title>Service Request Portal · Platform Operations</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -24,21 +26,66 @@
   --sw:300px;
   font-family:'Rubik',sans-serif;
 }
-body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
-
-/* ── HEADER ── */
+html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text)}
+.gate{position:fixed;inset:0;background:var(--k800);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;transition:opacity 0.4s}
+.gate.out{opacity:0;pointer-events:none}
+.gate-card{background:var(--surface);border-radius:14px;padding:2.75rem 2.25rem;width:100%;max-width:400px;text-align:center}
+.gate-logo{height:44px;width:auto;display:block;margin:0 auto 1.5rem}
+.gate-card h1{font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.gate-sub{font-size:0.72rem;color:var(--muted);margin-bottom:2rem;letter-spacing:0.05em;text-transform:uppercase}
+.gate-divider{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.gate-divider-line{flex:1;height:1px;background:var(--border)}
+.gate-divider-text{font-size:0.7rem;color:var(--muted);white-space:nowrap}
+.gate-google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Rubik',sans-serif;font-size:0.9rem;font-weight:500;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:0.75rem 1rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s}
+.gate-google-btn:hover{border-color:var(--primary);box-shadow:0 0 0 3px rgba(33,122,61,0.08)}
+.gate-google-btn:disabled{opacity:0.6;cursor:not-allowed}
+.gate-google-btn svg{flex-shrink:0}
+.gate-error{font-size:0.75rem;color:var(--tomato);min-height:18px;margin-top:10px}
+.gate-hint{font-size:0.7rem;color:var(--muted);margin-top:14px;line-height:1.6}
+.gate-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:1rem 0}
+.gate-loading-spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite}
+.gate-loading p{font-size:0.8rem;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.app{display:none;flex-direction:column;height:100vh;overflow:hidden}
+.app.on{display:flex}
 .shell-header{background:var(--k800);padding:0 1.75rem;height:52px;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .sh-left{display:flex;align-items:center;gap:12px}
 .sh-logo{height:28px;width:auto}
 .sh-divider{width:1px;height:24px;background:var(--k600)}
 .sh-title{font-size:14px;font-weight:500;color:#fff}
 .sh-sub{font-size:10px;color:var(--k300);letter-spacing:0.06em;text-transform:uppercase;margin-top:1px}
+.sh-right{display:flex;align-items:center;gap:8px}
+.sh-user{font-size:0.75rem;color:var(--k300);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px}
+.sh-logout{font-family:'Rubik',sans-serif;font-size:0.75rem;color:var(--k300);background:none;border:1px solid rgba(125,212,154,0.25);border-radius:6px;padding:5px 11px;cursor:pointer;transition:all 0.15s}
+.sh-logout:hover{border-color:var(--k300);color:#fff}
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;flex-shrink:0}
+.tab{font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--muted);padding:0.75rem 1.125rem;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;display:flex;align-items:center;gap:7px;transition:color 0.15s,border-color 0.15s;white-space:nowrap}
+.tab svg{width:14px;height:14px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:500}
+.views{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.view{display:none;flex:1;overflow:hidden;flex-direction:column}
+.view.on{display:flex}
 
-/* ── ANALYTICS STRIP ── */
+/* ── LANDING — scrollable so all cards are always reachable ── */
+.landing{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:1.5rem 1.5rem 2rem}
+.landing::-webkit-scrollbar{width:4px}
+.landing::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.landing-inner{width:100%;max-width:680px;display:flex;flex-direction:column;align-items:center}
+.landing h2{font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:4px;text-align:center;margin-top:1.25rem}
+.landing-sub{font-size:0.875rem;color:var(--muted);margin-bottom:1.5rem;text-align:center}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%}
+.lcard{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:1.25rem 1.25rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s,transform 0.15s;text-align:center}
+.lcard:hover{border-color:var(--primary);box-shadow:0 6px 24px rgba(33,122,61,0.1);transform:translateY(-2px)}
+.lcard-icon{width:40px;height:40px;border-radius:10px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem}
+.lcard-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.lcard h3{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.lcard p{font-size:0.76rem;color:var(--muted);line-height:1.55}
+
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
 .analytics.on{display:flex}
 .analytics-row{display:flex;gap:8px;flex-wrap:wrap}
-.sc{flex:1;min-width:110px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color 0.15s,background 0.15s}
+.sc{flex:1;min-width:100px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color 0.15s,background 0.15s}
 .sc:hover{border-color:var(--k300)}
 .sc.active{border-color:var(--primary);background:var(--primary-lt)}
 .sc-label{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px}
@@ -46,29 +93,33 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);heigh
 .sc-sub{font-size:0.62rem;color:var(--muted);margin-top:2px}
 .sc.active .sc-label,.sc.active .sc-sub{color:var(--k600)}
 .sc.active .sc-value{color:var(--primary-dk)}
+/* Closed scorecard — red tint when active */
+.sc[data-lc="Closed"].active{border-color:var(--tomato);background:var(--tomato-lt)}
+.sc[data-lc="Closed"].active .sc-label,.sc[data-lc="Closed"].active .sc-sub{color:#7a1010}
+.sc[data-lc="Closed"].active .sc-value{color:var(--tomato)}
+/* For Team Assessment scorecard — amber tint when active */
+.sc[data-lc="For Team Assessment"].active{border-color:var(--mango);background:var(--mango-lt)}
+.sc[data-lc="For Team Assessment"].active .sc-label,.sc[data-lc="For Team Assessment"].active .sc-sub{color:#7a4800}
+.sc[data-lc="For Team Assessment"].active .sc-value{color:var(--mango)}
 .analytics-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .meta-pill span{color:var(--text);font-weight:600}
-
-/* ── LAYOUT ── */
 .body{display:flex;flex:1;overflow:hidden}
-
-/* ── SIDEBAR ── */
 .sidebar{width:var(--sw);flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
 .sb-search{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center}
 .sb-search input{flex:1;font-family:'Rubik',sans-serif;font-size:0.8rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s}
 .sb-search input:focus{border-color:var(--primary)}
 .sb-refresh{font-family:'Rubik',sans-serif;font-size:0.75rem;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:6px 9px;cursor:pointer;flex-shrink:0;transition:all 0.15s}
 .sb-refresh:hover{border-color:var(--k300)}
-.sb-filters{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:5px;flex-wrap:wrap}
+.sb-cat-section{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-cat-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.sb-cat-pills{display:flex;gap:5px;flex-wrap:wrap}
 .pill{font-size:0.67rem;padding:3px 9px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all 0.12s;white-space:nowrap;font-family:'Rubik',sans-serif}
 .pill:hover{border-color:var(--k300)}
 .pill.on{background:var(--primary-lt);border-color:var(--primary);color:var(--primary-dk);font-weight:500}
 .sb-list{flex:1;overflow-y:auto}
 .sb-list::-webkit-scrollbar{width:3px}
 .sb-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-/* ── REQUEST CARD ── */
 .rcard{padding:11px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
 .rcard:hover{background:var(--bg)}
 .rcard.on{background:var(--primary-lt);border-left:3px solid var(--primary)}
@@ -79,8 +130,6 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);heigh
 .rc-date{font-size:0.67rem;color:var(--muted)}
 .rc-key{font-size:0.67rem;color:var(--primary);font-weight:600}
 .empty-sb{padding:2rem;text-align:center;color:var(--muted);font-size:0.8rem}
-
-/* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:0.62rem;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:0.04em}
 .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .b-green{background:#d4f5df;color:#0d5a24}.b-green::before{background:#2a9e50}
@@ -94,8 +143,7 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);heigh
 .cost-paid{background:#e8ecfd;color:#1c3a9e}
 .cost-waived{background:#ede9ff;color:#3b1d9e}
 .cost-pending{background:#f4f5f4;color:#4a4b4a}
-
-/* ── DETAIL ── */
+.cost-withdrawn{background:#fff3cd;color:#7a4800}
 .detail{flex:1;overflow-y:auto;padding:1.75rem}
 .detail::-webkit-scrollbar{width:4px}
 .detail::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -115,8 +163,6 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);heigh
 .iitem label{display:block;font-size:0.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px}
 .iitem span{font-size:0.8125rem;color:var(--text)}
 .iitem.full{grid-column:1/-1}
-
-/* ── STEPPER ── */
 .stepper{display:flex;align-items:flex-start;gap:0;margin:4px 0 0;overflow-x:auto;padding-bottom:4px}
 .step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px;position:relative}
 .step:not(:last-child)::after{content:'';position:absolute;top:10px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
@@ -128,8 +174,6 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);heigh
 .step.current .step-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary)}
 .step-label{font-size:0.6rem;text-align:center;color:var(--muted);margin-top:6px;line-height:1.3;padding:0 2px}
 .step.done .step-label,.step.current .step-label{color:var(--primary-dk);font-weight:600}
-
-/* ── TICKET CARDS ── */
 .tcard{border:1.5px solid var(--border);border-radius:8px;margin-bottom:9px;overflow:hidden}
 .tcard:last-child{margin-bottom:0}
 .tc-hd{padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;background:var(--bg);cursor:pointer;transition:background 0.12s}
@@ -154,258 +198,1831 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);heigh
 .ci-body{font-size:0.78rem;color:var(--text);line-height:1.5}
 .no-c{font-size:0.78rem;color:var(--muted);font-style:italic;margin-top:8px}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-
+.rejected-banner{background:var(--tomato-lt);border:1.5px solid #fbbdbd;border-radius:8px;padding:12px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.rejected-banner svg{flex-shrink:0;color:var(--tomato)}
+.rejected-banner p{font-size:0.8125rem;color:#7a1010;line-height:1.5}
+.rejected-banner strong{font-weight:600}
+.csm-comment-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.csm-comment-box .dsh{padding:9px 14px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.csm-comment-box .dsh h3{font-size:0.67rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted)}
+.csm-comment-inner{padding:12px}
+.csm-comment-inner textarea{width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:9px 11px;outline:none;resize:vertical;min-height:72px;line-height:1.6;transition:border-color 0.15s}
+.csm-comment-inner textarea:focus{border-color:var(--primary)}
+.csm-comment-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.csm-comment-hint{font-size:0.68rem;color:var(--muted)}
+.csm-comment-send{font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:6px 16px;border-radius:7px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s}
+.csm-comment-send:hover{background:var(--primary-dk)}
+.csm-comment-send:disabled{opacity:0.55;cursor:not-allowed}
+.csm-comment-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
+.csm-comment-ok{color:var(--primary-dk);font-weight:500}
+.csm-comment-err{color:var(--tomato)}
+.enh-shell{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.enh-scroll{flex:1;overflow-y:auto;padding:0}
+.enh-scroll::-webkit-scrollbar{width:4px}
+.enh-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.enh-hero{background:var(--k800);padding:2.5rem 2.5rem 2rem;color:#fff}
+.enh-hero-inner{max-width:760px;margin:0 auto}
+.enh-hero h2{font-size:1.5rem;font-weight:600;margin-bottom:6px}
+.enh-hero p{font-size:0.875rem;color:var(--k300);line-height:1.75;max-width:580px}
+.enh-body{max-width:900px;margin:0 auto;padding:2rem 2.5rem 4rem;display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start}
+@media(max-width:780px){.enh-body{grid-template-columns:1fr;padding:1.5rem 1.25rem 3rem}}
+.enh-form-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.25rem 1.375rem;position:sticky;top:0}
+.enh-form-card h3{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem}
+.enh-form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.enh-form-group label{font-size:0.72rem;font-weight:500;color:var(--muted)}
+.enh-form-group input,.enh-form-group textarea,.enh-form-group select{font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s;width:100%}
+.enh-form-group input:focus,.enh-form-group textarea:focus,.enh-form-group select:focus{border-color:var(--primary)}
+.enh-form-group textarea{resize:vertical;min-height:80px;line-height:1.6}
+.enh-submit-btn{width:100%;font-family:'Rubik',sans-serif;font-size:0.875rem;font-weight:500;padding:8px 0;border-radius:7px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s;margin-top:4px}
+.enh-submit-btn:hover{background:var(--primary-dk)}
+.enh-submit-btn:disabled{opacity:0.55;cursor:not-allowed}
+.enh-form-msg{font-size:0.72rem;margin-top:8px;min-height:16px;text-align:center}
+.enh-list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.enh-list-header h3{font-size:1rem;font-weight:600;color:var(--text)}
+.enh-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.125rem;margin-bottom:10px;transition:border-color 0.15s;cursor:pointer}
+.enh-item:hover{border-color:var(--k300)}
+.enh-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
+.enh-item-title{font-size:0.9rem;font-weight:600;color:var(--text);flex:1;line-height:1.35}
+.enh-item-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.enh-item-by{font-size:0.7rem;color:var(--muted)}
+.enh-item-desc{font-size:0.8rem;color:var(--m600);line-height:1.65}
+.enh-item-expand{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.enh-item-expand.open{display:block}
+.enh-type-badge{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.enh-type-ui{background:#e0f5f8;color:#074f5a}
+.enh-type-feature{background:var(--primary-lt);color:var(--primary-dk)}
+.enh-type-perf{background:var(--mango-lt);color:#7a4800}
+.enh-type-other{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.enh-empty{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.875rem}
+.enh-vote-btn{display:inline-flex;align-items:center;gap:4px;font-family:'Rubik',sans-serif;font-size:0.7rem;font-weight:500;padding:3px 9px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;margin-top:8px}
+.enh-vote-btn:hover{border-color:var(--primary);color:var(--primary)}
+.enh-vote-btn.voted{border-color:var(--primary);background:var(--primary-lt);color:var(--primary-dk)}
+.enh-sort-pills{display:flex;gap:5px;flex-wrap:wrap}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.toolbar h2{font-size:1.25rem;font-weight:600;color:var(--text)}
+.toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.date-group{display:flex;align-items:center;gap:6px}
+.date-group label{font-size:0.75rem;color:var(--muted)}
+.date-group input{font-family:'Rubik',sans-serif;font-size:0.8rem;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:7px;padding:5px 9px;outline:none;transition:border-color 0.15s}
+.date-group input:focus{border-color:var(--primary)}
+.btn{font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:6px 14px;border-radius:7px;cursor:pointer;transition:all 0.15s;border:1.5px solid var(--border);background:var(--surface);color:var(--muted)}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-dk);color:#fff}
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.sc-an{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px}
+.sc-an .sc-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px}
+.sc-an .sc-value{font-size:1.875rem;font-weight:600;color:var(--text);line-height:1}
+.sc-an .sc-sub{font-size:0.67rem;color:var(--muted);margin-top:4px}
+.sc-an.highlight{border-color:var(--primary);background:var(--primary-lt)}
+.sc-an.highlight .sc-label,.sc-an.highlight .sc-sub{color:var(--k600)}
+.sc-an.highlight .sc-value{color:var(--primary-dk)}
+.sc-an.revenue-in{border-color:var(--blueberry);background:var(--blueberry-lt)}
+.sc-an.revenue-in .sc-label,.sc-an.revenue-in .sc-sub{color:#1c3a9e}
+.sc-an.revenue-in .sc-value{color:var(--blueberry)}
+.sc-an.revenue-out{border-color:var(--lavender);background:var(--lavender-lt)}
+.sc-an.revenue-out .sc-label,.sc-an.revenue-out .sc-sub{color:#3b1d9e}
+.sc-an.revenue-out .sc-value{color:var(--lavender)}
+.sc-an.rejected{border-color:var(--tomato);background:var(--tomato-lt)}
+.sc-an.rejected .sc-label,.sc-an.rejected .sc-sub{color:#7a1010}
+.sc-an.rejected .sc-value{color:var(--tomato)}
+.sc-an.on-hold{border-color:var(--mango);background:var(--mango-lt)}
+.sc-an.on-hold .sc-label,.sc-an.on-hold .sc-sub{color:#7a4800}
+.sc-an.on-hold .sc-value{color:var(--mango)}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.chart-grid.full{grid-template-columns:1fr}
+.chart-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.25rem}
+.chart-card h3{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem}
+.chart-wrap{position:relative;height:220px}
+.chart-wrap.tall{height:280px}
+.table-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.table-card h3{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem}
+table{width:100%;border-collapse:collapse;font-size:0.8125rem}
+th{text-align:left;font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;color:var(--muted)}
+.analytics-view-scroll{flex:1;overflow-y:auto;padding:1.75rem}
+.analytics-view-scroll::-webkit-scrollbar{width:4px}
+.analytics-view-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sv-shell{display:flex;flex:1;overflow:hidden}
+.sv-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
+.sv-sidebar-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sv-sidebar-head span{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
+.sv-cat-list{flex:1;overflow-y:auto;padding:8px 0}
+.sv-cat-list::-webkit-scrollbar{width:3px}
+.sv-cat-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sv-cat-item{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;cursor:pointer;font-size:0.8125rem;color:var(--muted);transition:background 0.1s,color 0.1s;border-left:3px solid transparent}
+.sv-cat-item:hover{background:var(--bg);color:var(--text)}
+.sv-cat-item.active{background:var(--primary-lt);color:var(--primary-dk);font-weight:500;border-left-color:var(--primary)}
+.sv-cat-count{font-size:0.65rem;font-weight:600;background:var(--border);color:var(--muted);border-radius:20px;padding:1px 7px;min-width:20px;text-align:center}
+.sv-cat-item.active .sv-cat-count{background:var(--primary);color:#fff}
+.sv-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.sv-topbar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--surface)}
+.sv-search-wrap{flex:1;position:relative}
+.sv-search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.sv-search{width:100%;font-family:'Rubik',sans-serif;font-size:0.8rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px 7px 30px;outline:none;transition:border-color 0.15s}
+.sv-search:focus{border-color:var(--primary)}
+.sv-result-count{font-size:0.75rem;color:var(--muted);white-space:nowrap}
+.sv-content{flex:1;overflow-y:auto;padding:1.125rem}
+.sv-content::-webkit-scrollbar{width:4px}
+.sv-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.sv-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.125rem;display:flex;flex-direction:column;gap:6px;transition:border-color 0.15s,box-shadow 0.15s;cursor:pointer;user-select:none}
+.sv-card:hover{border-color:var(--primary);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.sv-card.expanded{border-color:var(--primary);box-shadow:0 4px 16px rgba(33,122,61,0.1)}
+.sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
+.sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+/* Free badge on service cards */
+.sv-cost-free{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:#e0f5f8;color:#074f5a;white-space:nowrap;flex-shrink:0}
+.sv-cost-paid{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:var(--mango-lt);color:#7a4800;white-space:nowrap;flex-shrink:0}
+/* Services section divider */
+.sv-section-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:8px 2px 6px;grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.sv-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Waive request panel */
+.waive-panel{background:var(--lavender-lt);border:1.5px solid #c5b8f5;border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.waive-panel .dsh{background:#ede9ff;border-bottom:1px solid #c5b8f5}
+.waive-panel .dsh h3{color:#3b1d9e}
+.waive-inner{padding:14px}
+.waive-status-badge{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.waive-status-pending{background:#fff3cd;color:#7a4800;border:1px solid #f08c00}
+.waive-status-sent{background:#e0f5f8;color:#074f5a;border:1px solid #0c8599}
+.waive-status-approved{background:#d4f5df;color:#0d5a24;border:1px solid #2a9e50}
+.waive-status-rejected{background:#ffe0e0;color:#7a1010;border:1px solid #c92a2a}
+.waive-status-clarify{background:#fff3cd;color:#7a4800;border:1px solid #f08c00}
+.waive-field{margin-bottom:10px}
+.waive-field label{display:block;font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:4px}
+.waive-field input,.waive-field textarea,.waive-field select{width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--surface);border:1.5px solid #c5b8f5;border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s}
+.waive-field input:focus,.waive-field textarea:focus,.waive-field select:focus{border-color:var(--lavender)}
+.waive-field textarea{resize:vertical;min-height:90px;line-height:1.6}
+.waive-send-btn{font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;background:var(--lavender);border:none;color:#fff;transition:background 0.15s;width:100%;margin-top:4px}
+.waive-send-btn:hover{background:#5c3dd8}
+.waive-send-btn:disabled{opacity:0.55;cursor:not-allowed}
+.waive-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
+.waive-msg-ok{color:#3b1d9e;font-weight:500}
+.waive-msg-err{color:var(--tomato)}
+.waive-history{margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5}
+.waive-history-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:6px}
+.waive-hist-item{background:var(--surface);border-radius:6px;padding:8px 10px;margin-bottom:5px;font-size:0.78rem;color:var(--text);border-left:2px solid var(--lavender)}
+.waive-hist-meta{font-size:0.67rem;color:var(--muted);margin-bottom:2px}
+.sv-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;flex:1}
+.sv-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px}
+.sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
+.sv-card-actions{display:flex;gap:6px}
+.sv-btn-edit,.sv-btn-del{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
+.sv-btn-edit{background:var(--bg);border:1.5px solid var(--border);color:var(--muted)}
+.sv-btn-edit:hover{border-color:var(--primary);color:var(--primary)}
+.sv-btn-del{background:var(--tomato-lt);border:1.5px solid #fbbdbd;color:var(--tomato)}
+.sv-btn-del:hover{background:#ffd0d0}
+.sv-btn-submit{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s;white-space:nowrap}
+.sv-btn-submit:hover{background:var(--primary-dk)}
+.sv-card-expand{display:none;margin-top:8px;padding-top:12px;border-top:1px solid var(--border);animation:svExpand 0.18s ease}
+.sv-card-expand.open{display:block}
+@keyframes svExpand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.sv-card-expand-row{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.sv-card-expand-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)}
+.sv-card-expand-value{font-size:0.8125rem;color:var(--text);line-height:1.5}
+.sv-card-expand-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sv-card-chevron{transition:transform 0.2s;flex-shrink:0;color:var(--muted)}
+.sv-card.expanded .sv-card-chevron{transform:rotate(180deg)}
+.sv-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.875rem;grid-column:1/-1}
+.sv-empty p{margin-top:8px}
+.form-iframe-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.form-iframe-loader{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;transition:opacity 0.35s}
+.form-iframe-loader.hidden{opacity:0;pointer-events:none}
+.form-iframe-loader p{font-size:0.8rem;color:var(--muted)}
+.form-iframe-fallback{position:absolute;top:12px;right:16px;z-index:15;font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.form-iframe-fallback a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
+.svc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;padding:1.5rem}
+.svc-modal-overlay.open{display:flex}
+.svc-modal{background:var(--surface);border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.18);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.svc-modal h3{font-size:1rem;font-weight:600;margin-bottom:1.25rem}
+.svc-form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.svc-form-group label{font-size:0.75rem;font-weight:500;color:var(--muted)}
+.svc-form-group input,.svc-form-group textarea,.svc-form-group select{font-family:'Rubik',sans-serif;font-size:0.875rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;outline:none;transition:border-color 0.15s;width:100%}
+.svc-form-group input:focus,.svc-form-group textarea:focus,.svc-form-group select:focus{border-color:var(--primary)}
+.svc-form-group textarea{resize:vertical;min-height:80px;line-height:1.6}
+.svc-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.svc-modal-actions .btn-cancel{font-family:'Rubik',sans-serif;font-size:0.8125rem;font-weight:500;padding:7px 16px;border-radius:7px;cursor:pointer;background:transparent;border:1.5px solid var(--border);color:var(--muted);transition:all 0.15s}
+.svc-modal-actions .btn-cancel:hover{border-color:var(--muted);color:var(--text)}
+.svc-modal-actions .btn-save{font-family:'Rubik',sans-serif;font-size:0.8125rem;font-weight:500;padding:7px 20px;border-radius:7px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background 0.15s}
+.svc-modal-actions .btn-save:hover{background:var(--primary-dk)}
+.svc-modal-actions .btn-save:disabled{opacity:0.6;cursor:not-allowed}
+.toast{position:fixed;bottom:20px;right:28px;background:var(--k800);color:#fff;padding:10px 16px;border-radius:8px;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;box-shadow:0 6px 32px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:9999;display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateY(0);opacity:1}
+.process-scroll{flex:1;overflow-y:auto;padding:0}
+.process-scroll::-webkit-scrollbar{width:4px}
+.process-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.process-hero{background:var(--k800);padding:3rem 2.5rem 2.5rem;color:#fff}
+.process-hero-inner{max-width:760px;margin:0 auto}
+.process-hero h2{font-size:1.625rem;font-weight:600;margin-bottom:8px}
+.process-hero p{font-size:0.9rem;color:var(--k300);line-height:1.75;max-width:600px}
+.process-body{max-width:800px;margin:0 auto;padding:2rem 2.5rem 4rem}
+.proc-section{margin-bottom:2.5rem}
+.proc-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+.proc-section-title{font-size:1.125rem;font-weight:600;color:var(--text);margin-bottom:1rem}
+.proc-overview-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;font-size:0.875rem;color:var(--text);line-height:1.8}
+.proc-overview-card p{margin-bottom:0.75rem}
+.proc-overview-card p:last-child{margin-bottom:0}
+.proc-lifecycle{display:flex;align-items:flex-start;gap:0;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1.75rem 1.5rem 1.5rem;overflow-x:auto}
+.proc-lifecycle::-webkit-scrollbar{height:3px}
+.proc-lifecycle::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.proc-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:100px;position:relative}
+.proc-step:not(:last-child)::after{content:'';position:absolute;top:19px;left:50%;width:100%;height:2px;background:var(--k100);z-index:0}
+.proc-step-num{width:38px;height:38px;border-radius:50%;background:var(--primary-lt);border:2px solid var(--k300);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--primary-dk);z-index:1;flex-shrink:0;transition:all 0.2s}
+.proc-step-label{font-size:0.675rem;font-weight:600;text-align:center;color:var(--text);margin-top:10px;line-height:1.4;padding:0 4px}
+.proc-step-sub{font-size:0.6rem;color:var(--muted);text-align:center;margin-top:3px;padding:0 4px;line-height:1.4}
+.proc-step-notes{display:grid;gap:8px;margin-top:1.25rem}
+.proc-step-note{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:1rem 1.125rem;display:flex;gap:12px;align-items:flex-start}
+.proc-step-note-num{width:26px;height:26px;border-radius:50%;background:var(--primary-lt);color:var(--primary-dk);font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.proc-step-note-body strong{display:block;font-size:0.8125rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.proc-step-note-body span{font-size:0.8rem;color:var(--muted);line-height:1.65}
+.proc-table-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.proc-table{width:100%;border-collapse:collapse;font-size:0.8125rem}
+.proc-table th{background:var(--bg);text-align:left;font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border)}
+.proc-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6}
+.proc-table tr:last-child td{border-bottom:none}
+.proc-table tr:hover td{background:var(--bg)}
+.proc-table td:first-child{font-weight:500;white-space:nowrap}
+.proc-table .td-muted{color:var(--muted);font-size:0.78rem}
+.proc-cta{background:var(--k800);border-radius:12px;padding:2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;margin-top:1rem}
+.proc-cta-text h3{font-size:1rem;font-weight:600;color:#fff;margin-bottom:4px}
+.proc-cta-text p{font-size:0.8125rem;color:var(--k300);line-height:1.6}
+.proc-cta-btn{font-family:'Rubik',sans-serif;font-size:0.875rem;font-weight:600;padding:10px 24px;border-radius:8px;cursor:pointer;background:#fff;color:var(--k800);border:none;transition:opacity 0.15s;white-space:nowrap;flex-shrink:0}
+.proc-cta-btn:hover{opacity:0.9}
 @media(max-width:640px){
-  .body{flex-direction:column}
-  .sidebar{width:100%;height:240px;border-right:none;border-bottom:1px solid var(--border)}
-  .igrid{grid-template-columns:1fr}
-  .analytics-row{flex-direction:column}
+  .process-hero{padding:2rem 1.25rem 1.75rem}
+  .process-body{padding:1.5rem 1.25rem 3rem}
+  .proc-lifecycle{padding:1.25rem 1rem 1rem}
+  .proc-step{min-width:80px}
+  .proc-cta{flex-direction:column;text-align:center}
 }
 </style>
 </head>
 <body>
 
-<div class="shell-header">
-  <div class="sh-left">
-    <img src="whitetextlogo.svg" alt="Sprout Solutions" class="sh-logo"/>
-    <div class="sh-divider"></div>
-    <div>
-      <div class="sh-title">Service Request Tracker</div>
-      <div class="sh-sub">Platform Operations</div>
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <img src="logo.svg" alt="Sprout Solutions" class="gate-logo"/>
+    <h1>Service Request Portal</h1>
+    <p class="gate-sub">Platform Operations · Aurora Ops</p>
+    <div class="gate-divider">
+      <div class="gate-divider-line"></div>
+      <div class="gate-divider-text">Sign in with your Sprout account</div>
+      <div class="gate-divider-line"></div>
     </div>
+    <button class="gate-google-btn" id="gGoogleBtn" onclick="startGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        <path fill="none" d="M0 0h48v48H0z"/>
+      </svg>
+      Sign in with Google
+    </button>
+    <div class="gate-error" id="gErr"></div>
+    <p class="gate-hint">Access is restricted to <strong>@sprout.ph</strong> accounts.<br>Your role is assigned automatically.</p>
   </div>
 </div>
 
-<div class="analytics" id="analytics">
-  <div class="analytics-row" id="scRow">
-    <div class="sc" data-lc="all" onclick="scFilter(this)"><div class="sc-label">Total</div><div class="sc-value" id="sc-total">—</div><div class="sc-sub">All requests</div></div>
-    <div class="sc" data-lc="For Quotation" onclick="scFilter(this)"><div class="sc-label">For Quotation</div><div class="sc-value" id="sc-fq">—</div><div class="sc-sub">Awaiting review</div></div>
-    <div class="sc" data-lc="Ongoing Review" onclick="scFilter(this)"><div class="sc-label">Ongoing Review</div><div class="sc-value" id="sc-or">—</div><div class="sc-sub">Being reviewed</div></div>
-    <div class="sc" data-lc="Quotation Provided" onclick="scFilter(this)"><div class="sc-label">Quotation Provided</div><div class="sc-value" id="sc-qp">—</div><div class="sc-sub">Awaiting CRF</div></div>
-    <div class="sc" data-lc="For Execution / Schedule" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
-    <div class="sc" data-lc="Ongoing Execution / Activity" onclick="scFilter(this)"><div class="sc-label">Ongoing Activity</div><div class="sc-value" id="sc-oe">—</div><div class="sc-sub">In execution</div></div>
-    <div class="sc" data-lc="Request Done" onclick="scFilter(this)"><div class="sc-label">Done</div><div class="sc-value" id="sc-rd">—</div><div class="sc-sub">Completed</div></div>
-  </div>
-  <div class="analytics-meta" id="analyticsMeta"></div>
-</div>
-
-<div class="body">
-  <div class="sidebar">
-    <div class="sb-search">
-      <input type="text" id="srch" placeholder="Search client, ticket, email…" oninput="render()"/>
-      <button class="sb-refresh" onclick="refresh()" title="Refresh">↻</button>
+<!-- APP -->
+<div class="app" id="app">
+  <div class="shell-header">
+    <div class="sh-left">
+      <img src="whitetextlogo.svg" alt="Sprout Solutions" class="sh-logo"/>
+      <div class="sh-divider"></div>
+      <div>
+        <div class="sh-title">Service Request Portal</div>
+        <div class="sh-sub">Platform Operations</div>
+      </div>
     </div>
-    <div class="sb-filters" id="filters">
-      <span class="pill on" data-f="all" onclick="setF(this)">All</span>
-      <span class="pill" data-f="For Quotation" onclick="setF(this)">For Quotation</span>
-      <span class="pill" data-f="Ongoing Review" onclick="setF(this)">Ongoing Review</span>
-      <span class="pill" data-f="Quotation Provided" onclick="setF(this)">Quotation Provided</span>
-      <span class="pill" data-f="For Execution / Schedule" onclick="setF(this)">For Execution</span>
-      <span class="pill" data-f="Ongoing Execution / Activity" onclick="setF(this)">Ongoing Activity</span>
-      <span class="pill" data-f="Request Done" onclick="setF(this)">Done</span>
-    </div>
-    <div class="sb-list" id="sbList"><div class="empty-sb"><span class="spinner"></span></div></div>
-  </div>
-  <div class="detail" id="detail">
-    <div class="state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-      <p>Select a request to view details</p>
+    <div class="sh-right">
+      <span class="sh-user" id="shUser"></span>
+      <button class="sh-logout" onclick="logout()" title="Sign out">Sign out</button>
     </div>
   </div>
-</div>
 
-<script>
-var GAS_URL='https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
-var params=new URLSearchParams(location.search);
-var USER_EMAIL=params.get('email')||'';
-var IS_INTERNAL=params.get('internal')==='1';
-var LIFECYCLE=['For Quotation','Ongoing Review','Quotation Provided','For Execution / Schedule','Ongoing Execution / Activity','Request Done'];
-var all=[],activeF='all',activeSC='all',activeKey=null;
+  <div class="tab-bar" id="tabBar" style="display:none">
+    <button class="tab" id="tab-process" onclick="switchTab('process')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Process
+    </button>
+    <button class="tab" id="tab-services" onclick="switchTab('services')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
+      List of Services
+    </button>
+    <button class="tab" id="tab-form" onclick="switchTab('form')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg>
+      Submit a Request
+    </button>
+    <button class="tab" id="tab-tracker" onclick="switchTab('tracker')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      Tracker
+    </button>
+    <button class="tab" id="tab-analytics" onclick="switchTab('analytics')" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Analytics
+    </button>
+    <button class="tab" id="tab-quotation" onclick="switchTab('quotation')" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Quotation Builder
+    </button>
+    <button class="tab" id="tab-enhancements" onclick="switchTab('enhancements')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Enhancements
+    </button>
+  </div>
 
-async function init(){
-  if(IS_INTERNAL){document.getElementById('analytics').classList.add('on');loadAnalytics();}
-  await loadList();
-}
-async function loadList(){
-  document.getElementById('sbList').innerHTML='<div class="empty-sb"><span class="spinner"></span></div>';
-  try{
-    const ctrl=new AbortController();
-    const to=setTimeout(()=>ctrl.abort(),15000);
-    const res=await fetch(GAS_URL+'?action=list&email='+encodeURIComponent(USER_EMAIL),{signal:ctrl.signal});
-    clearTimeout(to); const d=await res.json(); all=d.submissions||[]; render();
-  }catch(e){document.getElementById('sbList').innerHTML='<div class="empty-sb">Failed to load. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadList()">Retry</span></div>';}
-}
-async function refresh(){all=[];activeKey=null;document.getElementById('detail').innerHTML='<div class="state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Select a request to view details</p></div>';await loadList();if(IS_INTERNAL)loadAnalytics();}
-async function loadAnalytics(){
-  try{
-    const res=await fetch(GAS_URL+'?action=analytics');const data=await res.json();if(!data||data.error)return;
-    document.getElementById('sc-total').textContent=data.total||0;
-    document.getElementById('sc-fq').textContent=data.lifecycleCounts['For Quotation']||0;
-    document.getElementById('sc-or').textContent=data.lifecycleCounts['Ongoing Review']||0;
-    document.getElementById('sc-qp').textContent=data.lifecycleCounts['Quotation Provided']||0;
-    document.getElementById('sc-fe').textContent=data.lifecycleCounts['For Execution / Schedule']||0;
-    document.getElementById('sc-oe').textContent=data.lifecycleCounts['Ongoing Execution / Activity']||0;
-    document.getElementById('sc-rd').textContent=data.lifecycleCounts['Request Done']||0;
-    const meta=document.getElementById('analyticsMeta');const pills=[];
-    if(data.byCost){pills.push(`Paid: <span>${data.byCost['Paid']||0}</span>`);pills.push(`Waived: <span>${data.byCost['Waived']||0}</span>`);pills.push(`Cost TBD: <span>${data.byCost['Pending']||0}</span>`);}
-    if(data.avgDays!=null)pills.push(`Avg. resolution: <span>${data.avgDays}d</span>`);
-    if(data.monthlyArr&&data.monthlyArr.length){const last=data.monthlyArr[data.monthlyArr.length-1];pills.push(`This month: <span>${last.count} request${last.count!==1?'s':''}</span>`);}
-    if(data.byService){const top=Object.entries(data.byService).sort((a,b)=>b[1]-a[1])[0];if(top)pills.push(`Top service: <span>${top[0]}</span>`);}
-    meta.innerHTML=pills.map(p=>`<div class="meta-pill">${p}</div>`).join('');
-  }catch(e){}
-}
-function setF(el){document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');activeF=el.dataset.f;activeSC='all';document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));render();}
-function scFilter(el){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));el.classList.add('active');activeSC=el.dataset.lc;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));const match=document.querySelector('.pill[data-f="'+activeSC+'"]');if(match){match.classList.add('on');activeF=activeSC;}else{document.querySelector('.pill[data-f="all"]').classList.add('on');activeF='all';}render();}
-function matches(s){const lc=s.lifecycle||'';if(activeF!=='all'&&lc!==activeF)return false;const q=document.getElementById('srch').value.toLowerCase();if(!q)return true;return[s.clientName,s.requesterName,s.requesterEmail,s.jiraKey,s.serviceType,s.hrUrl,s.csmName].some(v=>(v||'').toLowerCase().includes(q));}
-function render(){
-  const filtered=all.filter(matches);const list=document.getElementById('sbList');
-  if(!filtered.length){list.innerHTML='<div class="empty-sb">No requests found.</div>';return;}
-  list.innerHTML=filtered.map(s=>{
-    const lc=s.lifecycle||'For Quotation';const bcls=lcBadge(lc);
-    const dateStr=s.timestamp?new Date(s.timestamp).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}):'—';
-    const isOn=s.jiraKey===activeKey?'on':'';
-    return`<div class="rcard ${isOn}" onclick="select('${esc(s.jiraKey)}',this)">
-      <div class="rc-top"><div class="rc-client">${esc(s.clientName)}</div><span class="badge ${bcls}">${esc(lc)}</span></div>
-      <div class="rc-service">${esc(s.serviceType)}</div>
-      <div class="rc-bottom"><span class="rc-date">${dateStr}</span><span class="rc-key">${s.jiraKey||'—'}</span></div>
-    </div>`;
-  }).join('');
-}
-async function select(jiraKey,el){
-  activeKey=jiraKey;document.querySelectorAll('.rcard').forEach(c=>c.classList.remove('on'));if(el)el.classList.add('on');
-  const panel=document.getElementById('detail');panel.innerHTML='<div class="state"><span class="spinner"></span></div>';
-  const s=all.find(x=>x.jiraKey===jiraKey);
-  if(!jiraKey||jiraKey==='ERROR'){renderDetail(s,null);return;}
-  try{const res=await fetch(GAS_URL+'?action=detail&key='+encodeURIComponent(jiraKey));const detail=await res.json();renderDetail(s,detail);}
-  catch(e){renderDetail(s,null);}
-}
-function renderDetail(s,d){
-  const panel=document.getElementById('detail');
-  const psrv=d&&d.psrv?d.psrv:null;const linked=d&&d.linkedTickets?d.linkedTickets:[];
-  const lc=s?s.lifecycle:'—';const bcls=lcBadge(lc);
-  let costHtml='';
-  if(s&&s.costStatus){const cc=s.costStatus==='Paid'?'cost-paid':s.costStatus==='Waived'?'cost-waived':'cost-pending';costHtml=`<span class="cost-badge ${cc}">${s.costStatus}</span>`;}
-  let html=`<div class="dh"><h2>${esc(s?s.clientName:(psrv?psrv.summary:'—'))}</h2>
-    <div class="dh-meta"><span class="badge ${bcls}">${esc(lc)}</span>${costHtml}
-      ${psrv?`<a href="${psrv.url}" target="_blank">${psrv.key} ↗</a>`:''}
-      ${s?`<span>·</span><span>${esc(s.serviceType)}</span>`:''}
-      ${s&&s.urgency?`<span>·</span><span>${esc(s.urgency)} urgency</span>`:''}
-    </div></div>`;
-  html+=renderOpCard(s);
-  html+=`<div class="dsec"><div class="dsh"><h3>Request lifecycle</h3></div><div class="dsb"><div class="stepper">${renderStepper(lc)}</div></div></div>`;
-  if(s){html+=`<div class="dsec"><div class="dsh"><h3>Request information</h3></div><div class="dsb"><div class="igrid">
-    <div class="iitem full"><label>Client / Company</label><span>${esc(s.clientName)}</span></div>
-    <div class="iitem"><label>Requester Name</label><span>${esc(s.requesterName)}</span></div>
-    <div class="iitem"><label>Requester Email</label><span>${esc(s.requesterEmail)}</span></div>
-    <div class="iitem"><label>CSM</label><span>${esc(s.csmName)}</span></div>
-    <div class="iitem"><label>CSM Email</label><span>${esc(s.csmEmail||'—')}</span></div>
-    <div class="iitem"><label>HR URL</label><span>${esc(s.hrUrl)}</span></div>
-    <div class="iitem"><label>Payroll Codes</label><span>${esc(s.payrollCodes||'—')}</span></div>
-    <div class="iitem"><label>Target Date</label><span>${esc(s.targetDate||'—')}</span></div>
-    <div class="iitem"><label>Urgency</label><span>${esc(s.urgency||'—')}</span></div>
-    ${s.timestamp?`<div class="iitem"><label>Submitted</label><span>${new Date(s.timestamp).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span></div>`:''}
-    ${s.description?`<div class="iitem full"><label>Description</label><span>${esc(s.description)}</span></div>`:''}
-    ${s.constraints?`<div class="iitem full"><label>Constraints / Blackout Dates</label><span>${esc(s.constraints)}</span></div>`:''}
-    ${s.notes?`<div class="iitem full"><label>Additional Notes</label><span>${esc(s.notes)}</span></div>`:''}
-  </div></div></div>`;}
-  if(psrv){html+=`<div class="dsec"><div class="dsh"><h3>Inquiry ticket — ${psrv.key}</h3><span class="badge ${lcBadgeFromJira(psrv.status)}">${esc(psrv.status)}</span></div><div class="dsb">
-    <div class="igrid" style="margin-bottom:10px"><div class="iitem"><label>Assignee</label><span>${esc(psrv.assignee)}</span></div><div class="iitem"><label>Last updated</label><span>${(psrv.updated||'').substring(0,10)}</span></div></div>
-    ${renderComments(psrv.comments)}</div></div>`;}
-  if(linked.length){
-    html+=`<div class="dsec"><div class="dsh"><h3>Activity tickets (CRF &amp; execution)</h3></div><div class="dsb">`;
-    linked.forEach((t,i)=>{
-      const tid='tc'+i;
-      html+=`<div class="tcard"><div class="tc-hd" onclick="tog('${tid}')">
-        <div><div class="tc-key"><a href="${t.url}" target="_blank" onclick="event.stopPropagation()">${t.key} [${t.project}] ↗</a>
-          ${t.costStatus?`<span class="cost-badge ${t.costStatus==='Paid'?'cost-paid':'cost-waived'}" style="margin-left:5px">${t.costStatus}</span>`:''}
-        </div><div class="tc-sum">${esc(t.summary)}</div><div class="tc-who">Assigned: ${esc(t.assignee)}</div></div>
-        <span class="badge ${lcBadgeFromJira(t.status)}">${esc(t.status)}</span>
-      </div><div class="tc-bd" id="${tid}">`;
-      if(t.subTickets&&t.subTickets.length){html+=`<div class="sub-list"><h4>Sub-tickets</h4>`;t.subTickets.forEach(sub=>{html+=`<div class="sub-row"><div class="sub-info"><div class="sub-key"><a href="${sub.url}" target="_blank">${sub.key} [${sub.project}] ↗</a></div><div class="sub-sum">${esc(sub.summary)}</div><div class="sub-who">${esc(sub.assignee)}</div></div><span class="badge ${lcBadgeFromJira(sub.status)}">${esc(sub.status)}</span></div>`;});html+=`</div>`;}
-      html+=renderComments(t.comments)+'</div></div>';
-    });
-    html+=`</div></div>`;
-  } else {
-    const noST=['For Quotation','Ongoing Review','Quotation Provided'].includes(lc);
-    if(noST)html+=`<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>`;
-  }
-  panel.innerHTML=html;
-}
-function renderStepper(currentLc){return LIFECYCLE.map(lc=>{const cIdx=LIFECYCLE.indexOf(currentLc);const lIdx=LIFECYCLE.indexOf(lc);const cls=lIdx<cIdx?'done':lIdx===cIdx?'current':'';const short=lc.replace('Ongoing ','').replace(' / Activity','').replace(' / Schedule','');return`<div class="step ${cls}"><div class="step-dot"></div><div class="step-label">${esc(short)}</div></div>`;}).join('');}
-function renderComments(comments){if(!comments||!comments.length)return'<p class="no-c">No comments yet.</p>';return`<div class="clist">`+comments.map(c=>`<div class="ci"><div class="ci-who">${esc(c.author)} · ${(c.date||'').substring(0,10)}</div><div class="ci-body">${esc(c.body)}</div></div>`).join('')+'</div>';}
-function tog(id){document.getElementById(id).classList.toggle('on');}
-function lcBadge(lc){const map={'For Quotation':'b-gray','Ongoing Review':'b-amber','Quotation Provided':'b-blue','For Execution / Schedule':'b-purple','Ongoing Execution / Activity':'b-teal','Request Done':'b-green'};return map[lc]||'b-gray';}
-function lcBadgeFromJira(status){const s=(status||'').toLowerCase();if(['done','closed','resolved'].some(v=>s.includes(v)))return'b-green';if(['in progress','for pr review'].some(v=>s.includes(v)))return'b-teal';if(['ready for checking','for checking'].some(v=>s.includes(v)))return'b-blue';if(['on hold'].some(v=>s.includes(v)))return'b-amber';if(['cancelled','canceled'].some(v=>s.includes(v)))return'b-red';return'b-gray';}
-function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  <div class="views">
 
-function renderOpCard(s) {
-  if (!IS_INTERNAL) return '';
-  const cost  = s && s.serviceCost != null ? s.serviceCost : '';
-  const adate = s && s.activityDate ? s.activityDate.substring(0,10) : '';
-  const cstat = s && s.costStatus   ? s.costStatus : 'Pending';
-  const jk    = s && s.jiraKey      ? s.jiraKey    : '';
-  const statusOpts = ['Pending','Paid','Waived'].map(o =>
-    `<option value="${o}"${cstat===o?' selected':''}>${o}</option>`).join('');
-  return `<div class="dsec" id="opCard">
-    <div class="dsh">
-      <h3>Operational details</h3>
-      <span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span>
-    </div>
-    <div class="dsb">
-      <div class="igrid">
-        <div class="iitem">
-          <label>Service / Operational Cost (₱)</label>
-          <input type="number" id="op-cost" value="${esc(String(cost))}" min="0" step="100"
-            placeholder="e.g. 5000"
-            style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none"/>
-        </div>
-        <div class="iitem">
-          <label>Activity Date</label>
-          <input type="date" id="op-date" value="${adate}"
-            style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none"/>
-        </div>
-        <div class="iitem">
-          <label>Cost Status</label>
-          <select id="op-status"
-            style="width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">
-            ${statusOpts}
-          </select>
-        </div>
-        <div class="iitem" style="display:flex;align-items:flex-end">
-          <button onclick="saveOpDetails('${jk}')"
-            style="font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;width:100%">
-            Save
-          </button>
+    <!-- LANDING -->
+    <div class="view on" id="view-landing">
+      <div class="landing">
+        <div class="landing-inner">
+          <h2>What would you like to do?</h2>
+          <p class="landing-sub">Select an option to get started.</p>
+          <div class="cards" id="landingCards">
+            <div class="lcard" onclick="switchTab('process')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+              <h3>How It Works</h3>
+              <p>Learn about the request process, lifecycle stages, guardrails, and escalation paths.</p>
+            </div>
+            <div class="lcard" onclick="switchTab('services')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg></div>
+              <h3>List of Services</h3>
+              <p>Browse all available Platform Operations services and what they cover.</p>
+            </div>
+            <div class="lcard" onclick="switchTab('form')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"/></svg></div>
+              <h3>Submit a Request</h3>
+              <p>Log a new paid service request for review and quotation.</p>
+            </div>
+            <div class="lcard" id="trackerCard" onclick="switchTab('tracker')">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+              <h3>View Tracker</h3>
+              <p id="trackerCardDesc">Monitor the status of service requests and activity tickets.</p>
+            </div>
+            <div class="lcard" onclick="switchTab('enhancements')" style="grid-column:1/-1">
+              <div class="lcard-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+              <h3>Portal Enhancements</h3>
+              <p>Submit ideas or improvements for this portal. Vote on existing requests to help prioritise what gets built.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>`;
+
+    <!-- PROCESS VIEW -->
+    <div class="view" id="view-process">
+      <div class="process-scroll">
+        <div class="process-hero">
+          <div class="process-hero-inner">
+            <h2>Platform Operations Services — How It Works</h2>
+            <p>This portal covers paid backend services for active clients: data migrations, database operations, configuration changes, and other work not covered by standard BAU. All requests go through a structured review, costing, and approval process before any work begins.</p>
+          </div>
+        </div>
+        <div class="process-body">
+          <div class="proc-section">
+            <div class="proc-section-label">01 — Overview</div>
+            <div class="proc-section-title">What qualifies as a Platform Operations service request?</div>
+            <div class="proc-overview-card">
+              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies.</p>
+              <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
+              <p>If you are unsure whether your request falls under this portal, reach out to the Platform Operations team before submitting.</p>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">02 — Request Lifecycle</div>
+            <div class="proc-section-title">From submission to completion</div>
+            <div class="proc-lifecycle" style="margin-bottom:1rem">
+              <div class="proc-step"><div class="proc-step-num">1</div><div class="proc-step-label">Request<br>Logged</div><div class="proc-step-sub">You submit this form</div></div>
+              <div class="proc-step"><div class="proc-step-num">2</div><div class="proc-step-label">For<br>Scoping</div><div class="proc-step-sub">Ops reviews &amp; estimates</div></div>
+              <div class="proc-step"><div class="proc-step-num">3</div><div class="proc-step-label">For<br>Quotation</div><div class="proc-step-sub">Quotation in progress</div></div>
+              <div class="proc-step"><div class="proc-step-num">4</div><div class="proc-step-label">Quotation<br>Done</div><div class="proc-step-sub">CRF + Work Order</div></div>
+              <div class="proc-step"><div class="proc-step-num">5</div><div class="proc-step-label">For<br>Execution</div><div class="proc-step-sub">CRF raised</div></div>
+              <div class="proc-step"><div class="proc-step-num">6</div><div class="proc-step-label">Execution<br>Done</div><div class="proc-step-sub">Work completed</div></div>
+            </div>
+            <div class="proc-step-notes">
+              <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>Request Logged</strong><span>Submit through this portal with client details, service needed, target date, and known constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Quotation Done</strong><span>Must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order attached to the CRF.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">5</div><div class="proc-step-note-body"><strong>For Execution</strong><span>The CRF has been raised and execution is scheduled. The assigned Platform Ops team member is preparing to carry out the work.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">6</div><div class="proc-step-note-body"><strong>Execution Done</strong><span>The service has been executed, results validated, and the request updated in the tracker. The requester and CSM are notified upon completion.</span></div></div>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">03 — Scope &amp; Quality Safeguards</div>
+            <div class="proc-section-title">Guardrails that apply to all requests</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>Guardrail</th><th>What It Means</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr><td>All requests through this portal</td><td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs.</td><td class="td-muted">Redirect requester to submit via this form.</td></tr>
+                  <tr><td>Assessment before execution</td><td class="td-muted">No work begins without completed review of scope, cost, and timeline.</td><td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td></tr>
+                  <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
+                  <tr><td>All services subject to fees</td><td class="td-muted">Fee waivers are not granted by default. To request a waiver, email the CTO, Gian Dela Rama (<a href="mailto:gdelarama@sprout.ph" style="color:var(--primary)">gdelarama@sprout.ph</a>) with CC to: DJ (<a href="mailto:diane@sprout.ph" style="color:var(--primary)">diane@sprout.ph</a>), Danica (<a href="mailto:afrancisco@sprout.ph" style="color:var(--primary)">afrancisco@sprout.ph</a>), Gaby (<a href="mailto:gabriellef@sprout.ph" style="color:var(--primary)">gabriellef@sprout.ph</a>).</td><td class="td-muted">Written CTO approval required. No exceptions.</td></tr>
+                  <tr><td>No unapproved scope changes</td><td class="td-muted">New requirements mid-execution are treated as a separate request.</td><td class="td-muted">Log a new request. Re-assess and re-estimate.</td></tr>
+                  <tr><td>Downtime must be confirmed</td><td class="td-muted">No CRF raised until schedule is confirmed with client.</td><td class="td-muted">Platform Ops coordinates with CSM to lock window.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">04 — Exit Criteria</div>
+            <div class="proc-section-title">When is a request considered complete?</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>#</th><th>Condition</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
+                  <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
+                  <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
+                  <tr><td>4</td><td>Tracker updated and request marked as <strong>Execution Done</strong>.</td></tr>
+                  <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">05 — Escalation</div>
+            <div class="proc-section-title">When things get stuck</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>Scenario</th><th>Escalation Path</th><th>Expected Outcome</th></tr></thead>
+                <tbody>
+                  <tr><td>Request stalled with no response</td><td class="td-muted">CSM → Platform Ops Lead</td><td class="td-muted">Status update within 2 business days</td></tr>
+                  <tr><td>Scope or feasibility unclear</td><td class="td-muted">Platform Ops → Engineering Manager</td><td class="td-muted">Joint assessment within 2 business days</td></tr>
+                  <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-muted">CSM → Lead CSM</td><td class="td-muted">Resolution or cancellation of request</td></tr>
+                  <tr><td>Fee waiver without CTO approval</td><td class="td-muted">CSM → CTO</td><td class="td-muted">Written approval or denial before request proceeds</td></tr>
+                  <tr><td>Scope change mid-execution</td><td class="td-muted">Platform Ops Tech Lead → Platform Ops Lead</td><td class="td-muted">Scope frozen; new items logged separately</td></tr>
+                  <tr><td>Downtime window not agreed in time</td><td class="td-muted">CSM → Lead CSM → Platform Ops Lead</td><td class="td-muted">Schedule confirmed or request deferred</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="proc-cta">
+            <div class="proc-cta-text">
+              <h3>Ready to submit a service request?</h3>
+              <p>Have the client's HR URL, payroll code(s), target date, and a clear description of what's needed.</p>
+            </div>
+            <button class="proc-cta-btn" onclick="switchTab('form')">Submit a Request →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM VIEW -->
+    <div class="view" id="view-form">
+      <div class="form-iframe-wrap">
+        <div class="form-iframe-loader" id="formLoader">
+          <span class="spinner"></span>
+          <p>Loading request form…</p>
+        </div>
+        <iframe id="form-iframe" style="flex:1;border:none;width:100%;height:100%" title="Service Request Form"></iframe>
+        <div class="form-iframe-fallback">
+          Having trouble? <a href="servicerequestform.html" target="_blank">Open in new tab ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACKER VIEW -->
+    <div class="view" id="view-tracker">
+      <div class="analytics" id="analytics">
+        <div class="analytics-row" id="scRow">
+          <div class="sc" data-lc="all" onclick="scFilter(this)"><div class="sc-label">Total</div><div class="sc-value" id="sc-total">—</div><div class="sc-sub">All requests</div></div>
+          <div class="sc" data-lc="Request Logged" onclick="scFilter(this)"><div class="sc-label">Request Logged</div><div class="sc-value" id="sc-rl">—</div><div class="sc-sub">Backlog</div></div>
+          <div class="sc" data-lc="For Scoping" onclick="scFilter(this)"><div class="sc-label">For Scoping</div><div class="sc-value" id="sc-fs">—</div><div class="sc-sub">Under review</div></div>
+          <div class="sc" data-lc="For Quotation" onclick="scFilter(this)"><div class="sc-label">For Quotation</div><div class="sc-value" id="sc-fq">—</div><div class="sc-sub">Active quotation</div></div>
+          <div class="sc" data-lc="For Team Assessment" onclick="scFilter(this)"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="sc-ta">—</div><div class="sc-sub">Pending clarification</div></div>
+          <div class="sc" data-lc="Quotation Done" onclick="scFilter(this)"><div class="sc-label">Quotation Done</div><div class="sc-value" id="sc-qd">—</div><div class="sc-sub">No execution</div></div>
+          <div class="sc" data-lc="For Execution" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
+          <div class="sc" data-lc="Execution Done" onclick="scFilter(this)"><div class="sc-label">Execution Done</div><div class="sc-value" id="sc-ed">—</div><div class="sc-sub">Completed</div></div>
+          <div class="sc" data-lc="Closed" onclick="scFilter(this)"><div class="sc-label">Closed</div><div class="sc-value" id="sc-cl">—</div><div class="sc-sub">Request closed</div></div>
+        </div>
+        <div class="analytics-meta" id="analyticsMeta"></div>
+      </div>
+      <div class="body">
+        <div class="sidebar">
+          <div class="sb-search">
+            <input type="text" id="srch" placeholder="Search client, ticket, email…" oninput="render()"/>
+            <button class="sb-refresh" onclick="refresh()" title="Refresh">↻</button>
+          </div>
+          <div class="sb-cat-section">
+            <div class="sb-cat-label">Filter by category</div>
+            <div class="sb-cat-pills" id="catPills">
+              <span class="pill on" data-cat="all" onclick="setCatF(this)">All</span>
+            </div>
+          </div>
+          <div class="sb-list" id="sbList"><div class="empty-sb"><span class="spinner"></span></div></div>
+        </div>
+        <div class="detail" id="detail">
+          <div class="state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+            <p>Select a request to view details</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES VIEW -->
+    <div class="view" id="view-services">
+      <div class="sv-shell">
+        <div class="sv-sidebar">
+          <div class="sv-sidebar-head">
+            <span>Categories</span>
+            <span id="sv-sync-msg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span>
+          </div>
+          <div class="sv-cat-list" id="svCatList">
+            <div class="sv-cat-item active" data-cat="all" onclick="svSetCat(this)">
+              <span>All Services</span>
+              <span class="sv-cat-count" id="sv-count-all">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="sv-main">
+          <div class="sv-topbar">
+            <div class="sv-search-wrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="sv-search" id="svSearch" placeholder="Search services…" oninput="renderServicesView()"/>
+            </div>
+            <span class="sv-result-count" id="svResultCount"></span>
+            <button class="btn btn-primary" id="sv-add-btn" onclick="openServiceModal()" style="display:none;font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:6px 14px;border-radius:7px;cursor:pointer;background:var(--primary);color:#fff;border:none">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:4px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Service
+            </button>
+          </div>
+          <div class="sv-content">
+            <div id="sv-grid" class="sv-grid">
+              <div class="sv-empty"><span class="spinner"></span><p>Loading services…</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS VIEW -->
+    <div class="view" id="view-analytics">
+      <div class="analytics-view-scroll">
+        <div id="an-loadingState" class="loading-state"><span class="spinner"></span><p>Loading analytics…</p></div>
+        <div id="an-content" style="display:none">
+          <div class="toolbar">
+            <h2>Analytics &amp; Reports</h2>
+            <div class="toolbar-right">
+              <div class="date-group"><label>From</label><input type="date" id="an-fromDate"/></div>
+              <div class="date-group"><label>To</label><input type="date" id="an-toDate"/></div>
+              <button class="btn btn-primary" onclick="applyFilter()">Apply</button>
+              <button class="btn" onclick="clearFilter()">All time</button>
+            </div>
+          </div>
+          <div class="sc-grid">
+            <div class="sc-an highlight"><div class="sc-label">Total Requests</div><div class="sc-value" id="an-total">—</div><div class="sc-sub">In selected period</div></div>
+            <div class="sc-an"><div class="sc-label">Request Logged</div><div class="sc-value" id="an-rl">—</div><div class="sc-sub">Backlog</div></div>
+            <div class="sc-an"><div class="sc-label">For Scoping</div><div class="sc-value" id="an-fs">—</div><div class="sc-sub">Under review</div></div>
+            <div class="sc-an"><div class="sc-label">For Quotation</div><div class="sc-value" id="an-fq">—</div><div class="sc-sub">Active quotation</div></div>
+            <div class="sc-an on-hold"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="an-ta">—</div><div class="sc-sub">Pending clarification</div></div>
+            <div class="sc-an"><div class="sc-label">Quotation Done</div><div class="sc-value" id="an-qd">—</div><div class="sc-sub">No execution ticket</div></div>
+            <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
+            <div class="sc-an"><div class="sc-label">Execution Done</div><div class="sc-value" id="an-ed">—</div><div class="sc-sub">Completed</div></div>
+            <div class="sc-an rejected"><div class="sc-label">Closed</div><div class="sc-value" id="an-cl">—</div><div class="sc-sub">Request closed</div></div>
+            <div class="sc-an"><div class="sc-label">Avg. Resolution</div><div class="sc-value" id="an-avg">—</div><div class="sc-sub">Days to complete</div></div>
+            <div class="sc-an revenue-in"><div class="sc-label">Revenue Received</div><div class="sc-value" id="an-rev-in">—</div><div class="sc-sub">Paid requests total</div></div>
+            <div class="sc-an revenue-out"><div class="sc-label">Revenue Lost</div><div class="sc-value" id="an-rev-out">—</div><div class="sc-sub">Waived requests total</div></div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card"><h3>Requests over time</h3><div class="chart-wrap tall"><canvas id="an-chartMonthly"></canvas></div></div>
+            <div class="chart-card"><h3>By lifecycle stage</h3><div class="chart-wrap tall"><canvas id="an-chartLifecycle"></canvas></div></div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card"><h3>By service type</h3><div class="chart-wrap"><canvas id="an-chartService"></canvas></div></div>
+            <div class="chart-card"><h3>Cost status</h3><div class="chart-wrap"><canvas id="an-chartCost"></canvas></div></div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card"><h3>By urgency</h3><div class="chart-wrap"><canvas id="an-chartUrgency"></canvas></div></div>
+            <div class="chart-card">
+              <h3>Service type breakdown</h3>
+              <div class="table-card" style="border:none;padding:0;margin:0">
+                <table id="an-serviceTable"><thead><tr><th>Service Type</th><th>Count</th><th>Share</th></tr></thead><tbody></tbody></table>
+              </div>
+            </div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card"><h3>Revenue over time</h3><div class="chart-wrap tall"><canvas id="an-chartRevTime"></canvas></div></div>
+            <div class="chart-card"><h3>Revenue by service type</h3><div class="chart-wrap tall"><canvas id="an-chartRevService"></canvas></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUOTATION VIEW -->
+    <div class="view" id="view-quotation">
+      <div id="quotation-frame-wrap" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <iframe id="quotation-iframe" src="quotation.html" style="flex:1;border:none;width:100%;height:100%" title="Quotation Builder"></iframe>
+      </div>
+    </div>
+
+    <!-- ENHANCEMENTS VIEW -->
+    <div class="view" id="view-enhancements">
+      <div class="enh-shell">
+        <div class="enh-scroll">
+          <div class="enh-hero">
+            <div class="enh-hero-inner">
+              <h2>Portal Enhancement Requests</h2>
+              <p>Have an idea to improve this portal? Log it here. These are tracked by the Platform Operations team and reviewed periodically. Upvote ideas you'd find useful — the most supported ones get prioritised first.</p>
+            </div>
+          </div>
+          <div class="enh-body">
+            <div class="enh-list-col">
+              <div class="enh-list-header">
+                <h3>Logged Requests</h3>
+                <div class="enh-sort-pills">
+                  <span class="pill on" data-esort="newest" onclick="setEnhSort(this)">Newest</span>
+                  <span class="pill" data-esort="votes" onclick="setEnhSort(this)">Most Voted</span>
+                </div>
+              </div>
+              <div id="enhList"><div class="enh-empty"><span class="spinner"></span></div></div>
+            </div>
+            <div class="enh-form-col">
+              <div class="enh-form-card">
+                <h3>Submit an Idea</h3>
+                <div class="enh-form-group">
+                  <label>Title <span style="color:var(--tomato)">*</span></label>
+                  <input type="text" id="enh-title" placeholder="e.g. Add export to CSV on tracker"/>
+                </div>
+                <div class="enh-form-group">
+                  <label>Type</label>
+                  <select id="enh-type">
+                    <option value="Feature">New Feature</option>
+                    <option value="UI">UI / UX Improvement</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="enh-form-group">
+                  <label>Description <span style="color:var(--tomato)">*</span></label>
+                  <textarea id="enh-desc" placeholder="Describe what you'd like to see and why it would help…"></textarea>
+                </div>
+                <div class="enh-form-group">
+                  <label>Expected benefit <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+                  <input type="text" id="enh-benefit" placeholder="e.g. Saves 10 mins per week"/>
+                </div>
+                <button class="enh-submit-btn" id="enhSubmitBtn" onclick="submitEnhancement()">Submit Request</button>
+                <div class="enh-form-msg" id="enhFormMsg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SERVICE EDIT MODAL -->
+<div class="svc-modal-overlay" id="svcModal">
+  <div class="svc-modal">
+    <h3 id="svcModalTitle">Add Service</h3>
+    <input type="hidden" id="svcEditId"/>
+    <div class="svc-form-group"><label>Service Name <span style="color:var(--tomato)">*</span></label><input type="text" id="svcName" placeholder="e.g. Data Migration"/></div>
+    <div class="svc-form-group"><label>Category <span style="color:var(--tomato)">*</span></label><input type="text" id="svcCategory" placeholder="e.g. Database, Configuration"/></div>
+    <div class="svc-form-group"><label>Description / Overview</label><textarea id="svcDesc" rows="3" placeholder="What does this service involve? What's included?"></textarea></div>
+    <div class="svc-form-group">
+      <label>Cost Type <span style="color:var(--tomato)">*</span></label>
+      <select id="svcCostType" onchange="toggleSvcPriceField()">
+        <option value="With Cost">With Cost — requires CTO/COO approval to waive</option>
+        <option value="Free">Free — no charge to client</option>
+      </select>
+    </div>
+    <div class="svc-form-group" id="svcPriceGroup"><label id="svcPriceLabel">Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
+    <div class="svc-form-group"><label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/></div>
+    <div class="svc-modal-actions">
+      <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
+      <button class="btn-save" id="svcSaveBtn" onclick="saveService()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
+  <span id="toastMsg">Done</span>
+</div>
+
+<script>
+var GAS_URL     = 'https://script.google.com/macros/s/AKfycbxpNYlKZmKBkykfvWU-cbPbJyxHxyrcRY-Vx8_wKYsESJQSprAohRKqwrtUZBTg-0el3g/exec';
+var SESSION_KEY = 'platops_v2';
+var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=false, trackerInit=false, analyticsInit=false, servicesInit=false, enhInit=false;
+
+var GOOGLE_CLIENT_ID = '32164233896-7us7hgll8adt8hooclcmk4ugrab12rp5.apps.googleusercontent.com';
+var ALLOWED_DOMAIN   = 'sprout.ph';
+
+function startGoogleLogin() {
+  document.getElementById('gErr').textContent = '';
+  document.getElementById('gGoogleBtn').disabled = true;
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+  });
+  google.accounts.id.prompt(function(notification) {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) showGooglePopup();
+  });
+}
+
+function showGooglePopup() {
+  var container = document.createElement('div');
+  container.style.display = 'none';
+  document.body.appendChild(container);
+  google.accounts.id.renderButton(container, { type:'standard', theme:'outline', size:'large' });
+  var btn = container.querySelector('div[role="button"]');
+  if (btn) btn.click();
+  setTimeout(function() { document.body.removeChild(container); }, 1000);
+}
+
+async function handleGoogleCredential(response) {
+  var errEl = document.getElementById('gErr');
+  var btn   = document.getElementById('gGoogleBtn');
+  try {
+    var b64 = response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    var payload = JSON.parse(atob(b64));
+    var email = (payload.email || '').toLowerCase();
+    if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
+      errEl.textContent = 'Access restricted to @sprout.ph accounts.';
+      btn.disabled = false;
+      google.accounts.id.disableAutoSelect();
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
+    var role = 'client';
+    try {
+      var cached = sessionStorage.getItem('role_' + email);
+      if (cached) {
+        role = cached;
+      } else {
+        var ctrl = new AbortController();
+        var to = setTimeout(function() { ctrl.abort(); }, 9000);
+        var res = await fetch(GAS_URL + '?action=checkAccess&email=' + encodeURIComponent(email), { signal: ctrl.signal });
+        clearTimeout(to);
+        var d = await res.json();
+        role = d.role || 'client';
+        sessionStorage.setItem('role_' + email, role);
+      }
+    } catch(e) { role = 'client'; }
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, role, ts: Date.now() }));
+    document.getElementById('gate').classList.add('out');
+    setTimeout(function() { document.getElementById('gate').style.display = 'none'; }, 400);
+    initApp(email, role);
+  } catch(e) {
+    errEl.textContent = 'Sign-in failed. Please try again.';
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Sign in with Google';
+  }
+}
+
+function logout() {
+  google.accounts.id.disableAutoSelect();
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+function initApp(email, role) {
+  userEmail = email; userRole = role || 'client';
+  isAdmin    = userRole === 'admin';
+  isLead     = userRole === 'lead';
+  isInternal = isAdmin || isLead;
+  document.getElementById('shUser').textContent = email;
+  document.getElementById('app').classList.add('on');
+  if (isAdmin) {
+    document.getElementById('tab-analytics').style.display = 'flex';
+    document.getElementById('tab-quotation').style.display = 'flex';
+    document.getElementById('sv-add-btn').style.display = 'flex';
+  }
+  if (!isInternal) document.getElementById('trackerCardDesc').textContent = 'View your submitted service requests and their current status.';
+  var cacheKey = 'tracker_cache_' + email;
+  if (!sessionStorage.getItem(cacheKey)) {
+    fetch(GAS_URL + '?action=list&email=' + encodeURIComponent(email) + '&role=' + encodeURIComponent(userRole))
+      .then(r => r.json())
+      .then(d => sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() })))
+      .catch(() => {});
+  }
+  loadServicesData();
+}
+
+var formIframeLoaded = false;
+
+function openView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('view-' + name).classList.add('on');
+  document.getElementById('tabBar').style.display = 'flex';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  var tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+}
+
+function switchTab(name) {
+  if (name === 'quotation') {
+    openView('quotation');
+    var iframe = document.getElementById('quotation-iframe');
+    if (iframe && !iframe.dataset.loaded) { iframe.src = 'quotation.html'; iframe.dataset.loaded = '1'; }
+    return;
+  }
+  if (name === 'form') {
+    openView('form');
+    var iframe = document.getElementById('form-iframe');
+    if (!formIframeLoaded) {
+      formIframeLoaded = true;
+      var loader = document.getElementById('formLoader');
+      iframe.onload = function() { loader.classList.add('hidden'); };
+      iframe.src = 'servicerequestform.html';
+    }
+    return;
+  }
+  openView(name);
+  if (name === 'tracker' && !trackerInit) { trackerInit = true; USER_EMAIL = userEmail; USER_ROLE = userRole; IS_INTERNAL = isInternal; init_tracker(); }
+  if (name === 'services') { renderServicesView(); }
+  if (name === 'enhancements' && !enhInit) { enhInit = true; loadEnhancements(); }
+  if (name === 'analytics' && !analyticsInit) {
+    analyticsInit = true;
+    var from = new Date(); from.setDate(1);
+    document.getElementById('an-fromDate').value = from.toISOString().split('T')[0];
+    document.getElementById('an-toDate').value = new Date().toISOString().split('T')[0];
+    load_analytics(document.getElementById('an-fromDate').value, document.getElementById('an-toDate').value);
+  }
+}
+
+function openFormWithService(serviceName) {
+  openView('form');
+  var iframe = document.getElementById('form-iframe');
+  var loader = document.getElementById('formLoader');
+  loader.classList.remove('hidden');
+  formIframeLoaded = true;
+  iframe.onload = function() { loader.classList.add('hidden'); };
+  iframe.src = 'servicerequestform.html?service=' + encodeURIComponent(serviceName);
+}
+
+var saved = sessionStorage.getItem(SESSION_KEY);
+if (saved) {
+  try {
+    var s = JSON.parse(saved);
+    document.getElementById('gate').style.display = 'none';
+    initApp(s.email, s.role);
+  } catch(e) { sessionStorage.removeItem(SESSION_KEY); }
+}
+
+var SVC_LS_KEY = 'platops_services_cache';
+var servicesList = [];
+
+function lsReadServices() { try { return JSON.parse(localStorage.getItem(SVC_LS_KEY) || '[]'); } catch(e) { return []; } }
+function lsWriteServices(arr) { try { localStorage.setItem(SVC_LS_KEY, JSON.stringify(arr)); } catch(e) {} }
+
+async function loadServicesData() {
+  var cached = lsReadServices();
+  if (cached.length) { servicesList = cached; renderCatPills(); }
+  try {
+    var res = await fetch(GAS_URL + '?action=getServices');
+    var d   = await res.json();
+    if (d.services) {
+      servicesList = d.services;
+      lsWriteServices(servicesList);
+      renderServicesView();
+      renderCatPills();
+    }
+  } catch(e) { console.warn('Services fetch failed, using cache:', e); }
+}
+
+var svActiveCat = 'all';
+
+function svSetCat(el) {
+  document.querySelectorAll('.sv-cat-item').forEach(function(i) { i.classList.remove('active'); });
+  el.classList.add('active');
+  svActiveCat = el.dataset.cat;
+  var s = document.getElementById('svSearch');
+  if (s) s.value = '';
+  renderServicesView();
+}
+
+function renderServicesView() {
+  var grid = document.getElementById('sv-grid');
+  if (!grid) return;
+  var catList = document.getElementById('svCatList');
+  if (catList) {
+    var cats = {};
+    servicesList.forEach(function(svc) { var c = svc.category || 'Uncategorized'; cats[c] = (cats[c] || 0) + 1; });
+    var allItem = '<div class="sv-cat-item' + (svActiveCat === 'all' ? ' active' : '') + '" data-cat="all" onclick="svSetCat(this)"><span>All Services</span><span class="sv-cat-count">' + servicesList.length + '</span></div>';
+    var catItems = Object.keys(cats).sort().map(function(c) {
+      var active = svActiveCat === c ? ' active' : '';
+      return '<div class="sv-cat-item' + active + '" data-cat="' + esc(c) + '" onclick="svSetCat(this)"><span>' + esc(c) + '</span><span class="sv-cat-count">' + cats[c] + '</span></div>';
+    }).join('');
+    catList.innerHTML = allItem + catItems;
+  }
+  if (!servicesList.length) {
+    grid.innerHTML = '<div class="sv-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.2"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg><p>No services listed yet.' + (isAdmin ? ' Click <strong>Add Service</strong> to get started.' : '') + '</p></div>';
+    return;
+  }
+  var q = ((document.getElementById('svSearch') || {}).value || '').toLowerCase().trim();
+  var filtered = servicesList.filter(function(svc) {
+    var catMatch = svActiveCat === 'all' || (svc.category || 'Uncategorized') === svActiveCat;
+    var searchMatch = !q || (svc.name || '').toLowerCase().includes(q) || (svc.description || '').toLowerCase().includes(q) || (svc.category || '').toLowerCase().includes(q);
+    return catMatch && searchMatch;
+  });
+  var countEl = document.getElementById('svResultCount');
+  if (countEl) countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
+  if (!filtered.length) { grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>'; return; }
+
+  // Split into Free and With Cost
+  var freeItems   = filtered.filter(function(s) { return s.costType === 'Free'; });
+  var paidItems   = filtered.filter(function(s) { return s.costType !== 'Free'; });
+
+  function renderCard(svc) {
+    var cardId = 'svcard-' + svc.id.replace(/[^a-z0-9]/gi, '-');
+    var adminActions = '';
+    if (isAdmin) {
+      adminActions = '<button class="sv-btn-edit" onclick="event.stopPropagation();openServiceModal(\'' + svc.id.replace(/'/g, "\\'") + '\')">Edit</button>'
+        + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
+    }
+    var chevron = '<svg class="sv-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    var isFree = svc.costType === 'Free';
+    var expandRows = '';
+    // Always show Cost Type
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Cost Type</span><span class="sv-card-expand-value">' + (isFree ? '<span class="sv-cost-free" style="font-size:0.7rem">Free</span>' : '<span class="sv-cost-paid" style="font-size:0.7rem">With Cost</span>') + '</span></div>';
+    // Always show Estimated Cost — "Free" label for free services, price or "Quoted per request" for paid
+    var costDisplay = isFree ? 'Free — no charge to client' : (svc.price || 'Quoted per request');
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(costDisplay) + '</span></div>';
+    if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
+    var expandFooter = '<div class="sv-card-expand-footer"><div style="display:flex;gap:6px">' + adminActions + '</div><button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button></div>';
+    var costBadge = svc.costType === 'Free'
+      ? '<span class="sv-cost-free">Free</span>'
+      : '<span class="sv-cost-paid">With Cost</span>';
+    return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')">'
+      + '<div class="sv-card-header"><span class="sv-card-name">' + esc(svc.name) + '</span>'
+      + '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+      + costBadge
+      + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
+      + chevron + '</div></div>'
+      + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
+      + '<div class="sv-card-expand" id="' + cardId + '-expand">' + expandRows + expandFooter + '</div>'
+      + '</div>';
+  }
+
+  var html = '';
+  if (paidItems.length) {
+    html += '<div class="sv-section-label">With Cost <span style="font-size:0.6rem;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— requires CTO &amp; COO approval to waive</span></div>';
+    html += paidItems.map(renderCard).join('');
+  }
+  if (freeItems.length) {
+    html += '<div class="sv-section-label">Free Services</div>';
+    html += freeItems.map(renderCard).join('');
+  }
+  grid.innerHTML = html;
+}
+
+var editingServiceId = null;
+function openServiceModal(id) {
+  editingServiceId = id || null;
+  document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
+  ['svcName','svcCategory','svcDesc','svcPrice','svcTeams'].forEach(function(f) { document.getElementById(f).value = ''; });
+  document.getElementById('svcCostType').value = 'With Cost';
+  toggleSvcPriceField();
+  if (id) {
+    var svc = servicesList.find(function(s) { return s.id === id; });
+    if (svc) {
+      document.getElementById('svcName').value     = svc.name        || '';
+      document.getElementById('svcCategory').value = svc.category    || '';
+      document.getElementById('svcDesc').value     = svc.description || '';
+      document.getElementById('svcPrice').value    = svc.price       || '';
+      document.getElementById('svcTeams').value    = svc.teams       || '';
+      document.getElementById('svcCostType').value = svc.costType    || 'With Cost';
+      toggleSvcPriceField();
+    }
+  }
+  document.getElementById('svcModal').classList.add('open');
+  setTimeout(function() { document.getElementById('svcName').focus(); }, 100);
+}
+function closeSvcModal() { document.getElementById('svcModal').classList.remove('open'); editingServiceId = null; }
+
+function toggleSvcPriceField() {
+  var isFree = document.getElementById('svcCostType').value === 'Free';
+  var label = document.getElementById('svcPriceLabel');
+  var input = document.getElementById('svcPrice');
+  if (label) label.innerHTML = isFree
+    ? 'Cost Note <span style="color:var(--muted);font-weight:400">(optional — e.g. "Free for active clients")</span>'
+    : 'Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span>';
+  if (input) input.placeholder = isFree
+    ? 'e.g. Free for all active clients'
+    : 'e.g. ₱5,000 – ₱15,000 or Quoted per request';
+}
+
+async function saveService() {
+  var name = document.getElementById('svcName').value.trim();
+  var category = document.getElementById('svcCategory').value.trim();
+  var desc     = document.getElementById('svcDesc').value.trim();
+  var costType = document.getElementById('svcCostType').value || 'With Cost';
+  var price    = document.getElementById('svcPrice').value.trim();
+  var teams    = document.getElementById('svcTeams').value.trim();
+  if (!name) { document.getElementById('svcName').focus(); return; }
+  if (!category) { document.getElementById('svcCategory').focus(); return; }
+  var btn = document.getElementById('svcSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, costType, price, teams,
+    sortOrder: editingServiceId ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0 : servicesList.length + 1 };
+  if (editingServiceId) { var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; }); if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc); } else servicesList.push(svc);
+  lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'saveService', service: svc }) }); } catch(e) {}
+  btn.disabled = false; btn.textContent = 'Save'; closeSvcModal(); showToast(editingServiceId ? 'Service updated.' : 'Service added.'); showSyncMsg();
+}
+
+async function deleteService(id) {
+  if (!confirm('Delete this service?')) return;
+  servicesList = servicesList.filter(function(s) { return s.id !== id; });
+  lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'deleteService', id }) }); } catch(e) {}
+  showToast('Service deleted.'); showSyncMsg();
+}
+
+function syncServiceNamesToForm() { var names = servicesList.map(function(s) { return s.name; }); try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {} }
+function showSyncMsg() { var el = document.getElementById('sv-sync-msg'); if (!el) return; el.style.display = 'inline'; setTimeout(function() { el.style.display = 'none'; }, 3000); }
+function toggleSvCard(cardId) {
+  var card = document.getElementById(cardId), panel = document.getElementById(cardId + '-expand');
+  if (!card || !panel) return;
+  var isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.sv-card.expanded').forEach(function(c) { if (c.id !== cardId) { c.classList.remove('expanded'); var p = document.getElementById(c.id + '-expand'); if (p) p.classList.remove('open'); } });
+  if (isOpen) { panel.classList.remove('open'); card.classList.remove('expanded'); } else { panel.classList.add('open'); card.classList.add('expanded'); }
+}
+function showToast(msg) { var t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 3000); }
+document.getElementById('svcModal').addEventListener('click', function(e) { if (e.target === this) closeSvcModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSvcModal(); });
+
+var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
+var LIFECYCLE_STEPS = ['Request Logged','For Scoping','For Quotation','Quotation Done','For Execution','Execution Done'];
+var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
+
+function renderCatPills() {
+  var container = document.getElementById('catPills');
+  if (!container) return;
+  var cats = {};
+  all.forEach(function(s) { var c = (s.category || '').trim(); if (c) cats[c] = true; });
+  var catKeys = Object.keys(cats).sort();
+  var html = '<span class="pill' + (activeCat === 'all' ? ' on' : '') + '" data-cat="all" onclick="setCatF(this)">All</span>';
+  catKeys.forEach(function(c) { html += '<span class="pill' + (activeCat === c ? ' on' : '') + '" data-cat="' + esc(c) + '" onclick="setCatF(this)">' + esc(c) + '</span>'; });
+  var hasUncategorized = all.some(function(s) { return !(s.category || '').trim(); });
+  if (hasUncategorized) html += '<span class="pill' + (activeCat === '__uncategorized__' ? ' on' : '') + '" data-cat="__uncategorized__" onclick="setCatF(this)">Uncategorized</span>';
+  container.innerHTML = html;
+}
+
+function setCatF(el) {
+  document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on'); activeCat = el.dataset.cat; activeSC = 'all';
+  document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
+  render();
+}
+
+function scFilter(el) {
+  document.querySelectorAll('.sc').forEach(function(s) { s.classList.remove('active'); });
+  el.classList.add('active'); activeSC = el.dataset.lc; activeCat = 'all';
+  document.querySelectorAll('#catPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  var allPill = document.querySelector('#catPills .pill[data-cat="all"]');
+  if (allPill) allPill.classList.add('on');
+  render();
+}
+
+function matches(s) {
+  if (activeCat !== 'all') {
+    var sCat = (s.category || '').trim();
+    if (activeCat === '__uncategorized__') { if (sCat) return false; }
+    else { if (sCat.toLowerCase() !== activeCat.toLowerCase()) return false; }
+  }
+  // Closed scorecard groups both terminal statuses
+  if (activeSC === 'Closed') {
+    var slc = s.lifecycle || '';
+    if (slc !== 'Not doable or out of scope' && slc !== 'Request no longer needed') return false;
+  } else if (activeSC !== 'all' && (s.lifecycle || '') !== activeSC) return false;
+  var q = document.getElementById('srch').value.toLowerCase();
+  if (!q) return true;
+  return [s.clientName, s.requesterName, s.requesterEmail, s.jiraKey, s.serviceType, s.hrUrl, s.csmName]
+    .some(function(v) { return (v || '').toLowerCase().includes(q); });
+}
+
+async function init_tracker() {
+  if (initialized) return; initialized = true;
+  if (IS_INTERNAL) { document.getElementById('analytics').classList.add('on'); loadAnalytics(); }
+  await loadList();
+}
+
+var _listLoading = false;
+
+async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
+  var SLOW_THRESHOLD = 20000;
+  var slowTimer = setTimeout(function() { if (onSlowCallback) onSlowCallback(); }, SLOW_THRESHOLD);
+  var lastErr;
+  var delays = [0, 5000, 10000];
+  for (var i = 0; i < maxAttempts; i++) {
+    if (delays[i] > 0) await new Promise(function(r) { setTimeout(r, delays[i]); });
+    try {
+      var res = await fetch(url);
+      clearTimeout(slowTimer);
+      return await res.json();
+    } catch(err) { lastErr = err; }
+  }
+  clearTimeout(slowTimer);
+  throw lastErr;
+}
+
+async function loadList() {
+  if (_listLoading) return;
+  _listLoading = true;
+  var cacheKey = 'tracker_cache_' + USER_EMAIL;
+  var cached   = sessionStorage.getItem(cacheKey);
+  var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
+  var url = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
+  if (cached) {
+    try { var cd = JSON.parse(cached); all = cd.data.submissions || []; renderCatPills(); render(); } catch(e) {}
+  } else {
+    document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
+  }
+  var onSlow = function() {
+    var el = document.getElementById('sbList');
+    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Still extracting latest data — hang tight…</span></div>';
+  };
+  try {
+    var d = await fetchListWithRetry(url, 3, onSlow);
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
+    all = d.submissions || [];
+    renderCatPills(); render();
+  } catch(e) {
+    var el = document.getElementById('sbList');
+    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
+    console.warn('loadList: all retries exhausted', e);
+  } finally { _listLoading = false; }
+}
+
+async function refresh() {
+  if (_listLoading) return;
+  sessionStorage.removeItem('tracker_cache_' + USER_EMAIL);
+  all = []; activeKey = null;
+  document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Refreshing…</span></div>';
+  document.getElementById('detail').innerHTML = '<div class="state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Select a request to view details</p></div>';
+  await loadList();
+  if (IS_INTERNAL) loadAnalytics();
+}
+
+async function loadAnalytics() {
+  try {
+    var res = await fetch(GAS_URL + '?action=analytics');
+    var data = await res.json();
+    if (!data || data.error) return;
+    var lc = data.lifecycleCounts || {};
+    document.getElementById('sc-total').textContent = data.total != null ? data.total : '—';
+    document.getElementById('sc-rl').textContent  = lc['Request Logged']              != null ? lc['Request Logged']              : '—';
+    document.getElementById('sc-fs').textContent  = lc['For Scoping']                 != null ? lc['For Scoping']                 : '—';
+    document.getElementById('sc-fq').textContent  = lc['For Quotation']               != null ? lc['For Quotation']               : '—';
+    document.getElementById('sc-ta').textContent  = lc['For Team Assessment']         != null ? lc['For Team Assessment']         : '—';
+    document.getElementById('sc-qd').textContent  = lc['Quotation Done']              != null ? lc['Quotation Done']              : '—';
+    document.getElementById('sc-fe').textContent  = lc['For Execution']               != null ? lc['For Execution']               : '—';
+    document.getElementById('sc-ed').textContent  = lc['Execution Done']              != null ? lc['Execution Done']              : '—';
+    document.getElementById('sc-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
+    var meta = document.getElementById('analyticsMeta');
+    var pills = [];
+    if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Withdrawn: <span>' + (data.byCost['Withdrawn']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
+    if (data.revenueReceived != null) pills.push('Revenue received: <span>' + fmtPhp(data.revenueReceived) + '</span>');
+    if (data.revenueLost != null) pills.push('Revenue lost: <span>' + fmtPhp(data.revenueLost) + '</span>');
+    if (data.avgDays != null) pills.push('Avg. resolution: <span>' + data.avgDays + 'd</span>');
+    if (data.monthlyArr && data.monthlyArr.length) { var last = data.monthlyArr[data.monthlyArr.length-1]; pills.push('This month: <span>' + last.count + ' request' + (last.count !== 1 ? 's' : '') + '</span>'); }
+    if (data.byService) { var top = Object.entries(data.byService).sort((a,b) => b[1]-a[1])[0]; if (top) pills.push('Top service: <span>' + top[0] + '</span>'); }
+    meta.innerHTML = pills.map(p => '<div class="meta-pill">' + p + '</div>').join('');
+  } catch(e) {}
+}
+
+function render() {
+  var filtered = all.filter(matches);
+  var list = document.getElementById('sbList');
+  if (!filtered.length) { list.innerHTML = '<div class="empty-sb">No requests found.</div>'; return; }
+  list.innerHTML = filtered.map(function(s) {
+    var lc = s.lifecycle || 'Request Logged';
+    var bcls = lcBadge(lc);
+    var dateStr = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
+    var isOn = s.jiraKey === activeKey ? 'on' : '';
+    return '<div class="rcard ' + isOn + '" onclick="select(\'' + esc(s.jiraKey) + '\',this)">'
+      + '<div class="rc-top"><div class="rc-client">' + esc(s.clientName) + '</div><span class="badge ' + bcls + '">' + esc(lc) + '</span></div>'
+      + '<div class="rc-service">' + esc(s.serviceType) + '</div>'
+      + '<div class="rc-bottom"><span class="rc-date">' + dateStr + '</span><span class="rc-key">' + (s.jiraKey || '—') + '</span></div>'
+      + '</div>';
+  }).join('');
+}
+
+async function select(jiraKey, el) {
+  activeKey = jiraKey;
+  document.querySelectorAll('.rcard').forEach(c => c.classList.remove('on'));
+  if (el) el.classList.add('on');
+  var panel = document.getElementById('detail');
+  panel.innerHTML = '<div class="state"><span class="spinner"></span></div>';
+  var s = all.find(x => x.jiraKey === jiraKey);
+  if (!jiraKey || jiraKey === 'ERROR') { renderDetail(s, null); return; }
+  try {
+    var res = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
+    var detail = await res.json();
+    renderDetail(s, detail);
+  } catch(e) { renderDetail(s, null); }
+}
+
+function renderDetail(s, d) {
+  var panel = document.getElementById('detail');
+  var psrv = d && d.psrv ? d.psrv : null;
+  var linked = d && d.linkedTickets ? d.linkedTickets : [];
+  var lc = s ? s.lifecycle : '—';
+  var bcls = lcBadge(lc);
+  var costHtml = '';
+  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : s.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
+  var html = '<div class="dh"><h2>' + esc(s ? s.clientName : (psrv ? psrv.summary : '—')) + '</h2>'
+    + '<div class="dh-meta"><span class="badge ' + bcls + '">' + esc(lc) + '</span>' + costHtml
+    + (psrv ? '<a href="' + psrv.url + '" target="_blank">' + psrv.key + ' ↗</a>' : '')
+    + (s ? '<span>·</span><span>' + esc(s.serviceType) + '</span>' : '')
+    + (s && s.urgency ? '<span>·</span><span>' + esc(s.urgency) + ' urgency</span>' : '')
+    + '</div></div>';
+
+  // Closed statuses — red banner with tailored copy
+  if (lc === 'Not doable or out of scope' || lc === 'Request no longer needed') {
+    var closedLabel = lc === 'Request no longer needed' ? 'This request has been cancelled.' : 'This request has been closed — not doable or out of scope.';
+    var closedDetail = lc === 'Request no longer needed'
+      ? 'Check the Jira ticket comments for context. If you believe this was in error, please contact the Platform Operations team.'
+      : 'Check the Jira ticket comments below for the reason provided by Platform Operations. If you believe this was in error, please resubmit or contact the team directly.';
+    html += '<div class="rejected-banner">'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+      + '<p><strong>' + closedLabel + '</strong> ' + closedDetail + '</p>'
+      + '</div>';
+  }
+
+  // For Team Assessment — amber banner
+  if (lc === 'For Team Assessment') {
+    html += '<div style="background:var(--mango-lt);border:1.5px solid #fde8b0;border-radius:8px;padding:12px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px">'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--mango)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      + '<p style="font-size:0.8125rem;color:#7a4800;line-height:1.5"><strong style="font-weight:600">This request is pending team assessment.</strong> Further clarification or dev assessment is needed before it can proceed. Check the Jira ticket comments for details or reach out to Platform Operations.</p>'
+      + '</div>';
+  }
+
+  html += renderOpCard(s);
+  if (s && s.quotationUrl) {
+    html += '<div class="dsec"><div class="dsh"><h3>Quotation document</h3></div>'
+      + '<div class="dsb" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      + '<a href="' + esc(s.quotationUrl) + '" target="_blank" class="quot-link">'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>'
+      + esc(s.quotationFilename || 'View quotation') + ' ↗</a>'
+      + '<span style="font-size:0.68rem;color:var(--muted)">Uploaded by ' + esc(s.quotationUploadedBy) + ' · ' + esc(s.quotationUploadedAt) + '</span>'
+      + '</div></div>';
+  }
+  html += '<div class="dsec"><div class="dsh"><h3>Request lifecycle</h3></div><div class="dsb"><div class="stepper">' + renderStepper(lc) + '</div></div></div>';
+  if (s) {
+    html += '<div class="dsec"><div class="dsh"><h3>Request information</h3></div><div class="dsb"><div class="igrid">'
+      + '<div class="iitem full"><label>Client / Company</label><span>' + esc(s.clientName) + '</span></div>'
+      + '<div class="iitem"><label>Requester Name</label><span>' + esc(s.requesterName) + '</span></div>'
+      + '<div class="iitem"><label>Requester Email</label><span>' + esc(s.requesterEmail) + '</span></div>'
+      + '<div class="iitem"><label>CSM</label><span>' + esc(s.csmName) + '</span></div>'
+      + '<div class="iitem"><label>CSM Email</label><span>' + esc(s.csmEmail || '—') + '</span></div>'
+      + '<div class="iitem"><label>HR URL</label><span>' + esc(s.hrUrl) + '</span></div>'
+      + '<div class="iitem"><label>Payroll Codes</label><span>' + esc(s.payrollCodes || '—') + '</span></div>'
+      + '<div class="iitem"><label>Account MRR</label><span>' + esc(s.accountMrr || '—') + '</span></div>'
+      + '<div class="iitem"><label>Account Headcount</label><span>' + esc(s.accountHeadcount || '—') + '</span></div>'
+      + '<div class="iitem"><label>Target Date</label><span>' + esc(s.targetDate || '—') + '</span></div>'
+      + '<div class="iitem"><label>Urgency</label><span>' + esc(s.urgency || '—') + '</span></div>'
+      + (s.timestamp ? '<div class="iitem"><label>Submitted</label><span>' + new Date(s.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) + '</span></div>' : '')
+      + (s.description ? '<div class="iitem full"><label>Description</label><span>' + esc(s.description) + '</span></div>' : '')
+      + (s.constraints ? '<div class="iitem full"><label>Constraints / Blackout Dates</label><span>' + esc(s.constraints) + '</span></div>' : '')
+      + (s.notes ? '<div class="iitem full"><label>Additional Notes</label><span>' + esc(s.notes) + '</span></div>' : '')
+      + '</div></div></div>';
+  }
+  if (psrv) {
+    html += '<div class="dsec"><div class="dsh"><h3>Inquiry ticket — ' + psrv.key + '</h3><span class="badge ' + lcBadgeFromJira(psrv.status) + '">' + esc(psrv.status) + '</span></div><div class="dsb">'
+      + '<div class="igrid" style="margin-bottom:10px"><div class="iitem"><label>Assignee</label><span>' + esc(psrv.assignee) + '</span></div><div class="iitem"><label>Last updated</label><span>' + (psrv.updated || '').substring(0, 10) + '</span></div></div>'
+      + renderComments(psrv.comments) + '</div></div>';
+  }
+  if (linked.length) {
+    html += '<div class="dsec"><div class="dsh"><h3>Activity tickets (CRF &amp; execution)</h3></div><div class="dsb">';
+    linked.forEach(function(t, i) {
+      var tid = 'tc' + i;
+      html += '<div class="tcard"><div class="tc-hd" onclick="tog(\'' + tid + '\')">'
+        + '<div><div class="tc-key"><a href="' + t.url + '" target="_blank" onclick="event.stopPropagation()">' + t.key + ' [' + t.project + '] ↗</a>'
+        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : t.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
+        + '</div><div class="tc-sum">' + esc(t.summary) + '</div><div class="tc-who">Assigned: ' + esc(t.assignee) + '</div></div>'
+        + '<span class="badge ' + lcBadgeFromJira(t.status) + '">' + esc(t.status) + '</span>'
+        + '</div><div class="tc-bd" id="' + tid + '">';
+      if (t.subTickets && t.subTickets.length) {
+        html += '<div class="sub-list"><h4>Sub-tickets</h4>';
+        t.subTickets.forEach(function(sub) {
+          html += '<div class="sub-row"><div class="sub-info"><div class="sub-key"><a href="' + sub.url + '" target="_blank">' + sub.key + ' [' + sub.project + '] ↗</a></div><div class="sub-sum">' + esc(sub.summary) + '</div><div class="sub-who">' + esc(sub.assignee) + '</div></div><span class="badge ' + lcBadgeFromJira(sub.status) + '">' + esc(sub.status) + '</span></div>';
+        });
+        html += '</div>';
+      }
+      html += renderComments(t.comments) + '</div></div>';
+    });
+    html += '</div></div>';
+  } else if (lc !== 'Not doable or out of scope' && lc !== 'Request no longer needed') {
+    var noST = ['Request Logged','For Scoping','For Quotation'].includes(lc);
+    if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
+  }
+
+  // ── COMMENT BOX — visible to all roles ───────────────────────────────────
+  // Admins: see a Jira redirect nudge (they must comment in Jira directly)
+  // All others (client / lead): get the active textarea to post to Jira
+  if (s && s.jiraKey && s.jiraKey !== 'ERROR') {
+    var jiraUrl = psrv ? psrv.url : '';
+    html += '<div class="csm-comment-box">'
+      + '<div class="dsh"><h3>Add a comment</h3></div>'
+      + '<div class="csm-comment-inner">';
+    if (isAdmin) {
+      html += '<p style="font-size:0.8125rem;color:var(--muted);line-height:1.6">'
+        + 'Admin comments must be posted directly in Jira.'
+        + (jiraUrl ? ' <a href="' + esc(jiraUrl) + '" target="_blank" style="color:var(--primary);font-weight:500">Open ' + esc(s.jiraKey) + ' in Jira ↗</a>' : '')
+        + '</p>';
+    } else {
+      html += '<textarea id="csmCommentText" placeholder="Write a comment — it will be posted to the PSRV ticket on your behalf…"></textarea>'
+        + '<div class="csm-comment-actions">'
+        + '<span class="csm-comment-hint">Will appear as: ' + esc(userEmail) + '</span>'
+        + '<button class="csm-comment-send" onclick="sendCsmComment(\'' + esc(s.jiraKey) + '\')">Post Comment</button>'
+        + '</div>'
+        + '<div class="csm-comment-msg" id="csmCommentMsg"></div>';
+    }
+    html += '</div></div>';
+  }
+
+  panel.innerHTML = html;
+}
+
+function renderStepper(currentLc) {
+  // Terminal states — red branch appended after greyed-out linear steps
+  if (currentLc === 'Not doable or out of scope' || currentLc === 'Request no longer needed') {
+    var label = currentLc;
+    return LIFECYCLE_STEPS.map(function(lc) {
+      return '<div class="step"><div class="step-dot" style="border-color:#fbbdbd;background:var(--tomato-lt)"></div><div class="step-label" style="color:var(--tomato)">' + esc(lc) + '</div></div>';
+    }).join('')
+      + '<div class="step current"><div class="step-dot" style="border-color:var(--tomato);background:var(--tomato);box-shadow:0 0 0 3px rgba(201,42,42,0.15)"></div><div class="step-label" style="color:var(--tomato);font-weight:700">' + esc(label) + '</div></div>';
+  }
+  // For Team Assessment — amber pause node appended
+  if (currentLc === 'For Team Assessment') {
+    return LIFECYCLE_STEPS.map(function(lc) {
+      return '<div class="step"><div class="step-dot" style="border-color:var(--mango-lt);background:var(--mango-lt)"></div><div class="step-label" style="color:var(--muted)">' + esc(lc) + '</div></div>';
+    }).join('')
+      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">For Team Assessment</div></div>';
+  }
+  // Normal linear stepper
+  return LIFECYCLE_STEPS.map(function(lc) {
+    var cIdx = LIFECYCLE_STEPS.indexOf(currentLc);
+    var lIdx = LIFECYCLE_STEPS.indexOf(lc);
+    var cls = lIdx < cIdx ? 'done' : lIdx === cIdx ? 'current' : '';
+    return '<div class="step ' + cls + '"><div class="step-dot"></div><div class="step-label">' + esc(lc) + '</div></div>';
+  }).join('');
+}
+
+function renderComments(comments) {
+  if (!comments || !comments.length) return '<p class="no-c">No comments yet.</p>';
+  return '<div class="clist">' + comments.map(function(c) {
+    return '<div class="ci"><div class="ci-who">' + esc(c.author) + ' · ' + (c.date || '').substring(0, 10) + '</div><div class="ci-body">' + esc(c.body) + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function tog(id) { document.getElementById(id).classList.toggle('on'); }
+
+function lcBadge(lc) {
+  var map = {
+    'Request Logged':'b-gray',
+    'For Scoping':'b-blue',
+    'For Quotation':'b-teal',
+    'For Team Assessment':'b-amber',
+    'Quotation Done':'b-purple',
+    'For Execution':'b-amber',
+    'Execution Done':'b-green',
+    'Not doable or out of scope':'b-red',
+    'Request no longer needed':'b-red'
+  };
+  return map[lc] || 'b-gray';
+}
+
+function lcBadgeFromJira(status) {
+  var s = (status || '').toLowerCase();
+  if (['done','closed','resolved'].some(v => s.includes(v))) return 'b-green';
+  if (['in progress','for pr review'].some(v => s.includes(v))) return 'b-teal';
+  if (['ready for checking','for checking'].some(v => s.includes(v))) return 'b-blue';
+  if (['on hold'].some(v => s.includes(v))) return 'b-amber';
+  if (['cancelled','canceled','rejected'].some(v => s.includes(v))) return 'b-red';
+  return 'b-gray';
+}
+
+function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+var charts = {};
+var COLORS = { green:'#217a3d',blue:'#3b5bdb',amber:'#f08c00',red:'#c92a2a',gray:'#7a7b7a',purple:'#7048e8',teal:'#0c8599',greenL:'#d4f5df',blueL:'#e8ecfd',amberL:'#fff3cd',redL:'#ffe0e0',grayL:'#f4f5f4',purpleL:'#ede9ff',tealL:'#e0f5f8' };
+
+function fmtPhp(n) {
+  if (n === null || n === undefined) return '—';
+  if (n >= 1000000) return '₱' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '₱' + (n/1000).toFixed(0) + 'K';
+  return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits:0, maximumFractionDigits:0 });
+}
+
+async function load_analytics(from, to) {
+  document.getElementById('an-loadingState').style.display = 'flex';
+  document.getElementById('an-content').style.display = 'none';
+  try {
+    var url = GAS_URL + '?action=analytics';
+    if (from) url += '&from=' + from;
+    if (to) url += '&to=' + to;
+    var res = await fetch(url);
+    var data = await res.json();
+    render_analytics(data);
+    document.getElementById('an-loadingState').style.display = 'none';
+    document.getElementById('an-content').style.display = 'block';
+  } catch(e) {
+    var ls = document.getElementById('an-loadingState');
+    if (ls) ls.innerHTML = '<p style="color:var(--muted)">Failed to load analytics. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="load_analytics()">Retry</span></p>';
+  }
+}
+
+function render_analytics(data) {
+  var lc = data.lifecycleCounts || {}; var svc = data.byService || {}; var cost = data.byCost || {}; var urg = data.byUrgency || {};
+  var svcKeys = Object.keys(svc).sort((a,b) => svc[b]-svc[a]);
+  document.getElementById('an-total').textContent = data.total ?? '—';
+  document.getElementById('an-rl').textContent  = lc['Request Logged']              != null ? lc['Request Logged']              : '—';
+  document.getElementById('an-fs').textContent  = lc['For Scoping']                 != null ? lc['For Scoping']                 : '—';
+  document.getElementById('an-fq').textContent  = lc['For Quotation']               != null ? lc['For Quotation']               : '—';
+  document.getElementById('an-ta').textContent  = lc['For Team Assessment']         != null ? lc['For Team Assessment']         : '—';
+  document.getElementById('an-qd').textContent  = lc['Quotation Done']              != null ? lc['Quotation Done']              : '—';
+  document.getElementById('an-fe').textContent  = lc['For Execution']               != null ? lc['For Execution']               : '—';
+  document.getElementById('an-ed').textContent  = lc['Execution Done']              != null ? lc['Execution Done']              : '—';
+  document.getElementById('an-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
+  document.getElementById('an-avg').textContent = data.avgDays != null ? data.avgDays + 'd' : '—';
+  document.getElementById('an-rev-in').textContent  = fmtPhp(data.revenueReceived ?? null);
+  document.getElementById('an-rev-out').textContent = fmtPhp(data.revenueLost ?? null);
+  var tbody = document.querySelector('#an-serviceTable tbody');
+  if (tbody) {
+    tbody.innerHTML = '';
+    var total = Object.values(svc).reduce((a,b) => a+b, 0) || 1;
+    svcKeys.forEach(function(k) {
+      var pct = Math.round((svc[k]/total)*100);
+      tbody.innerHTML += '<tr><td>' + k + '</td><td>' + svc[k] + '</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px"><div style="width:' + pct + '%;height:100%;background:var(--primary);border-radius:3px"></div></div><span style="font-size:0.72rem;color:var(--muted);min-width:30px">' + pct + '%</span></div></td></tr>';
+    });
+  }
+  setTimeout(function() {
+    if (typeof Chart === 'undefined') return;
+    var monthly = data.monthlyArr || [];
+    var lcLabels = ['Request Logged','For Scoping','For Quotation','For Team Assessment','Quotation Done','For Execution','Execution Done','Closed'];
+    var lcShort  = lcLabels;
+    var lcValues = lcLabels.map(function(l) {
+      if (l === 'Closed') return (lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0);
+      return lc[l] || 0;
+    });
+    var LC_COLORS_CHART  = [COLORS.grayL,COLORS.blueL,COLORS.tealL,COLORS.amberL,COLORS.purpleL,COLORS.amberL,COLORS.greenL,COLORS.redL];
+    var LC_BORDERS_CHART = [COLORS.gray, COLORS.blue, COLORS.teal, COLORS.amber, COLORS.purple, COLORS.amber, COLORS.green, COLORS.red];
+    var svcColors = [COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
+    buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
+    buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcValues,backgroundColor:LC_COLORS_CHART,borderColor:LC_BORDERS_CHART,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
+    buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
+    buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Withdrawn','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Withdrawn||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.amber,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
+    buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
+    var revMonthly = data.revenueByMonth || [];
+    buildChart('an-chartRevTime','bar',{labels:revMonthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Received',data:revMonthly.map(m=>m.received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revMonthly.map(m=>m.lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
+    var revSvc = data.revenueByService || {};
+    var revSvcKeys = Object.keys(revSvc).sort((a,b) => (revSvc[b].received+revSvc[b].lost)-(revSvc[a].received+revSvc[a].lost));
+    buildChart('an-chartRevService','bar',{labels:revSvcKeys,datasets:[{label:'Received',data:revSvcKeys.map(k=>revSvc[k].received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revSvcKeys.map(k=>revSvc[k].lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
+  }, 150);
+}
+
+function buildChart(id, type, data, options) {
+  if (charts[id]) charts[id].destroy();
+  var ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, { type, data, options: Object.assign({ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:type==='doughnut',labels:{font:{family:"'Rubik'"}}}}, scales:type==='doughnut'?{}:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:"'Rubik'",size:11}}}} }, options || {}) });
+}
+
+function applyFilter() { load_analytics(document.getElementById('an-fromDate').value, document.getElementById('an-toDate').value); }
+function clearFilter() { document.getElementById('an-fromDate').value = ''; document.getElementById('an-toDate').value = ''; load_analytics(); }
+function fmtMonth(ym) { if (!ym) return ''; var p = ym.split('-'); var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return (names[parseInt(p[1],10)-1]||p[1]) + ' ' + p[0]; }
+
+function renderOpCard(s) {
+  if (!IS_INTERNAL || !isAdmin) return '';
+  var cost  = s && s.serviceCost != null ? s.serviceCost : '';
+  var adate = s && s.activityDate ? s.activityDate.substring(0,10) : '';
+  var cstat = s && s.costStatus ? s.costStatus : 'Pending';
+  var jk    = s && s.jiraKey ? s.jiraKey : '';
+  var statusOpts = ['Pending','Paid','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  var quotUrl  = s && s.quotationUrl        ? s.quotationUrl        : '';
+  var quotFile = s && s.quotationFilename   ? s.quotationFilename   : '';
+  var quotBy   = s && s.quotationUploadedBy ? s.quotationUploadedBy : '';
+  var quotAt   = s && s.quotationUploadedAt ? s.quotationUploadedAt : '';
+  var quotSection = '<div class="iitem full" style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px"><label style="margin-bottom:8px;display:block">Quotation Document</label>';
+  if (quotUrl) {
+    quotSection += '<div style="margin-bottom:8px"><a href="' + esc(quotUrl) + '" target="_blank" class="quot-link">'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>'
+      + esc(quotFile || 'View document') + ' ↗</a>'
+      + '<div style="font-size:0.68rem;color:var(--muted);margin-top:4px">Uploaded by ' + esc(quotBy) + ' on ' + esc(quotAt) + '</div></div>';
+  }
+  quotSection += '<div class="upload-zone" id="uploadZone">'
+    + '<input type="file" id="quotFile" accept=".pdf,.xlsx,.xls,.doc,.docx,.png,.jpg" onchange="handleFileSelect(this)"/>'
+    + '<div class="upload-zone-label"><strong>Click to upload</strong> or drag and drop<br><span style="font-size:0.68rem">PDF, Excel, Word, or image</span></div>'
+    + '</div>'
+    + '<div class="upload-file-preview" id="uploadPreview">'
+    + '<span class="upload-file-name" id="uploadFileName"></span>'
+    + '<span class="upload-file-clear" onclick="clearUpload()">✕</span>'
+    + '</div>'
+    + '<button class="upload-send-btn" id="uploadBtn" onclick="uploadQuotation(\'' + jk + '\')" style="display:none">Upload &amp; Notify CSM</button>'
+    + '<div class="upload-msg" id="uploadMsg"></div></div>';
+  return '<div class="dsec" id="opCard">'
+    + '<div class="dsh"><h3>Operational details</h3><span id="opSaveMsg" style="font-size:0.72rem;color:var(--primary);font-weight:500;display:none">Saved ✓</span></div>'
+    + '<div class="dsb"><div class="igrid">'
+    + '<div class="iitem"><label>Service / Operational Cost (₱)</label><input type="number" id="op-cost" value="' + esc(String(cost)) + '" min="0" step="100" placeholder="e.g. 5000" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
+    + '<div class="iitem"><label>Activity Date</label><input type="date" id="op-date" value="' + adate + '" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'"/></div>'
+    + '<div class="iitem"><label>Cost Status</label><select id="op-status" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">' + statusOpts + '</select></div>'
+    + '<div class="iitem" style="display:flex;align-items:flex-end"><button onclick="saveOpDetails(\'' + jk + '\')" style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%" onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">Save</button></div>'
+    + quotSection
+    + '</div></div></div>'
+    + renderWaivePanel(s);
 }
 
 async function saveOpDetails(jiraKey) {
-  const cost   = document.getElementById('op-cost').value;
-  const date   = document.getElementById('op-date').value;
-  const status = document.getElementById('op-status').value;
-  const msgEl  = document.getElementById('opSaveMsg');
-  if (msgEl) msgEl.style.display='none';
+  var cost   = document.getElementById('op-cost').value;
+  var date   = document.getElementById('op-date').value;
+  var status = document.getElementById('op-status').value;
+  var msgEl  = document.getElementById('opSaveMsg');
+  if (msgEl) msgEl.style.display = 'none';
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action:'update', jiraKey, serviceCost:cost, activityDate:date, costStatus:status })
-    });
-    const d = await res.json();
-    if (d.success) {
-      const entry = all.find(x => x.jiraKey === jiraKey);
-      if (entry) { entry.serviceCost=cost!==''?parseFloat(cost):null; entry.activityDate=date; entry.costStatus=status; }
-      render();
-      if (msgEl) { msgEl.style.display='inline'; setTimeout(()=>{ if(msgEl) msgEl.style.display='none'; },3000); }
-    } else { alert('Save failed: ' + (d.error||'Unknown error')); }
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ action:'update', jiraKey, serviceCost:cost, activityDate:date, costStatus:status }) });
+    var entry = all.find(x => x.jiraKey === jiraKey);
+    if (entry) { entry.serviceCost = cost !== '' ? parseFloat(cost) : null; entry.activityDate = date; entry.costStatus = status; }
+    try {
+      var cacheKey = 'tracker_cache_' + USER_EMAIL;
+      var existing = sessionStorage.getItem(cacheKey);
+      if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); }
+    } catch(cacheErr) {}
+    var cb = document.querySelector('.dh-meta .cost-badge');
+    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : status === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
+    render();
+    if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
   } catch(e) { alert('Save failed: ' + e.message); }
 }
 
-init();
+// ── WAIVE REQUEST PANEL ───────────────────────────────────────────────────────
+// Rendered inside renderOpCard for admin view only.
+// Shows the waive request form — CSM reason, business justification, impact.
+// On send: fires GAS action=sendWaiveRequest which emails CTO (gdelarama@sprout.ph)
+// CC: COO (diane@sprout.ph), PlatOps Lead (gabriellef@sprout.ph), requesting CSM.
+// Email includes Approve / Reject / Request Clarification action links.
+
+function renderWaivePanel(s) {
+  if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') return '';
+  var jk       = s.jiraKey;
+  var wStatus  = s.waiveStatus  || '';   // 'Pending' | 'Sent' | 'Approved' | 'Rejected' | 'Clarification Requested'
+  var wReason  = s.waiveReason  || '';
+  var wJustify = s.waiveJustify || '';
+  var wImpact  = s.waiveImpact  || '';
+  var wSentAt  = s.waiveSentAt  || '';
+  var wNote    = s.waiveNote    || '';   // clarification note or rejection note from CTO
+
+  var statusBadge = '';
+  if (wStatus === 'Sent')                     statusBadge = '<span class="waive-status-badge waive-status-sent">● Sent — awaiting CTO/COO approval</span>';
+  else if (wStatus === 'Approved')             statusBadge = '<span class="waive-status-badge waive-status-approved">✓ Approved by CTO/COO</span>';
+  else if (wStatus === 'Rejected')             statusBadge = '<span class="waive-status-badge waive-status-rejected">✕ Rejected</span>';
+  else if (wStatus === 'Clarification Requested') statusBadge = '<span class="waive-status-badge waive-status-clarify">⚑ Clarification requested</span>';
+
+  var noteBlock = (wNote && (wStatus === 'Rejected' || wStatus === 'Clarification Requested'))
+    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid ' + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
+      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">' + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
+      + '<div style="font-size:0.8rem;color:var(--text)">' + esc(wNote) + '</div>'
+      + '</div>'
+    : '';
+
+  // Read-only view after sending
+  var formOrHistory = '';
+  if (wStatus === 'Sent' || wStatus === 'Approved' || wStatus === 'Rejected') {
+    formOrHistory = '<div class="waive-history">'
+      + (wSentAt ? '<div class="waive-hist-meta">Sent ' + wSentAt + '</div>' : '')
+      + '<div class="waive-hist-item"><strong>CSM Reason:</strong> ' + esc(wReason) + '</div>'
+      + '<div class="waive-hist-item"><strong>Business Justification:</strong> ' + esc(wJustify) + '</div>'
+      + (wImpact ? '<div class="waive-hist-item"><strong>Client Impact if Charged:</strong> ' + esc(wImpact) + '</div>' : '')
+      + noteBlock
+      + '</div>';
+    if (wStatus === 'Clarification Requested') {
+      // Allow resubmit with updated details
+      formOrHistory += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5">'
+        + '<div style="font-size:0.72rem;color:#3b1d9e;font-weight:500;margin-bottom:8px">Update your details and resubmit:</div>'
+        + renderWaiveForm(jk, wReason, wJustify, wImpact, true)
+        + '</div>';
+    }
+  } else {
+    formOrHistory = renderWaiveForm(jk, wReason, wJustify, wImpact, false);
+  }
+
+  return '<div class="waive-panel">'
+    + '<div class="dsh"><h3>Waiver Request</h3>'
+    + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '')
+    + '</div>'
+    + '<div class="waive-inner">'
+    + (statusBadge ? '<div>' + statusBadge + '</div>' : '')
+    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">To waive the service fee, provide a detailed defense below. This will be sent to the CTO (<strong style="color:var(--text)">Gian Dela Rama</strong>) with the COO on CC for approval. The requesting CSM will receive a copy for visibility.</p>'
+    + formOrHistory
+    + '</div></div>';
+}
+
+function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
+  var btn = isResubmit ? 'Resubmit Waiver Request' : 'Send Waiver Request to CTO &amp; COO';
+  return '<div class="waive-field"><label>CSM Reason for Waiver <span style="color:var(--tomato)">*</span></label>'
+    + '<input type="text" id="waive-reason" value="' + esc(reason) + '" placeholder="e.g. Client is on a paid pilot, goodwill gesture, executive-level commitment…"/></div>'
+    + '<div class="waive-field"><label>Business Justification &amp; Defense <span style="color:var(--tomato)">*</span></label>'
+    + '<textarea id="waive-justify" rows="4" placeholder="Provide a detailed defense: Why should this fee be waived? What is the strategic or commercial rationale? What precedent does this set? What approvals have been discussed with sales or leadership?">' + esc(justify) + '</textarea></div>'
+    + '<div class="waive-field"><label>Client Impact if Charged <span style="color:var(--muted);font-weight:400">(optional but recommended)</span></label>'
+    + '<input type="text" id="waive-impact" value="' + esc(impact) + '" placeholder="e.g. Client may churn, at risk of non-renewal, MRR value…"/></div>'
+    + '<button class="waive-send-btn" id="waiveSendBtn" onclick="sendWaiveRequest(\'' + jk + '\')">' + btn + '</button>'
+    + '<div class="waive-msg" id="waiveMsg"></div>';
+}
+
+async function sendWaiveRequest(jiraKey) {
+  var reason  = (document.getElementById('waive-reason')  || {}).value || '';
+  var justify = (document.getElementById('waive-justify') || {}).value || '';
+  var impact  = (document.getElementById('waive-impact')  || {}).value || '';
+  var msgEl   = document.getElementById('waiveMsg');
+  var btn     = document.getElementById('waiveSendBtn');
+
+  if (!reason.trim())  { if (msgEl) { msgEl.textContent = 'Please provide the CSM reason.';         msgEl.className = 'waive-msg waive-msg-err'; } return; }
+  if (!justify.trim()) { if (msgEl) { msgEl.textContent = 'Business justification is required.';    msgEl.className = 'waive-msg waive-msg-err'; } return; }
+
+  btn.disabled = true; btn.textContent = 'Sending…';
+  if (msgEl) { msgEl.textContent = ''; msgEl.className = 'waive-msg'; }
+
+  var s = all.find(function(x) { return x.jiraKey === jiraKey; });
+  var payload = {
+    action:      'sendWaiveRequest',
+    jiraKey:     jiraKey,
+    clientName:  s ? s.clientName  : '—',
+    serviceType: s ? s.serviceType : '—',
+    csmName:     s ? s.csmName     : '—',
+    csmEmail:    s ? s.csmEmail    : '',
+    hrUrl:       s ? s.hrUrl       : '—',
+    serviceCost: s ? s.serviceCost : '',
+    reason:      reason.trim(),
+    justify:     justify.trim(),
+    impact:      impact.trim(),
+    submittedBy: userEmail,
+  };
+
+  try {
+    // Use regular fetch (not no-cors) so we can read the response
+    var res  = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) });
+    var data = await res.json();
+    if (data.success) {
+      // Update local state
+      if (s) {
+        s.waiveStatus  = 'Sent';
+        s.waiveReason  = reason.trim();
+        s.waiveJustify = justify.trim();
+        s.waiveImpact  = impact.trim();
+        s.waiveSentAt  = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+        try {
+          var ck = 'tracker_cache_' + USER_EMAIL;
+          var ex = sessionStorage.getItem(ck);
+          if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(ck, JSON.stringify(p)); }
+        } catch(ce) {}
+      }
+      if (msgEl) { msgEl.textContent = 'Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className = 'waive-msg waive-msg-ok'; }
+      // Re-render detail to show read-only history view
+      setTimeout(function() { if (s) renderDetail(s, null); }, 1500);
+    } else {
+      if (msgEl) { msgEl.textContent = 'Failed: ' + (data.error || 'Unknown error'); msgEl.className = 'waive-msg waive-msg-err'; }
+      btn.disabled = false; btn.textContent = 'Send Waiver Request to CTO &amp; COO';
+    }
+  } catch(e) {
+    if (msgEl) { msgEl.textContent = 'Could not send. Please check your connection.'; msgEl.className = 'waive-msg waive-msg-err'; }
+    btn.disabled = false; btn.textContent = 'Send Waiver Request to CTO &amp; COO';
+  }
+}
+
+async function sendCsmComment(jiraKey) {
+  var textarea = document.getElementById('csmCommentText');
+  var msgEl    = document.getElementById('csmCommentMsg');
+  var btn      = document.querySelector('.csm-comment-send');
+  if (!textarea || !textarea.value.trim()) {
+    if (msgEl) { msgEl.textContent = 'Please write a comment first.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
+    return;
+  }
+  var body = textarea.value.trim();
+  btn.disabled = true; btn.textContent = 'Posting…';
+  if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; }
+  try {
+    await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'addComment', jiraKey: jiraKey, comment: body, email: userEmail }) });
+    textarea.value = '';
+    if (msgEl) { msgEl.textContent = 'Comment posted to Jira ✓'; msgEl.className = 'csm-comment-msg csm-comment-ok'; }
+    setTimeout(function() { if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; } }, 4000);
+  } catch(e) {
+    if (msgEl) { msgEl.textContent = 'Failed to post. Please try again.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
+  }
+  btn.disabled = false; btn.textContent = 'Post Comment';
+}
+
+var _uploadFile = null;
+function handleFileSelect(input) { if (input.files && input.files[0]) setUploadFile(input.files[0]); }
+function handleDrop(e) { e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag'); if (e.dataTransfer.files && e.dataTransfer.files[0]) setUploadFile(e.dataTransfer.files[0]); }
+function setUploadFile(file) {
+  _uploadFile = file;
+  var preview = document.getElementById('uploadPreview'); var name = document.getElementById('uploadFileName'); var btn = document.getElementById('uploadBtn');
+  if (preview) preview.classList.add('show'); if (name) name.textContent = file.name; if (btn) btn.style.display = 'block';
+  var msg = document.getElementById('uploadMsg'); if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+}
+function clearUpload() {
+  _uploadFile = null;
+  var preview = document.getElementById('uploadPreview'); var btn = document.getElementById('uploadBtn'); var input = document.getElementById('quotFile');
+  if (preview) preview.classList.remove('show'); if (btn) btn.style.display = 'none'; if (input) input.value = '';
+}
+async function uploadQuotation(jiraKey) {
+  if (!_uploadFile) return;
+  var btn = document.getElementById('uploadBtn'); var msg = document.getElementById('uploadMsg');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+  try {
+    var b64 = await new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { resolve(e.target.result.split(',')[1]); }; reader.onerror = reject; reader.readAsDataURL(_uploadFile); });
+    var payload = { action:'uploadCostDocument', jiraKey:jiraKey, fileData:b64, filename:_uploadFile.name, mimeType:_uploadFile.type||'application/octet-stream', uploadedBy:userEmail };
+    var res = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
+    var data = await res.json();
+    if (data.success) {
+      if (msg) { msg.textContent = 'Uploaded and CSM notified ✓'; msg.className = 'upload-msg upload-ok'; }
+      clearUpload();
+      var entry = all.find(function(x) { return x.jiraKey === jiraKey; });
+      if (entry) { entry.quotationUrl = data.fileUrl; entry.quotationFilename = data.filename; entry.quotationUploadedBy = userEmail; entry.quotationUploadedAt = data.uploadedAt; try { var cacheKey = 'tracker_cache_' + USER_EMAIL; var existing = sessionStorage.getItem(cacheKey); if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); } } catch(ce) {} }
+      var s = all.find(function(x) { return x.jiraKey === jiraKey; }); if (s) renderDetail(s, null);
+    } else { if (msg) { msg.textContent = 'Upload failed: ' + (data.error || 'Unknown error'); msg.className = 'upload-msg upload-err'; } }
+  } catch(e) { if (msg) { msg.textContent = 'Upload failed. Please try again.'; msg.className = 'upload-msg upload-err'; } console.error('uploadQuotation error:', e); }
+  btn.disabled = false; btn.textContent = 'Upload & Notify CSM';
+}
+
+var ENH_KEY = 'platops_enhancements', enhList = [], enhSort = 'newest', ENH_VOTED = 'platops_enh_voted';
+function lsReadEnh()   { try { return JSON.parse(localStorage.getItem(ENH_KEY) || '[]'); } catch(e) { return []; } }
+function lsWriteEnh(a) { try { localStorage.setItem(ENH_KEY, JSON.stringify(a)); } catch(e) {} }
+function getVoted()    { try { return JSON.parse(localStorage.getItem(ENH_VOTED) || '{}'); } catch(e) { return {}; } }
+function setVoted(id)  { var v = getVoted(); v[id] = true; try { localStorage.setItem(ENH_VOTED, JSON.stringify(v)); } catch(e) {} }
+
+async function loadEnhancements() {
+  var cached = lsReadEnh();
+  if (cached.length) { enhList = cached; renderEnhList(); }
+  try {
+    var res = await fetch(GAS_URL + '?action=getEnhancements'); var d = await res.json();
+    if (d.enhancements) { enhList = d.enhancements; lsWriteEnh(enhList); renderEnhList(); }
+  } catch(e) {
+    if (!cached.length) document.getElementById('enhList').innerHTML = '<div class="enh-empty">Could not load enhancements. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadEnhancements()">Retry</span></div>';
+  }
+}
+
+function setEnhSort(el) { document.querySelectorAll('.enh-sort-pills .pill').forEach(function(p) { p.classList.remove('on'); }); el.classList.add('on'); enhSort = el.dataset.esort; renderEnhList(); }
+
+function renderEnhList() {
+  var container = document.getElementById('enhList');
+  if (!container) return;
+  if (!enhList.length) { container.innerHTML = '<div class="enh-empty">No enhancement requests yet.<br>Be the first to submit one!</div>'; return; }
+  var sorted = enhList.slice().sort(function(a, b) { if (enhSort === 'votes') return (b.votes || 0) - (a.votes || 0); return new Date(b.timestamp) - new Date(a.timestamp); });
+  var voted = getVoted(); var typeClass = { 'Feature':'enh-type-feature', 'UI':'enh-type-ui', 'Performance':'enh-type-perf', 'Other':'enh-type-other' };
+  container.innerHTML = sorted.map(function(e) {
+    var tc = typeClass[e.type] || 'enh-type-other'; var isV = !!voted[e.id];
+    var dateStr = e.timestamp ? new Date(e.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
+    var expandId = 'enh-expand-' + e.id;
+    return '<div class="enh-item" onclick="toggleEnh(\'' + expandId + '\')">'
+      + '<div class="enh-item-top"><span class="enh-item-title">' + esc(e.title) + '</span><span class="enh-type-badge ' + tc + '">' + esc(e.type) + '</span></div>'
+      + '<div class="enh-item-meta"><span class="enh-item-by">by ' + esc(e.submittedBy || '—') + '</span><span class="enh-item-by">·</span><span class="enh-item-by">' + dateStr + '</span></div>'
+      + '<div class="enh-item-desc">' + esc(e.description) + '</div>'
+      + '<div class="enh-item-expand" id="' + expandId + '">' + (e.benefit ? '<p style="font-size:0.78rem;color:var(--muted);margin-top:4px"><strong style="color:var(--text)">Expected benefit:</strong> ' + esc(e.benefit) + '</p>' : '') + '</div>'
+      + '<button class="enh-vote-btn' + (isV ? ' voted' : '') + '" onclick="event.stopPropagation();voteEnh(\'' + e.id + '\')" title="' + (isV ? 'You voted for this' : 'Upvote') + '">'
+      + '<svg width="11" height="11" viewBox="0 0 24 24" fill="' + (isV ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>'
+      + (e.votes || 0) + ' ' + ((e.votes || 0) === 1 ? 'vote' : 'votes') + '</button></div>';
+  }).join('');
+}
+
+function toggleEnh(expandId) { var el = document.getElementById(expandId); if (el) el.classList.toggle('open'); }
+
+async function voteEnh(id) {
+  var voted = getVoted(); if (voted[id]) return;
+  var entry = enhList.find(function(e) { return e.id === id; }); if (!entry) return;
+  entry.votes = (entry.votes || 0) + 1; setVoted(id); lsWriteEnh(enhList); renderEnhList();
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ action:'voteEnhancement', id:id }) }); } catch(e) {}
+}
+
+async function submitEnhancement() {
+  var title = (document.getElementById('enh-title').value || '').trim();
+  var type  = (document.getElementById('enh-type').value  || 'Feature');
+  var desc  = (document.getElementById('enh-desc').value  || '').trim();
+  var benefit = (document.getElementById('enh-benefit').value || '').trim();
+  var msgEl = document.getElementById('enhFormMsg'); var btn = document.getElementById('enhSubmitBtn');
+  if (!title) { document.getElementById('enh-title').focus(); return; }
+  if (!desc)  { document.getElementById('enh-desc').focus();  return; }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  if (msgEl) { msgEl.textContent = ''; msgEl.style.color = ''; }
+  var entry = { id:'enh_'+Date.now(), title, type, description:desc, benefit, submittedBy:userEmail, timestamp:new Date().toISOString(), votes:0 };
+  enhList.unshift(entry); lsWriteEnh(enhList); renderEnhList();
+  ['enh-title','enh-desc','enh-benefit'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('enh-type').value = 'Feature';
+  try {
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ action:'saveEnhancement', enhancement:entry }) });
+    if (msgEl) { msgEl.textContent = 'Submitted! ✓'; msgEl.style.color = 'var(--primary-dk)'; }
+  } catch(e) { if (msgEl) { msgEl.textContent = 'Saved locally — will sync when online.'; msgEl.style.color = 'var(--muted)'; } }
+  btn.disabled = false; btn.textContent = 'Submit Request';
+  setTimeout(function() { if (msgEl) { msgEl.textContent = ''; } }, 4000);
+}
 </script>
 </body>
 </html>
