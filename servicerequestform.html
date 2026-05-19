@@ -564,6 +564,12 @@
   }
   .svc-preview-item-desc { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
   .svc-preview-item-price { font-size: 0.8rem; font-weight: 600; color: var(--green); margin-top: 6px; }
+  .svc-preview-item-cost-type {
+    display: inline-block; font-size: 0.6rem; font-weight: 700;
+    border-radius: 20px; padding: 1px 7px; margin-top: 5px;
+  }
+  .svc-preview-item-cost-free { background: #e0f5f8; color: #074f5a; }
+  .svc-preview-item-cost-paid { background: #faeeda; color: #7a4800; }
   .svc-preview-empty { text-align: center; padding: 2.5rem 1rem; color: var(--ink-muted); font-size: 0.875rem; }
 
   .view-services-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
@@ -978,8 +984,8 @@
       </div>
       <div>
         <div class="fee-policy-title">Note on service fees</div>
-        All Platform Operations backend services are subject to applicable service fees as part of our standard engagement policy.
-        If a fee waiver is being requested for this engagement, written approval from the <strong>Chief Technology Officer (CTO)</strong> is required prior to scheduling and execution.
+        Platform Operations services are classified as <strong>With Cost</strong> or <strong>Free</strong>. With Cost services are subject to applicable service fees. Free services are provided at no charge to the client.
+        If a fee waiver is being requested for a With Cost service, written approval from the <strong>Chief Technology Officer (CTO)</strong> and <strong>Chief Operating Officer (COO)</strong> is required. Waiver requests are submitted through the Tracker by the Platform Operations team — no separate email needed.
       </div>
     </div>
 
@@ -1158,12 +1164,19 @@ function openServicesPreview() {
     }).join('');
   } else {
     list.innerHTML = services.map(function(svc) {
-      var catHtml   = svc.category    ? '<span class="svc-preview-item-cat">'  + svc.category    + '</span>' : '';
-      var descHtml  = svc.description ? '<p class="svc-preview-item-desc">'    + svc.description + '</p>'    : '';
-      var priceHtml = svc.price       ? '<p class="svc-preview-item-price">'   + svc.price       + '</p>'    : '';
+      var isFree    = svc.costType === 'Free';
+      var catHtml   = svc.category    ? '<span class="svc-preview-item-cat">' + svc.category + '</span>' : '';
+      var costBadge = isFree
+        ? '<span class="svc-preview-item-cost-type svc-preview-item-cost-free">Free</span>'
+        : '<span class="svc-preview-item-cost-type svc-preview-item-cost-paid">With Cost</span>';
+      var descHtml  = svc.description ? '<p class="svc-preview-item-desc">' + svc.description + '</p>' : '';
+      var priceHtml = isFree
+        ? '<p class="svc-preview-item-price" style="color:#074f5a">Free — no charge to client</p>'
+        : (svc.price ? '<p class="svc-preview-item-price">' + svc.price + '</p>' : '');
       return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + svc.name.replace(/'/g,"\\'") + '\')">'
         + '<div class="svc-preview-item-name">' + svc.name + '</div>'
-        + catHtml + descHtml + priceHtml
+        + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">' + catHtml + costBadge + '</div>'
+        + descHtml + priceHtml
         + '<span class="svc-preview-select-hint">Select</span>'
         + '</div>';
     }).join('');
@@ -1598,8 +1611,9 @@ function closeProcDrawer() {
       <div class="pd-section-label">01 — Overview</div>
       <div class="pd-section-title">What qualifies as a Platform Operations service request?</div>
       <div class="pd-overview">
-        <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies.</p>
-        <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
+        <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations.</p>
+        <p>Services are classified as <strong>With Cost</strong> — subject to a service fee, requiring a signed Work Order before execution — or <strong>Free Services</strong>, provided at no charge. You can see the type on each service in the "View all services" panel above.</p>
+        <p>Fee waivers for With Cost services require written approval from the CTO and COO. Waiver requests are handled through the Tracker by the Platform Operations team — no side-channel emails needed.</p>
       </div>
     </div>
     <div class="pd-section">
@@ -1615,11 +1629,14 @@ function closeProcDrawer() {
       </div>
       <div class="pd-step-notes">
         <div class="pd-step-note"><div class="pd-step-note-num">1</div><div class="pd-step-note-body"><strong>Request Logged</strong><span>You submit this form with client details, service needed, target date, and constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">2</div><div class="pd-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">3</div><div class="pd-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For Change HR URL, Rename Database, and similar — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
-        <div class="pd-step-note"><div class="pd-step-note-num">4</div><div class="pd-step-note-body"><strong>Quotation Done</strong><span>Must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order attached to the CRF.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">2</div><div class="pd-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility, prepares a cost estimate if applicable, and coordinates next steps. Additional information may be requested.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">3</div><div class="pd-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For Change HR URL, Rename Database, and similar — a confirmed maintenance window must be agreed before a CRF is raised. Free services skip this step.</span></div></div>
+        <div class="pd-step-note"><div class="pd-step-note-num">4</div><div class="pd-step-note-body"><strong>Quotation Done</strong><span>The CRF and Work Order must be submitted at least <strong>2 business days</strong> before the target date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order.</span></div></div>
         <div class="pd-step-note"><div class="pd-step-note-num">5</div><div class="pd-step-note-body"><strong>For Execution</strong><span>The CRF has been raised and execution is scheduled. The assigned Platform Ops team member is preparing to carry out the work.</span></div></div>
         <div class="pd-step-note"><div class="pd-step-note-num">6</div><div class="pd-step-note-body"><strong>Execution Done</strong><span>Work is executed and results validated. The requester and CSM are notified upon completion and the tracker is updated.</span></div></div>
+      </div>
+      <div style="margin-top:0.875rem;padding:10px 12px;background:#fef9ec;border:1px solid #e8c84a;border-left:3px solid #c9a227;border-radius:0 6px 6px 0;font-size:0.76rem;color:#7a4800;line-height:1.6">
+        <strong>Team Assessment</strong> — A request may be paused at any stage if additional technical review is needed. This appears as <em>Team Assessment</em> in the tracker. The CSM will be contacted for clarification.
       </div>
     </div>
     <div class="pd-section">
@@ -1631,8 +1648,8 @@ function closeProcDrawer() {
           <tbody>
             <tr><td>All requests through this portal</td><td class="td-m">No side-channel requests via Slack, email, or verbal handoffs are tracked or prioritized.</td></tr>
             <tr><td>Assessment before execution</td><td class="td-m">No work begins without a completed review of scope, cost, and timeline.</td></tr>
-            <tr><td>Signed Work Order required</td><td class="td-m">Must be received at least 2 business days before the target date.</td></tr>
-            <tr><td>All services are subject to fees</td><td class="td-m">Fee waivers require written CTO approval before the request can proceed.</td></tr>
+            <tr><td>Signed Work Order required</td><td class="td-m">Applies to With Cost services. Must be received at least 2 business days before the target date.</td></tr>
+            <tr><td>Fee waivers require CTO + COO approval</td><td class="td-m">Not granted by default. Request is submitted through the Tracker by the Platform Operations team. Written approval required before the request proceeds.</td></tr>
             <tr><td>No unapproved scope changes</td><td class="td-m">New requirements mid-execution are treated as a separate request.</td></tr>
             <tr><td>Downtime must be confirmed</td><td class="td-m">No CRF is raised until a maintenance window is confirmed with the client.</td></tr>
           </tbody>
@@ -1648,7 +1665,7 @@ function closeProcDrawer() {
           <tbody>
             <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
             <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
-            <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
+            <tr><td>3</td><td>Service fee settled, waiver formally approved by CTO + COO, or confirmed Free service.</td></tr>
             <tr><td>4</td><td>Tracker updated and request marked as <strong>Execution Done</strong>.</td></tr>
             <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
           </tbody>
@@ -1665,7 +1682,7 @@ function closeProcDrawer() {
             <tr><td>Request stalled with no response</td><td class="td-m">CSM → Platform Ops Lead</td></tr>
             <tr><td>Scope or feasibility unclear</td><td class="td-m">Platform Ops → Engineering Manager</td></tr>
             <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-m">CSM → Lead CSM</td></tr>
-            <tr><td>Fee waiver without CTO approval</td><td class="td-m">CSM → CTO</td></tr>
+            <tr><td>Fee waiver needed</td><td class="td-m">CSM → Platform Ops Lead → submitted via Tracker to CTO + COO</td></tr>
             <tr><td>Scope change mid-execution</td><td class="td-m">Platform Ops Tech Lead → Platform Ops Lead</td></tr>
             <tr><td>Downtime window not agreed in time</td><td class="td-m">CSM → Lead CSM → Platform Ops Lead</td></tr>
           </tbody>
