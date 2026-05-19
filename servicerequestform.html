@@ -262,79 +262,6 @@
   .others-field { display: none; margin-top: 8px; }
   .others-field.visible { display: block; }
 
-  /* Category selection tiles */
-  .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .cat-option { position: relative; }
-  .cat-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
-  .cat-option label {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; font-size: 0.8rem; font-weight: 400;
-    padding: 0.625rem 0.5rem; border: 1px solid var(--border); border-radius: 6px;
-    cursor: pointer; transition: all 0.15s; background: var(--white);
-    color: var(--ink-muted); line-height: 1.3; min-height: 48px; gap: 4px;
-  }
-  .cat-option input[type="radio"]:checked + label {
-    border-color: var(--green-mid); background: var(--green-light);
-    color: var(--green); font-weight: 500; box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
-  }
-  .cat-option label:hover { border-color: var(--green-muted); color: var(--green); }
-  .cat-option-count {
-    font-size: 0.62rem; color: inherit; opacity: 0.65; font-weight: 400;
-  }
-  /* Service sub-selection — shown after category is picked */
-  .svc-subselect {
-    display: none; margin-top: 10px;
-    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
-  }
-  .svc-subselect.visible { display: block; }
-  .svc-subselect-head {
-    padding: 8px 12px; background: var(--green-light);
-    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.07em; color: var(--green-mid);
-    border-bottom: 1px solid var(--border);
-  }
-  .svc-subselect-list { display: flex; flex-direction: column; }
-  .svc-sub-option { position: relative; }
-  .svc-sub-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
-  .svc-sub-option label {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 14px; cursor: pointer; transition: background 0.12s;
-    border-bottom: 1px solid var(--border); font-size: 0.8375rem; color: var(--ink);
-    font-weight: 400; text-align: left;
-  }
-  .svc-sub-option:last-child label { border-bottom: none; }
-  .svc-sub-option label:hover { background: #f4f9f4; }
-  .svc-sub-option input[type="radio"]:checked + label {
-    background: var(--green-light); color: var(--green); font-weight: 500;
-  }
-  .svc-sub-radio-dot {
-    width: 16px; height: 16px; border: 2px solid var(--border);
-    border-radius: 50%; flex-shrink: 0; margin-top: 1px;
-    display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.12s;
-  }
-  .svc-sub-option input[type="radio"]:checked + label .svc-sub-radio-dot {
-    border-color: var(--green-mid); background: var(--green-mid);
-    box-shadow: inset 0 0 0 3px var(--white);
-  }
-  .svc-sub-info { flex: 1; }
-  .svc-sub-name { font-size: 0.8375rem; line-height: 1.3; margin-bottom: 2px; }
-  .svc-sub-desc { font-size: 0.75rem; color: var(--ink-muted); line-height: 1.5; font-weight: 400; }
-  .svc-sub-badge {
-    font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 20px;
-    white-space: nowrap; flex-shrink: 0; margin-top: 2px;
-  }
-  .svc-sub-free { background: #e0f5f8; color: #074f5a; }
-  .svc-sub-paid { background: #faeeda; color: #7a4800; }
-  .svc-sub-cost { font-size: 0.72rem; font-weight: 500; margin-top: 4px; }
-  .svc-sub-cost-free { color: #0F6E56; }
-  .svc-sub-cost-paid { color: #854F0B; }
-
   .disclaimer {
     background: var(--white);
     border: 1px solid var(--border);
@@ -600,50 +527,127 @@
     main { padding: 1.5rem 1rem 3rem; }
   }
 
-  /* ── SERVICES PREVIEW MODAL ── */
+  /* Service selector trigger button */
+  .svc-select-trigger {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 0.5625rem 0.75rem;
+    font-family: var(--sans); font-size: 0.875rem; color: var(--ink-muted);
+    background: var(--white); border: 1px solid var(--border); border-radius: 6px;
+    cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; text-align: left;
+  }
+  .svc-select-trigger:hover { border-color: var(--green-mid); }
+  .svc-select-trigger.has-value { color: var(--ink); border-color: var(--green-mid); }
+
+  /* Selected service chip */
+  .svc-selected-chip {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 8px;
+    background: var(--green-light); border: 1px solid var(--green-muted);
+    border-radius: 6px; padding: 6px 10px; font-size: 0.8375rem;
+    color: var(--green); font-weight: 500; max-width: 100%;
+  }
+  .svc-chip-clear {
+    background: none; border: none; cursor: pointer; color: var(--green-mid);
+    padding: 0; line-height: 1; display: flex; align-items: center;
+    flex-shrink: 0; transition: color 0.12s;
+  }
+  .svc-chip-clear:hover { color: var(--red); }
+
+  /* ── Service selector modal ── */
   .svc-preview-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.45); z-index: 9000;
     align-items: center; justify-content: center; padding: 1.5rem;
   }
   .svc-preview-overlay.open { display: flex; }
-  .svc-preview-panel {
+
+  .svc-selector-panel {
     background: var(--white); border-radius: 12px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-    width: 100%; max-width: 620px; max-height: 86vh;
+    width: 100%; max-width: 680px; height: 72vh; max-height: 560px;
     display: flex; flex-direction: column; overflow: hidden;
   }
-  .svc-preview-header {
+  .svc-selector-header {
     padding: 16px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; flex-shrink: 0;
   }
-  .svc-preview-header h3 { font-size: 1rem; font-weight: 500; color: var(--ink); }
+  .svc-selector-header h3 { font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .svc-selector-header p  { font-size: 0.78rem; color: var(--ink-muted); margin: 0; }
   .svc-preview-close {
     background: none; border: none; cursor: pointer;
     color: var(--ink-muted); padding: 4px; border-radius: 4px;
-    line-height: 1; transition: color 0.15s;
+    line-height: 1; transition: color 0.15s; flex-shrink: 0;
   }
   .svc-preview-close:hover { color: var(--ink); }
-  .svc-preview-body { flex: 1; overflow-y: auto; padding: 1.25rem; }
-  .svc-preview-body::-webkit-scrollbar { width: 4px; }
-  .svc-preview-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .svc-preview-list { display: flex; flex-direction: column; gap: 10px; }
-  .svc-preview-item { border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 14px; }
-  .svc-preview-item-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-  .svc-preview-item-cat {
-    display: inline-block; font-size: 0.63rem; font-weight: 600;
-    color: var(--green); background: var(--green-light); border-radius: 20px;
-    padding: 1px 8px; margin-bottom: 6px;
+
+  .svc-selector-body {
+    display: flex; flex: 1; overflow: hidden;
   }
-  .svc-preview-item-desc { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
-  .svc-preview-item-price { font-size: 0.8rem; font-weight: 600; color: var(--green); margin-top: 6px; }
-  .svc-preview-item-cost-type {
-    display: inline-block; font-size: 0.6rem; font-weight: 700;
-    border-radius: 20px; padding: 1px 7px; margin-top: 5px;
+
+  /* Left — category list */
+  .svc-selector-cats {
+    width: 180px; flex-shrink: 0; border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 8px 0;
+    background: #fafaf8;
   }
-  .svc-preview-item-cost-free { background: #e0f5f8; color: #074f5a; }
-  .svc-preview-item-cost-paid { background: #faeeda; color: #7a4800; }
-  .svc-preview-empty { text-align: center; padding: 2.5rem 1rem; color: var(--ink-muted); font-size: 0.875rem; }
+  .svc-selector-cats::-webkit-scrollbar { width: 3px; }
+  .svc-selector-cats::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .svc-sel-cat {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; cursor: pointer; font-size: 0.8125rem;
+    color: var(--ink-muted); border-left: 3px solid transparent;
+    transition: background 0.1s, color 0.1s; user-select: none;
+  }
+  .svc-sel-cat:hover { background: var(--white); color: var(--ink); }
+  .svc-sel-cat.active {
+    background: var(--white); color: var(--green);
+    font-weight: 500; border-left-color: var(--green-mid);
+  }
+  .svc-sel-cat-count {
+    font-size: 0.62rem; font-weight: 600; background: var(--border);
+    color: var(--ink-muted); border-radius: 20px; padding: 1px 6px; flex-shrink: 0;
+  }
+  .svc-sel-cat.active .svc-sel-cat-count { background: var(--green-light); color: var(--green); }
+
+  /* Right — service list */
+  .svc-selector-svcs {
+    flex: 1; overflow-y: auto; padding: 0;
+  }
+  .svc-selector-svcs::-webkit-scrollbar { width: 4px; }
+  .svc-selector-svcs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .svc-selector-placeholder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; gap: 10px; color: var(--ink-muted); font-size: 0.8125rem;
+    text-align: center; padding: 2rem;
+  }
+  .svc-selector-placeholder p { margin: 0; }
+  .svc-sel-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.12s;
+  }
+  .svc-sel-item:last-child { border-bottom: none; }
+  .svc-sel-item:hover { background: #f4f9f4; }
+  .svc-sel-item.selected { background: var(--green-light); }
+  .svc-sel-item-info { flex: 1; min-width: 0; }
+  .svc-sel-item-name { font-size: 0.875rem; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+  .svc-sel-item-desc { font-size: 0.76rem; color: var(--ink-muted); line-height: 1.5; margin-bottom: 5px; }
+  .svc-sel-item-cost { font-size: 0.73rem; font-weight: 500; }
+  .svc-sel-item-cost-free { color: #0F6E56; }
+  .svc-sel-item-cost-paid { color: #854F0B; }
+  .svc-sel-item-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; padding-top: 2px; }
+  .svc-sel-badge {
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 2px 7px; border-radius: 20px; white-space: nowrap;
+  }
+  .svc-sel-badge-free { background: #e0f5f8; color: #074f5a; }
+  .svc-sel-badge-paid { background: #faeeda; color: #7a4800; }
+
+  @media (max-width: 520px) {
+    .svc-selector-panel { height: 85vh; max-height: none; }
+    .svc-selector-cats { width: 130px; }
+    .svc-sel-cat { padding: 9px 10px; font-size: 0.75rem; }
+  }
 
   .view-services-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
   .view-services-btn {
@@ -653,16 +657,6 @@
     text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s;
   }
   .view-services-btn:hover { color: var(--green); }
-
-  .svc-preview-selectable { cursor: pointer; position: relative; transition: border-color 0.15s, background 0.15s; }
-  .svc-preview-selectable:hover { border-color: var(--green-mid) !important; background: var(--green-light) !important; }
-  .svc-preview-select-hint {
-    display: none; position: absolute; top: 10px; right: 12px;
-    font-size: 0.65rem; font-weight: 600; color: var(--green);
-    background: var(--green-light); border: 1px solid var(--green-muted);
-    border-radius: 20px; padding: 2px 8px;
-  }
-  .svc-preview-selectable:hover .svc-preview-select-hint { display: inline-flex; }
 
   /* ── PROCESS DRAWER ── */
   .proc-fab {
@@ -832,7 +826,7 @@
         </div>
       </div>
 
-      <div class="two-col">
+      <div class="two-col" style="align-items:end">
         <div class="field" id="f-mrr">
           <label for="accountMrr">Account MRR <span class="req">*</span></label>
           <div class="field-hint">Monthly Recurring Revenue in Philippine Peso. Numbers only.</div>
@@ -858,27 +852,26 @@
 
       <div class="field" id="f-service">
         <label>Service type <span class="req">*</span></label>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div class="field-hint" style="margin-bottom:0">Select a category, then choose the specific service.</div>
-          <button type="button" class="view-services-btn" onclick="openServicesPreview()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            View all services
+        <div class="field-hint" style="margin-bottom:8px">Select from the available Platform Operations services.</div>
+
+        <!-- Trigger button -->
+        <button type="button" class="svc-select-trigger" id="svcSelectTrigger" onclick="openServiceSelector()">
+          <span id="svcSelectLabel">Choose a service…</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+
+        <!-- Selected service chip (shown after selection) -->
+        <div class="svc-selected-chip" id="svcSelectedChip" style="display:none">
+          <span id="svcSelectedName"></span>
+          <button type="button" class="svc-chip-clear" onclick="clearServiceSelection()" aria-label="Clear selection">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-        </div>
-
-        <!-- Step 1: Category tiles -->
-        <div class="cat-grid" id="catGrid"></div>
-
-        <!-- Step 2: Services in selected category -->
-        <div class="svc-subselect" id="svcSubselect">
-          <div class="svc-subselect-head" id="svcSubselectHead">Services</div>
-          <div class="svc-subselect-list" id="svcSubselectList"></div>
         </div>
 
         <div class="others-field" id="othersField">
           <input type="text" id="othersSpecify" name="othersSpecify" placeholder="Please specify..."/>
         </div>
-        <div class="error-msg" id="service-error" style="display:none">Please select a category and service.</div>
+        <div class="error-msg" id="service-error" style="display:none">Please select a service type.</div>
 
         <!-- Data Migration Notice -->
         <div class="migration-notice" id="migrationNotice">
@@ -1098,17 +1091,28 @@
   </div>
 </main>
 
-<!-- SERVICES PREVIEW MODAL -->
+<!-- SERVICE SELECTOR MODAL — two-pane: categories left, services right -->
 <div class="svc-preview-overlay" id="svcPreviewOverlay">
-  <div class="svc-preview-panel">
-    <div class="svc-preview-header">
-      <h3>Available Services</h3>
-      <button class="svc-preview-close" onclick="closeServicesPreview()" title="Close">
+  <div class="svc-selector-panel">
+    <div class="svc-selector-header">
+      <div>
+        <h3>Select a Service</h3>
+        <p>Choose a category, then pick the specific service.</p>
+      </div>
+      <button class="svc-preview-close" onclick="closeServiceSelector()" title="Close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <div class="svc-preview-body">
-      <div class="svc-preview-list" id="svcPreviewList"></div>
+    <div class="svc-selector-body">
+      <!-- Left: categories -->
+      <div class="svc-selector-cats" id="svcSelectorCats"></div>
+      <!-- Right: services in selected category -->
+      <div class="svc-selector-svcs" id="svcSelectorSvcs">
+        <div class="svc-selector-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:#ccc"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
+          <p>Select a category to see available services.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1126,10 +1130,7 @@ const DEFAULT_SERVICES = [
 function getServicesCache() {
   try {
     var raw = localStorage.getItem('platops_services_cache');
-    if (raw) {
-      var svcs = JSON.parse(raw);
-      if (Array.isArray(svcs) && svcs.length) return svcs;
-    }
+    if (raw) { var s = JSON.parse(raw); if (Array.isArray(s) && s.length) return s; }
   } catch(e) {}
   return null;
 }
@@ -1137,10 +1138,7 @@ function getServicesCache() {
 function getServiceNames() {
   try {
     var raw = localStorage.getItem('platops_service_names');
-    if (raw) {
-      var names = JSON.parse(raw);
-      if (Array.isArray(names) && names.length) return names;
-    }
+    if (raw) { var n = JSON.parse(raw); if (Array.isArray(n) && n.length) return n; }
   } catch(e) {}
   return DEFAULT_SERVICES;
 }
@@ -1149,7 +1147,7 @@ function fetchServicesFromGAS() {
   fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' })
     .then(function(r) {
       var ct = r.headers.get('content-type') || '';
-      if (!ct.includes('application/json') && !ct.includes('text/plain')) throw new Error('Non-JSON response');
+      if (!ct.includes('application/json') && !ct.includes('text/plain')) throw new Error('Non-JSON');
       return r.json();
     })
     .then(function(d) {
@@ -1159,170 +1157,187 @@ function fetchServicesFromGAS() {
       var names = svcs.map(function(s) { return s.name; });
       if (!names.some(function(n){ return n.toLowerCase() === 'others'; })) names.push('Others');
       try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
-      renderCategoryTiles();
     })
     .catch(function(err) { console.warn('fetchServicesFromGAS:', err); });
 }
 
-// ── Step 1: Render category tiles ────────────────────────────────────────────
-function renderCategoryTiles() {
-  var grid = document.getElementById('catGrid');
-  if (!grid) return;
+// ── Service selector modal ────────────────────────────────────────────────────
+var _activeSelectorCat = null;
+
+function openServiceSelector() {
+  var overlay = document.getElementById('svcPreviewOverlay');
+  if (!overlay) return;
+  renderSelectorCats();
+  overlay.classList.add('open');
+  // Auto-select the first category
+  var firstCat = overlay.querySelector('.svc-sel-cat');
+  if (firstCat) firstCat.click();
+}
+
+function closeServiceSelector() {
+  var overlay = document.getElementById('svcPreviewOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+// Alias — keeps old references in ESC key listener working
+function closeServicesPreview() { closeServiceSelector(); }
+function openServicesPreview()   { openServiceSelector(); }
+
+function renderSelectorCats() {
+  var container = document.getElementById('svcSelectorCats');
+  if (!container) return;
   var svcs = getServicesCache();
 
-  // Build category list from cache, or fall back to unique names as single category
-  var cats = [];
+  // Build unique sorted categories
+  var seen = {};
   if (svcs && svcs.length) {
-    var seen = {};
     svcs.forEach(function(s) {
       var cat = (s.category || 'Other').trim();
-      if (!seen[cat]) { seen[cat] = 0; }
+      if (!seen[cat]) seen[cat] = 0;
       seen[cat]++;
     });
-    // Sort alphabetically, put 'Other' last
-    cats = Object.keys(seen).sort(function(a, b) {
-      if (a === 'Other') return 1;
-      if (b === 'Other') return -1;
-      return a.localeCompare(b);
-    });
-    // Always append an "Others" option for anything not in the list
-    cats.push('Others');
   } else {
-    // No cache yet — show generic placeholder categories
-    cats = ['Database', 'Configuration', 'Others'];
+    ['Database', 'Configuration'].forEach(function(c) { seen[c] = 0; });
   }
-
-  grid.innerHTML = cats.map(function(cat, i) {
-    var id    = 'cat-' + i;
-    var count = svcs ? (svcs.filter(function(s) { return (s.category||'Other').trim() === cat; }).length || '') : '';
-    var countHtml = (count && cat !== 'Others') ? '<span class="cat-option-count">' + count + ' service' + (count !== 1 ? 's' : '') + '</span>' : '';
-    return '<div class="cat-option">'
-      + '<input type="radio" name="serviceCategory" id="' + id + '" value="' + cat.replace(/"/g,'&quot;') + '"/>'
-      + '<label for="' + id + '">' + cat + countHtml + '</label>'
-      + '</div>';
-  }).join('');
-
-  // Attach change listeners
-  document.querySelectorAll('input[name="serviceCategory"]').forEach(function(r) {
-    r.addEventListener('change', function() {
-      onCategorySelected(this.value);
-    });
+  var cats = Object.keys(seen).sort(function(a, b) {
+    if (a === 'Other') return 1; if (b === 'Other') return -1;
+    return a.localeCompare(b);
   });
+  cats.push('Others');
+
+  container.innerHTML = cats.map(function(cat) {
+    var count = (svcs && cat !== 'Others') ? seen[cat] || 0 : '';
+    var countHtml = count ? '<span class="svc-sel-cat-count">' + count + '</span>' : '';
+    return '<div class="svc-sel-cat" data-cat="' + esc(cat) + '" onclick="selectSelectorCat(this,\'' + cat.replace(/'/g,"\\'") + '\')">'
+      + esc(cat) + countHtml + '</div>';
+  }).join('');
 }
 
-// ── Step 2: Render service sub-list for selected category ────────────────────
-function onCategorySelected(category) {
-  var subselect = document.getElementById('svcSubselect');
-  var head      = document.getElementById('svcSubselectHead');
-  var list      = document.getElementById('svcSubselectList');
-  var others    = document.getElementById('othersField');
+function selectSelectorCat(el, category) {
+  _activeSelectorCat = category;
+  document.querySelectorAll('.svc-sel-cat').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  renderSelectorSvcs(category);
+}
 
-  // Clear any previous service selection
-  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) { r.checked = false; });
-  others.classList.remove('visible');
-  document.getElementById('othersSpecify').value = '';
-  hideAllNotices();
+function renderSelectorSvcs(category) {
+  var container = document.getElementById('svcSelectorSvcs');
+  if (!container) return;
 
   if (category === 'Others') {
-    subselect.classList.remove('visible');
-    // Show directly as a free-text entry
-    others.classList.add('visible');
-    head.textContent = 'Others';
-    // Inject a virtual checked radio so validation passes and payload has a value
-    injectServiceRadio('Others', true);
+    container.innerHTML = '<div style="padding:20px 18px">'
+      + '<p style="font-size:0.8125rem;color:var(--ink-muted);margin-bottom:10px">Don\'t see your service? Describe it in the field below.</p>'
+      + '<div class="svc-sel-item" style="cursor:default;border:1.5px dashed var(--border);border-radius:8px;background:var(--cream)" onclick="pickOthers()">'
+      + '<div class="svc-sel-item-info"><div class="svc-sel-item-name">Others</div>'
+      + '<div class="svc-sel-item-desc">Specify your request in the form after selecting this.</div>'
+      + '</div></div></div>';
     return;
   }
 
   var svcs = getServicesCache();
-  var filtered = svcs ? svcs.filter(function(s) { return (s.category||'Other').trim() === category; }) : [];
+  var filtered = svcs ? svcs.filter(function(s) { return (s.category || 'Other').trim() === category; }) : [];
 
   if (!filtered.length) {
-    // No cached services for this category yet — show a text fallback
-    subselect.classList.remove('visible');
+    container.innerHTML = '<div class="svc-selector-placeholder"><p>No services found for this category.</p></div>';
     return;
   }
 
-  head.textContent = category;
-  list.innerHTML = filtered.map(function(svc, i) {
-    var id       = 'sub-svc-' + i;
-    var isFree   = svc.costType === 'Free';
-    var badge    = isFree
-      ? '<span class="svc-sub-badge svc-sub-free">Free</span>'
-      : '<span class="svc-sub-badge svc-sub-paid">With Cost</span>';
-    var descHtml = svc.description
-      ? '<div class="svc-sub-desc">' + svc.description + '</div>'
-      : '';
+  // Check if any service is currently selected
+  var currentVal = (document.querySelector('input[name="serviceType"]:checked') || {}).value || '';
+
+  container.innerHTML = filtered.map(function(svc) {
+    var isFree  = svc.costType === 'Free';
+    var isSelected = svc.name === currentVal;
+    var descHtml = svc.description ? '<div class="svc-sel-item-desc">' + esc(svc.description) + '</div>' : '';
     var costHtml = '';
     if (isFree) {
-      costHtml = '<div class="svc-sub-cost svc-sub-cost-free">Free — no charge to client</div>';
+      costHtml = '<div class="svc-sel-item-cost svc-sel-item-cost-free">Free — no charge to client</div>';
     } else if (svc.price) {
-      costHtml = '<div class="svc-sub-cost svc-sub-cost-paid">Est. ' + svc.price + '</div>';
+      costHtml = '<div class="svc-sel-item-cost svc-sel-item-cost-paid">Est. ' + esc(svc.price) + '</div>';
     }
-    return '<div class="svc-sub-option">'
-      + '<input type="radio" name="serviceType" id="' + id + '" value="' + svc.name.replace(/"/g,'&quot;') + '"/>'
-      + '<label for="' + id + '">'
-      + '<span class="svc-sub-radio-dot"></span>'
-      + '<span class="svc-sub-info"><span class="svc-sub-name">' + svc.name + '</span>' + descHtml + costHtml + '</span>'
-      + badge
-      + '</label>'
+    var badge = isFree
+      ? '<span class="svc-sel-badge svc-sel-badge-free">Free</span>'
+      : '<span class="svc-sel-badge svc-sel-badge-paid">With Cost</span>';
+    return '<div class="svc-sel-item' + (isSelected ? ' selected' : '') + '" onclick="pickService(\'' + svc.name.replace(/'/g,"\\'") + '\')">'
+      + '<div class="svc-sel-item-info">'
+      + '<div class="svc-sel-item-name">' + esc(svc.name) + '</div>'
+      + descHtml + costHtml
+      + '</div>'
+      + '<div class="svc-sel-item-badges">' + badge + '</div>'
       + '</div>';
   }).join('');
-
-  subselect.classList.add('visible');
-
-  // Attach change listeners to service radios
-  list.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
-    r.addEventListener('change', function() {
-      var val = this.value;
-      others.classList.remove('visible');
-      document.getElementById('othersSpecify').value = '';
-      showNoticeFor(val);
-    });
-  });
 }
 
-// Injects a hidden checked radio for "Others" so validation + payload still work
-function injectServiceRadio(name, checked) {
+function pickService(name) {
+  closeServiceSelector();
+  applyServiceSelection(name);
+}
+
+function pickOthers() {
+  closeServiceSelector();
+  applyServiceSelection('Others');
+}
+
+function applyServiceSelection(name) {
+  // Remove any existing injected radio
   var existing = document.getElementById('svc-injected');
   if (existing) existing.remove();
+
+  // Inject a checked hidden radio
   var inp = document.createElement('input');
   inp.type = 'radio'; inp.name = 'serviceType'; inp.id = 'svc-injected';
-  inp.value = name; inp.checked = !!checked;
+  inp.value = name; inp.checked = true;
   inp.style.cssText = 'position:absolute;opacity:0;width:0;height:0';
   document.getElementById('f-service').appendChild(inp);
+
+  // Update trigger button and chip
+  var trigger = document.getElementById('svcSelectTrigger');
+  var chip    = document.getElementById('svcSelectedChip');
+  var chipName= document.getElementById('svcSelectedName');
+  var label   = document.getElementById('svcSelectLabel');
+
+  if (name === 'Others') {
+    if (label) label.textContent = 'Others — specify below';
+    if (trigger) { trigger.classList.add('has-value'); trigger.style.display = ''; }
+    if (chip) chip.style.display = 'none';
+    document.getElementById('othersField').classList.add('visible');
+  } else {
+    if (chip && chipName) { chipName.textContent = name; chip.style.display = 'inline-flex'; }
+    if (trigger) trigger.style.display = 'none';
+    document.getElementById('othersField').classList.remove('visible');
+    document.getElementById('othersSpecify').value = '';
+  }
+
+  // Clear and hide service error
+  document.getElementById('service-error').style.display = 'none';
+  document.getElementById('f-service').classList.remove('invalid');
+
+  showNoticeFor(name);
 }
 
-// ── Pre-select by service name (used by ?service= URL param and preview modal) ─
+function clearServiceSelection() {
+  var existing = document.getElementById('svc-injected');
+  if (existing) existing.remove();
+  var trigger = document.getElementById('svcSelectTrigger');
+  var chip    = document.getElementById('svcSelectedChip');
+  var label   = document.getElementById('svcSelectLabel');
+  if (chip) chip.style.display = 'none';
+  if (trigger) { trigger.style.display = ''; trigger.classList.remove('has-value'); }
+  if (label) label.textContent = 'Choose a service…';
+  document.getElementById('othersField').classList.remove('visible');
+  document.getElementById('othersSpecify').value = '';
+  hideAllNotices();
+}
+
+function renderCategoryTiles() { /* no-op — tiles replaced by modal */ }
+
 function tryPreSelectService(serviceName) {
   if (!serviceName) return false;
   var svcs = getServicesCache();
-
-  if (serviceName === 'Others') {
-    var catRadio = document.querySelector('input[name="serviceCategory"][value="Others"]');
-    if (catRadio) { catRadio.checked = true; onCategorySelected('Others'); return true; }
-    return false;
-  }
-
-  // Find which category this service belongs to
   var match = svcs ? svcs.find(function(s) { return s.name.toLowerCase() === serviceName.toLowerCase(); }) : null;
-  var targetCat = match ? (match.category || 'Other').trim() : null;
-
-  if (!targetCat) return false;
-
-  // Select the category tile
-  var catRadio = document.querySelector('input[name="serviceCategory"][value="' + targetCat.replace(/"/g,'&quot;') + '"]');
-  if (!catRadio) return false;
-  catRadio.checked = true;
-  onCategorySelected(targetCat);
-
-  // Now select the service within that category
-  var svcRadio = document.querySelector('input[name="serviceType"][value="' + serviceName.replace(/"/g,'&quot;') + '"]');
-  if (svcRadio) {
-    svcRadio.checked = true;
-    showNoticeFor(serviceName);
-    return true;
-  }
-  return false;
+  if (!match && serviceName !== 'Others') return false;
+  applyServiceSelection(serviceName);
+  return true;
 }
 
 function initUrlPreSelect() {
@@ -1336,67 +1351,13 @@ function initUrlPreSelect() {
   }, 200);
 }
 
-function openServicesPreview() {
-  var overlay = document.getElementById('svcPreviewOverlay');
-  var list    = document.getElementById('svcPreviewList');
-  if (!overlay || !list) return;
-  var services = [];
-  try {
-    var raw = localStorage.getItem('platops_services_cache');
-    if (raw) services = JSON.parse(raw);
-  } catch(e) {}
-  if (!services.length) {
-    var names = getServiceNames();
-    list.innerHTML = names.map(function(n) {
-      return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + n.replace(/'/g,"\\'") + '\')">'
-        + '<div class="svc-preview-item-name">' + n + '</div>'
-        + '<span class="svc-preview-select-hint">Select</span>'
-        + '</div>';
-    }).join('');
-  } else {
-    list.innerHTML = services.map(function(svc) {
-      var isFree    = svc.costType === 'Free';
-      var catHtml   = svc.category    ? '<span class="svc-preview-item-cat">' + svc.category + '</span>' : '';
-      var costBadge = isFree
-        ? '<span class="svc-preview-item-cost-type svc-preview-item-cost-free">Free</span>'
-        : '<span class="svc-preview-item-cost-type svc-preview-item-cost-paid">With Cost</span>';
-      var descHtml  = svc.description ? '<p class="svc-preview-item-desc">' + svc.description + '</p>' : '';
-      var priceHtml = isFree
-        ? '<p class="svc-preview-item-price" style="color:#074f5a">Free — no charge to client</p>'
-        : (svc.price ? '<p class="svc-preview-item-price">' + svc.price + '</p>' : '');
-      return '<div class="svc-preview-item svc-preview-selectable" onclick="selectServiceFromPreview(\'' + svc.name.replace(/'/g,"\\'") + '\')">'
-        + '<div class="svc-preview-item-name">' + svc.name + '</div>'
-        + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">' + catHtml + costBadge + '</div>'
-        + descHtml + priceHtml
-        + '<span class="svc-preview-select-hint">Select</span>'
-        + '</div>';
-    }).join('');
-  }
-  overlay.classList.add('open');
-}
-
-function closeServicesPreview() {
-  var overlay = document.getElementById('svcPreviewOverlay');
-  if (overlay) overlay.classList.remove('open');
-}
-
-function selectServiceFromPreview(name) {
-  closeServicesPreview();
-  // Reuse tryPreSelectService which handles category→service two-step
-  if (!tryPreSelectService(name)) {
-    // Service not in cache — fall back to injecting directly as Others
-    document.getElementById('othersField').classList.add('visible');
-    document.getElementById('othersSpecify').value = name;
-    injectServiceRadio('Others', true);
-  }
-}
-
 document.getElementById('svcPreviewOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeServicesPreview();
+  if (e.target === this) closeServiceSelector();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeServicesPreview(); closeProcDrawer(); }
+  if (e.key === 'Escape') { closeServiceSelector(); closeProcDrawer(); }
 });
+
 
 function toProperCase(str) {
   return str.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
@@ -1411,7 +1372,6 @@ function toProperCase(str) {
 
 document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
 
-renderCategoryTiles();
 fetchServicesFromGAS();
 initUrlPreSelect();
 
@@ -1725,14 +1685,19 @@ function resetForm() {
   document.getElementById('successScreen').classList.remove('visible');
   document.getElementById('submitBtn').disabled = false;
   document.getElementById('submitBtn').textContent = 'Submit inquiry';
-  document.getElementById('othersField').classList.remove('visible');
-  document.getElementById('svcSubselect').classList.remove('visible');
+  // Reset service selector
   var injected = document.getElementById('svc-injected');
   if (injected) injected.remove();
+  var chip = document.getElementById('svcSelectedChip');
+  var trigger = document.getElementById('svcSelectTrigger');
+  var label = document.getElementById('svcSelectLabel');
+  if (chip) chip.style.display = 'none';
+  if (trigger) { trigger.style.display = ''; trigger.classList.remove('has-value'); }
+  if (label) label.textContent = 'Choose a service…';
+  document.getElementById('othersField').classList.remove('visible');
   ['service-error','desc-error','ack-error','sig-error'].forEach(id => document.getElementById(id).style.display = 'none');
   hideAllNotices();
   document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-  renderCategoryTiles();
   document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
   const ratio = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
