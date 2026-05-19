@@ -621,8 +621,9 @@ tr:hover td{background:var(--bg)}
             <div class="proc-section-label">01 — Overview</div>
             <div class="proc-section-title">What qualifies as a Platform Operations service request?</div>
             <div class="proc-overview-card">
-              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations — and where a service fee applies.</p>
-              <p>These are not standard BAU tickets. Every request is reviewed for feasibility, scoped, priced, and requires a signed Work Order before execution. Fee waivers require written CTO approval.</p>
+              <p>A Platform Operations service request covers backend work for active clients that requires direct database access, system-level configuration changes, or manual data operations.</p>
+              <p>Services are classified into two types: <strong>With Cost</strong> — which carry a service fee and require a signed Work Order before execution — and <strong>Free Services</strong>, which are provided at no charge to the client. Browse the <a href="#" onclick="switchTab('services');return false;" style="color:var(--primary)">List of Services</a> to see which type applies.</p>
+              <p>Fee waivers for With Cost services require written approval from the CTO and COO. Waiver requests are submitted directly through the Tracker — no side-channel emails needed.</p>
               <p>If you are unsure whether your request falls under this portal, reach out to the Platform Operations team before submitting.</p>
             </div>
           </div>
@@ -639,15 +640,39 @@ tr:hover td{background:var(--bg)}
             </div>
             <div class="proc-step-notes">
               <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>Request Logged</strong><span>Submit through this portal with client details, service needed, target date, and known constraints. Submitting does not guarantee approval — it opens the request for review.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate, and coordinates next steps. Additional information may be requested.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised.</span></div></div>
-              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Quotation Done</strong><span>Must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order attached to the CRF.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>For Scoping</strong><span>Platform Ops assesses feasibility and complexity, prepares a cost estimate if applicable, and coordinates next steps. Additional information may be requested.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>For Quotation</strong><span>Quotation is being prepared. For services involving system downtime — such as Change HR URL or Rename Database — a confirmed maintenance window must be agreed before a CRF is raised. Free services skip this step.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Quotation Done</strong><span>The CRF and Work Order must be submitted at least <strong>2 business days</strong> before the target activity date. For Data Migration, an Account Creation Form is also required. No work begins without a signed Work Order.</span></div></div>
               <div class="proc-step-note"><div class="proc-step-note-num">5</div><div class="proc-step-note-body"><strong>For Execution</strong><span>The CRF has been raised and execution is scheduled. The assigned Platform Ops team member is preparing to carry out the work.</span></div></div>
               <div class="proc-step-note"><div class="proc-step-note-num">6</div><div class="proc-step-note-body"><strong>Execution Done</strong><span>The service has been executed, results validated, and the request updated in the tracker. The requester and CSM are notified upon completion.</span></div></div>
             </div>
+            <div style="margin-top:1rem;padding:12px 16px;background:var(--mango-lt);border:1px solid var(--mango);border-radius:8px;font-size:0.8125rem;color:#7a4800;line-height:1.6">
+              <strong>Team Assessment</strong> — A request may be paused at any stage if additional technical review is needed. This shows as <em>Team Assessment</em> in the tracker. The CSM will be contacted for clarification or additional details.
+            </div>
           </div>
           <div class="proc-section">
-            <div class="proc-section-label">03 — Scope &amp; Quality Safeguards</div>
+            <div class="proc-section-label">03 — Service Cost Types</div>
+            <div class="proc-section-title">With Cost vs Free Services</div>
+            <div class="proc-table-wrap">
+              <table class="proc-table">
+                <thead><tr><th>Type</th><th>What it means</th><th>Waiver applies?</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><span style="display:inline-block;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:12px;background:var(--mango-lt);color:#7a4800">With Cost</span></td>
+                    <td class="td-muted">Carries a service fee. A signed Work Order is required before execution. Fee can be waived only with written CTO + COO approval.</td>
+                    <td class="td-muted">Yes — submit a waiver request through the Tracker. The CSM provides reason and justification; the admin sends it to CTO and COO for approval.</td>
+                  </tr>
+                  <tr>
+                    <td><span style="display:inline-block;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:12px;background:#e0f5f8;color:#074f5a">Free Service</span></td>
+                    <td class="td-muted">No charge to the client. Still goes through the standard request and execution lifecycle.</td>
+                    <td class="td-muted">Not applicable.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">04 — Scope &amp; Quality Safeguards</div>
             <div class="proc-section-title">Guardrails that apply to all requests</div>
             <div class="proc-table-wrap">
               <table class="proc-table">
@@ -655,8 +680,8 @@ tr:hover td{background:var(--bg)}
                 <tbody>
                   <tr><td>All requests through this portal</td><td class="td-muted">No side-channel requests via Slack, email, or verbal handoffs.</td><td class="td-muted">Redirect requester to submit via this form.</td></tr>
                   <tr><td>Assessment before execution</td><td class="td-muted">No work begins without completed review of scope, cost, and timeline.</td><td class="td-muted">Platform Ops lead signs off before any execution is scheduled.</td></tr>
-                  <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
-                  <tr><td>All services subject to fees</td><td class="td-muted">Fee waivers are not granted by default. To request a waiver, email the CTO, Gian Dela Rama (<a href="mailto:gdelarama@sprout.ph" style="color:var(--primary)">gdelarama@sprout.ph</a>) with CC to: DJ (<a href="mailto:diane@sprout.ph" style="color:var(--primary)">diane@sprout.ph</a>), Danica (<a href="mailto:afrancisco@sprout.ph" style="color:var(--primary)">afrancisco@sprout.ph</a>), Gaby (<a href="mailto:gabriellef@sprout.ph" style="color:var(--primary)">gabriellef@sprout.ph</a>).</td><td class="td-muted">Written CTO approval required. No exceptions.</td></tr>
+                  <tr><td>Signed Work Order required</td><td class="td-muted">Must be received at least 2 business days before the target date. Applies to With Cost services.</td><td class="td-muted">CSM follows up with client if documents are pending.</td></tr>
+                  <tr><td>Fee waivers require approval</td><td class="td-muted">Waivers for With Cost services are not granted by default. Request via the Tracker — admin submits to CTO (<a href="mailto:gdelarama@sprout.ph" style="color:var(--primary)">gdelarama@sprout.ph</a>) with COO CC (<a href="mailto:kislayc@sprout.ph" style="color:var(--primary)">kislayc@sprout.ph</a>).</td><td class="td-muted">Written CTO + COO approval required. No exceptions.</td></tr>
                   <tr><td>No unapproved scope changes</td><td class="td-muted">New requirements mid-execution are treated as a separate request.</td><td class="td-muted">Log a new request. Re-assess and re-estimate.</td></tr>
                   <tr><td>Downtime must be confirmed</td><td class="td-muted">No CRF raised until schedule is confirmed with client.</td><td class="td-muted">Platform Ops coordinates with CSM to lock window.</td></tr>
                 </tbody>
@@ -664,7 +689,17 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
           <div class="proc-section">
-            <div class="proc-section-label">04 — Exit Criteria</div>
+            <div class="proc-section-label">05 — Fee Waiver Process</div>
+            <div class="proc-section-title">How to request a fee waiver</div>
+            <div class="proc-step-notes">
+              <div class="proc-step-note"><div class="proc-step-note-num">1</div><div class="proc-step-note-body"><strong>CSM contacts PlatOps Lead</strong><span>The CSM reaches out to the Platform Operations Lead to request a waiver and explains why.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">2</div><div class="proc-step-note-body"><strong>CSM provides justification</strong><span>The CSM submits a detailed defense: waiver reason, business justification, and the client impact if the fee were charged. This is done through the Tracker — no side-channel emails.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">3</div><div class="proc-step-note-body"><strong>Admin sends for approval</strong><span>The admin clicks "Send Waiver Request" in the Tracker. This automatically emails the CTO (To) and COO (CC) with full request details and one-click Approve / Reject / Request Clarification links.</span></div></div>
+              <div class="proc-step-note"><div class="proc-step-note-num">4</div><div class="proc-step-note-body"><strong>Decision recorded automatically</strong><span>When the CTO or COO clicks a decision link, the tracker is updated instantly and the CSM is notified. No manual follow-up needed.</span></div></div>
+            </div>
+          </div>
+          <div class="proc-section">
+            <div class="proc-section-label">06 — Exit Criteria</div>
             <div class="proc-section-title">When is a request considered complete?</div>
             <div class="proc-table-wrap">
               <table class="proc-table">
@@ -672,7 +707,7 @@ tr:hover td{background:var(--bg)}
                 <tbody>
                   <tr><td>1</td><td>Activity executed successfully in the target client environment.</td></tr>
                   <tr><td>2</td><td>Output validated by the requester or CSM.</td></tr>
-                  <tr><td>3</td><td>Service fee settled or waiver formally approved by the CTO.</td></tr>
+                  <tr><td>3</td><td>Service fee settled, waiver formally approved by CTO + COO, or confirmed Free service.</td></tr>
                   <tr><td>4</td><td>Tracker updated and request marked as <strong>Execution Done</strong>.</td></tr>
                   <tr><td>5</td><td>Requester and CSM notified of completion.</td></tr>
                 </tbody>
@@ -680,7 +715,7 @@ tr:hover td{background:var(--bg)}
             </div>
           </div>
           <div class="proc-section">
-            <div class="proc-section-label">05 — Escalation</div>
+            <div class="proc-section-label">07 — Escalation</div>
             <div class="proc-section-title">When things get stuck</div>
             <div class="proc-table-wrap">
               <table class="proc-table">
@@ -689,7 +724,7 @@ tr:hover td{background:var(--bg)}
                   <tr><td>Request stalled with no response</td><td class="td-muted">CSM → Platform Ops Lead</td><td class="td-muted">Status update within 2 business days</td></tr>
                   <tr><td>Scope or feasibility unclear</td><td class="td-muted">Platform Ops → Engineering Manager</td><td class="td-muted">Joint assessment within 2 business days</td></tr>
                   <tr><td>Quotation approval delayed &gt; 5 days</td><td class="td-muted">CSM → Lead CSM</td><td class="td-muted">Resolution or cancellation of request</td></tr>
-                  <tr><td>Fee waiver without CTO approval</td><td class="td-muted">CSM → CTO</td><td class="td-muted">Written approval or denial before request proceeds</td></tr>
+                  <tr><td>Fee waiver without CTO + COO approval</td><td class="td-muted">Submit through Tracker → CTO + COO via portal</td><td class="td-muted">Written approval or denial before request proceeds</td></tr>
                   <tr><td>Scope change mid-execution</td><td class="td-muted">Platform Ops Tech Lead → Platform Ops Lead</td><td class="td-muted">Scope frozen; new items logged separately</td></tr>
                   <tr><td>Downtime window not agreed in time</td><td class="td-muted">CSM → Lead CSM → Platform Ops Lead</td><td class="td-muted">Schedule confirmed or request deferred</td></tr>
                 </tbody>
@@ -729,7 +764,7 @@ tr:hover td{background:var(--bg)}
           <div class="sc" data-lc="Request Logged" onclick="scFilter(this)"><div class="sc-label">Request Logged</div><div class="sc-value" id="sc-rl">—</div><div class="sc-sub">Backlog</div></div>
           <div class="sc" data-lc="For Scoping" onclick="scFilter(this)"><div class="sc-label">For Scoping</div><div class="sc-value" id="sc-fs">—</div><div class="sc-sub">Under review</div></div>
           <div class="sc" data-lc="For Quotation" onclick="scFilter(this)"><div class="sc-label">For Quotation</div><div class="sc-value" id="sc-fq">—</div><div class="sc-sub">Active quotation</div></div>
-          <div class="sc" data-lc="For Team Assessment" onclick="scFilter(this)"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="sc-ta">—</div><div class="sc-sub">Pending clarification</div></div>
+          <div class="sc" data-lc="For Team Assessment" onclick="scFilter(this)"><div class="sc-label">Team Assessment</div><div class="sc-value" id="sc-ta">—</div><div class="sc-sub">Pending clarification</div></div>
           <div class="sc" data-lc="Quotation Done" onclick="scFilter(this)"><div class="sc-label">Quotation Done</div><div class="sc-value" id="sc-qd">—</div><div class="sc-sub">No execution</div></div>
           <div class="sc" data-lc="For Execution" onclick="scFilter(this)"><div class="sc-label">For Execution</div><div class="sc-value" id="sc-fe">—</div><div class="sc-sub">CRF raised</div></div>
           <div class="sc" data-lc="Execution Done" onclick="scFilter(this)"><div class="sc-label">Execution Done</div><div class="sc-value" id="sc-ed">—</div><div class="sc-sub">Completed</div></div>
@@ -818,7 +853,7 @@ tr:hover td{background:var(--bg)}
             <div class="sc-an"><div class="sc-label">Request Logged</div><div class="sc-value" id="an-rl">—</div><div class="sc-sub">Backlog</div></div>
             <div class="sc-an"><div class="sc-label">For Scoping</div><div class="sc-value" id="an-fs">—</div><div class="sc-sub">Under review</div></div>
             <div class="sc-an"><div class="sc-label">For Quotation</div><div class="sc-value" id="an-fq">—</div><div class="sc-sub">Active quotation</div></div>
-            <div class="sc-an on-hold"><div class="sc-label">For Team Assessment</div><div class="sc-value" id="an-ta">—</div><div class="sc-sub">Pending clarification</div></div>
+            <div class="sc-an on-hold"><div class="sc-label">Team Assessment</div><div class="sc-value" id="an-ta">—</div><div class="sc-sub">Pending clarification</div></div>
             <div class="sc-an"><div class="sc-label">Quotation Done</div><div class="sc-value" id="an-qd">—</div><div class="sc-sub">No execution ticket</div></div>
             <div class="sc-an"><div class="sc-label">For Execution</div><div class="sc-value" id="an-fe">—</div><div class="sc-sub">CRF raised</div></div>
             <div class="sc-an"><div class="sc-label">Execution Done</div><div class="sc-value" id="an-ed">—</div><div class="sc-sub">Completed</div></div>
@@ -1621,7 +1656,7 @@ function renderStepper(currentLc) {
     return LIFECYCLE_STEPS.map(function(lc) {
       return '<div class="step"><div class="step-dot" style="border-color:var(--mango-lt);background:var(--mango-lt)"></div><div class="step-label" style="color:var(--muted)">' + esc(lc) + '</div></div>';
     }).join('')
-      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">For Team Assessment</div></div>';
+      + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">Team Assessment</div></div>';
   }
   // Normal linear stepper
   return LIFECYCLE_STEPS.map(function(lc) {
@@ -1844,8 +1879,8 @@ function renderWaivePanel(s) {
 
   var cfg     = getWaiveConfig();
   var ctoEmail= cfg.ctoEmail  || 'gdelarama@sprout.ph';
-  var cooEmail= cfg.cooEmail  || 'diane@sprout.ph';
-  var ccEmails= cfg.ccEmails  || 'afrancisco@sprout.ph, gabriellef@sprout.ph';
+  var cooEmail= cfg.cooEmail  || 'kislayc@sprout.ph';
+  var ccEmails= cfg.ccEmails  || 'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph';
 
   // Email config panel — always shown so admin can verify/change before sending
   var configPanel = '<div class="waive-config">'
@@ -1978,11 +2013,13 @@ async function sendWaiveRequest(jiraKey, isTest) {
     jiraKey:     jiraKey,
     // Recipient config — passed from portal so GAS doesn't need them hardcoded
     ctoEmail:    cfg.ctoEmail  || 'gdelarama@sprout.ph',
-    cooEmail:    cfg.cooEmail  || 'diane@sprout.ph',
-    ccEmails:    cfg.ccEmails  || 'afrancisco@sprout.ph, gabriellef@sprout.ph',
+    cooEmail:    cfg.cooEmail  || 'kislayc@sprout.ph',
+    ccEmails:    cfg.ccEmails  || 'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph',
     // Ticket context
     clientName:  s ? s.clientName  : (isTest ? 'Test Client'    : '—'),
     serviceType: s ? s.serviceType : (isTest ? 'Test Service'   : '—'),
+    category:    s ? s.category    : (isTest ? 'Database'       : '—'),
+    description: s ? s.description : (isTest ? '[TEST] Sample request description for testing purposes.' : '—'),
     csmName:     s ? s.csmName     : (isTest ? 'Test CSM'       : '—'),
     csmEmail:    s ? s.csmEmail    : '',
     hrUrl:       s ? s.hrUrl       : (isTest ? 'testclient.hrhub.ph' : '—'),
