@@ -101,9 +101,23 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc[data-lc="For Team Assessment"].active{border-color:var(--mango);background:var(--mango-lt)}
 .sc[data-lc="For Team Assessment"].active .sc-label,.sc[data-lc="For Team Assessment"].active .sc-sub{color:#7a4800}
 .sc[data-lc="For Team Assessment"].active .sc-value{color:var(--mango)}
-.analytics-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.analytics-meta{display:flex;gap:6px;flex-wrap:wrap;flex-direction:column}
+.analytics-meta-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:20px}
 .meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .meta-pill span{color:var(--text);font-weight:600}
+.meta-pill-paid{background:#e8ecfd;border-color:#b8c9f9;color:#1c3a9e}
+.meta-pill-paid span{color:#1c3a9e;font-weight:700}
+.meta-pill-waived{background:#ede9ff;border-color:#c5b8f5;color:#3b1d9e}
+.meta-pill-waived span{color:#3b1d9e;font-weight:700}
+.meta-pill-free{background:#e0f5f8;border-color:#9dd8e2;color:#074f5a}
+.meta-pill-free span{color:#074f5a;font-weight:700}
+.meta-pill-withdrawn{background:#fff3cd;border-color:#f0c040;color:#7a4800}
+.meta-pill-withdrawn span{color:#7a4800;font-weight:700}
+.meta-pill-rev-in{background:#d4f5df;border-color:#7dd49a;color:#0d5a24;font-weight:500}
+.meta-pill-rev-in span{color:#0d5a24;font-weight:700}
+.meta-pill-rev-out{background:#ffe0e0;border-color:#fbbdbd;color:#7a1010;font-weight:500}
+.meta-pill-rev-out span{color:#7a1010;font-weight:700}
+.meta-pill-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);padding:3px 6px 3px 0;white-space:nowrap;align-self:center}
 .body{display:flex;flex:1;overflow:hidden}
 .sidebar{width:var(--sw);flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
 .sb-search{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center}
@@ -335,6 +349,38 @@ tr:hover td{background:var(--bg)}
 .sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+/* Free badge on service cards */
+.sv-cost-free{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:#e0f5f8;color:#074f5a;white-space:nowrap;flex-shrink:0}
+.sv-cost-paid{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:var(--mango-lt);color:#7a4800;white-space:nowrap;flex-shrink:0}
+/* Services section divider */
+.sv-section-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:8px 2px 6px;grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.sv-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Waive request panel */
+.waive-panel{background:var(--lavender-lt);border:1.5px solid #c5b8f5;border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.waive-panel .dsh{background:#ede9ff;border-bottom:1px solid #c5b8f5}
+.waive-panel .dsh h3{color:#3b1d9e}
+.waive-inner{padding:14px}
+.waive-status-badge{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.waive-status-pending{background:#fff3cd;color:#7a4800;border:1px solid #f08c00}
+.waive-status-sent{background:#e0f5f8;color:#074f5a;border:1px solid #0c8599}
+.waive-status-approved{background:#d4f5df;color:#0d5a24;border:1px solid #2a9e50}
+.waive-status-rejected{background:#ffe0e0;color:#7a1010;border:1px solid #c92a2a}
+.waive-status-clarify{background:#fff3cd;color:#7a4800;border:1px solid #f08c00}
+.waive-field{margin-bottom:10px}
+.waive-field label{display:block;font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:4px}
+.waive-field input,.waive-field textarea,.waive-field select{width:100%;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--surface);border:1.5px solid #c5b8f5;border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s}
+.waive-field input:focus,.waive-field textarea:focus,.waive-field select:focus{border-color:var(--lavender)}
+.waive-field textarea{resize:vertical;min-height:90px;line-height:1.6}
+.waive-send-btn{font-family:'Rubik',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;background:var(--lavender);border:none;color:#fff;transition:background 0.15s;width:100%;margin-top:4px}
+.waive-send-btn:hover{background:#5c3dd8}
+.waive-send-btn:disabled{opacity:0.55;cursor:not-allowed}
+.waive-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
+.waive-msg-ok{color:#3b1d9e;font-weight:500}
+.waive-msg-err{color:var(--tomato)}
+.waive-history{margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5}
+.waive-history-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:6px}
+.waive-hist-item{background:var(--surface);border-radius:6px;padding:8px 10px;margin-bottom:5px;font-size:0.78rem;color:var(--text);border-left:2px solid var(--lavender)}
+.waive-hist-meta{font-size:0.67rem;color:var(--muted);margin-bottom:2px}
 .sv-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;flex:1}
 .sv-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px}
 .sv-card-price{font-size:0.8rem;font-weight:600;color:var(--primary-dk)}
@@ -672,7 +718,10 @@ tr:hover td{background:var(--bg)}
           <div class="sc" data-lc="Execution Done" onclick="scFilter(this)"><div class="sc-label">Execution Done</div><div class="sc-value" id="sc-ed">—</div><div class="sc-sub">Completed</div></div>
           <div class="sc" data-lc="Closed" onclick="scFilter(this)"><div class="sc-label">Closed</div><div class="sc-value" id="sc-cl">—</div><div class="sc-sub">Request closed</div></div>
         </div>
-        <div class="analytics-meta" id="analyticsMeta"></div>
+        <div class="analytics-meta" id="analyticsMeta">
+          <div class="analytics-meta-row" id="analyticsMetaCounts"></div>
+          <div class="analytics-meta-row" id="analyticsMetaRevenue"></div>
+        </div>
       </div>
       <div class="body">
         <div class="sidebar">
@@ -858,7 +907,14 @@ tr:hover td{background:var(--bg)}
     <div class="svc-form-group"><label>Service Name <span style="color:var(--tomato)">*</span></label><input type="text" id="svcName" placeholder="e.g. Data Migration"/></div>
     <div class="svc-form-group"><label>Category <span style="color:var(--tomato)">*</span></label><input type="text" id="svcCategory" placeholder="e.g. Database, Configuration"/></div>
     <div class="svc-form-group"><label>Description / Overview</label><textarea id="svcDesc" rows="3" placeholder="What does this service involve? What's included?"></textarea></div>
-    <div class="svc-form-group"><label>Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
+    <div class="svc-form-group">
+      <label>Cost Type <span style="color:var(--tomato)">*</span></label>
+      <select id="svcCostType" onchange="toggleSvcPriceField()">
+        <option value="With Cost">With Cost — requires CTO/COO approval to waive</option>
+        <option value="Free">Free — no charge to client</option>
+      </select>
+    </div>
+    <div class="svc-form-group" id="svcPriceGroup"><label id="svcPriceLabel">Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
     <div class="svc-form-group"><label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/></div>
     <div class="svc-modal-actions">
       <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
@@ -1095,7 +1151,12 @@ function renderServicesView() {
   var countEl = document.getElementById('svResultCount');
   if (countEl) countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
   if (!filtered.length) { grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>'; return; }
-  grid.innerHTML = filtered.map(function(svc) {
+
+  // Split into Free and With Cost
+  var freeItems   = filtered.filter(function(s) { return s.costType === 'Free'; });
+  var paidItems   = filtered.filter(function(s) { return s.costType !== 'Free'; });
+
+  function renderCard(svc) {
     var cardId = 'svcard-' + svc.id.replace(/[^a-z0-9]/gi, '-');
     var adminActions = '';
     if (isAdmin) {
@@ -1103,20 +1164,39 @@ function renderServicesView() {
         + '<button class="sv-btn-del" onclick="event.stopPropagation();deleteService(\'' + svc.id.replace(/'/g, "\\'") + '\')">Delete</button>';
     }
     var chevron = '<svg class="sv-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    var isFree = svc.costType === 'Free';
     var expandRows = '';
-    if (svc.price) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(svc.price) + '</span></div>';
+    // Always show Cost Type
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Cost Type</span><span class="sv-card-expand-value">' + (isFree ? '<span class="sv-cost-free" style="font-size:0.7rem">Free</span>' : '<span class="sv-cost-paid" style="font-size:0.7rem">With Cost</span>') + '</span></div>';
+    // Always show Estimated Cost — "Free" label for free services, price or "Quoted per request" for paid
+    var costDisplay = isFree ? 'Free — no charge to client' : (svc.price || 'Quoted per request');
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(costDisplay) + '</span></div>';
     if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
-    if (!expandRows) expandRows = '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">No additional details available for this service.</p>';
     var expandFooter = '<div class="sv-card-expand-footer"><div style="display:flex;gap:6px">' + adminActions + '</div><button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button></div>';
+    var costBadge = svc.costType === 'Free'
+      ? '<span class="sv-cost-free">Free</span>'
+      : '<span class="sv-cost-paid">With Cost</span>';
     return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')">'
       + '<div class="sv-card-header"><span class="sv-card-name">' + esc(svc.name) + '</span>'
-      + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+      + '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+      + costBadge
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
       + chevron + '</div></div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
       + '<div class="sv-card-expand" id="' + cardId + '-expand">' + expandRows + expandFooter + '</div>'
       + '</div>';
-  }).join('');
+  }
+
+  var html = '';
+  if (paidItems.length) {
+    html += '<div class="sv-section-label">With Cost <span style="font-size:0.6rem;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— requires CTO &amp; COO approval to waive</span></div>';
+    html += paidItems.map(renderCard).join('');
+  }
+  if (freeItems.length) {
+    html += '<div class="sv-section-label">Free Services</div>';
+    html += freeItems.map(renderCard).join('');
+  }
+  grid.innerHTML = html;
 }
 
 var editingServiceId = null;
@@ -1124,6 +1204,8 @@ function openServiceModal(id) {
   editingServiceId = id || null;
   document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
   ['svcName','svcCategory','svcDesc','svcPrice','svcTeams'].forEach(function(f) { document.getElementById(f).value = ''; });
+  document.getElementById('svcCostType').value = 'With Cost';
+  toggleSvcPriceField();
   if (id) {
     var svc = servicesList.find(function(s) { return s.id === id; });
     if (svc) {
@@ -1132,6 +1214,8 @@ function openServiceModal(id) {
       document.getElementById('svcDesc').value     = svc.description || '';
       document.getElementById('svcPrice').value    = svc.price       || '';
       document.getElementById('svcTeams').value    = svc.teams       || '';
+      document.getElementById('svcCostType').value = svc.costType    || 'With Cost';
+      toggleSvcPriceField();
     }
   }
   document.getElementById('svcModal').classList.add('open');
@@ -1139,17 +1223,30 @@ function openServiceModal(id) {
 }
 function closeSvcModal() { document.getElementById('svcModal').classList.remove('open'); editingServiceId = null; }
 
+function toggleSvcPriceField() {
+  var isFree = document.getElementById('svcCostType').value === 'Free';
+  var label = document.getElementById('svcPriceLabel');
+  var input = document.getElementById('svcPrice');
+  if (label) label.innerHTML = isFree
+    ? 'Cost Note <span style="color:var(--muted);font-weight:400">(optional — e.g. "Free for active clients")</span>'
+    : 'Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span>';
+  if (input) input.placeholder = isFree
+    ? 'e.g. Free for all active clients'
+    : 'e.g. ₱5,000 – ₱15,000 or Quoted per request';
+}
+
 async function saveService() {
   var name = document.getElementById('svcName').value.trim();
   var category = document.getElementById('svcCategory').value.trim();
-  var desc  = document.getElementById('svcDesc').value.trim();
-  var price = document.getElementById('svcPrice').value.trim();
-  var teams = document.getElementById('svcTeams').value.trim();
+  var desc     = document.getElementById('svcDesc').value.trim();
+  var costType = document.getElementById('svcCostType').value || 'With Cost';
+  var price    = document.getElementById('svcPrice').value.trim();
+  var teams    = document.getElementById('svcTeams').value.trim();
   if (!name) { document.getElementById('svcName').focus(); return; }
   if (!category) { document.getElementById('svcCategory').focus(); return; }
   var btn = document.getElementById('svcSaveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
-  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, price, teams,
+  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, costType, price, teams,
     sortOrder: editingServiceId ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0 : servicesList.length + 1 };
   if (editingServiceId) { var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; }); if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc); } else servicesList.push(svc);
   lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
@@ -1306,15 +1403,36 @@ async function loadAnalytics() {
     document.getElementById('sc-fe').textContent  = lc['For Execution']               != null ? lc['For Execution']               : '—';
     document.getElementById('sc-ed').textContent  = lc['Execution Done']              != null ? lc['Execution Done']              : '—';
     document.getElementById('sc-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
-    var meta = document.getElementById('analyticsMeta');
-    var pills = [];
-    if (data.byCost) { pills.push('Paid: <span>' + (data.byCost['Paid']||0) + '</span>'); pills.push('Waived: <span>' + (data.byCost['Waived']||0) + '</span>'); pills.push('Withdrawn: <span>' + (data.byCost['Withdrawn']||0) + '</span>'); pills.push('Cost TBD: <span>' + (data.byCost['Pending']||0) + '</span>'); }
-    if (data.revenueReceived != null) pills.push('Revenue received: <span>' + fmtPhp(data.revenueReceived) + '</span>');
-    if (data.revenueLost != null) pills.push('Revenue lost: <span>' + fmtPhp(data.revenueLost) + '</span>');
-    if (data.avgDays != null) pills.push('Avg. resolution: <span>' + data.avgDays + 'd</span>');
-    if (data.monthlyArr && data.monthlyArr.length) { var last = data.monthlyArr[data.monthlyArr.length-1]; pills.push('This month: <span>' + last.count + ' request' + (last.count !== 1 ? 's' : '') + '</span>'); }
-    if (data.byService) { var top = Object.entries(data.byService).sort((a,b) => b[1]-a[1])[0]; if (top) pills.push('Top service: <span>' + top[0] + '</span>'); }
-    meta.innerHTML = pills.map(p => '<div class="meta-pill">' + p + '</div>').join('');
+    var countRow   = document.getElementById('analyticsMetaCounts');
+    var revenueRow = document.getElementById('analyticsMetaRevenue');
+
+    // ── Row 1: Service cost status counts + Free services ────────────────────
+    var countPills = [];
+    countPills.push('<span class="meta-pill-label">Requests:</span>');
+    if (data.byCost) {
+      countPills.push('<div class="meta-pill meta-pill-paid">Paid <span>' + (data.byCost['Paid'] || 0) + '</span></div>');
+      countPills.push('<div class="meta-pill meta-pill-waived">Waived <span>' + (data.byCost['Waived'] || 0) + '</span></div>');
+      countPills.push('<div class="meta-pill meta-pill-free">Free Services <span>' + (data.byCost['Free'] || 0) + '</span></div>');
+      if ((data.byCost['Withdrawn'] || 0) > 0) countPills.push('<div class="meta-pill meta-pill-withdrawn">Withdrawn <span>' + data.byCost['Withdrawn'] + '</span></div>');
+      countPills.push('<div class="meta-pill">Cost TBD <span>' + (data.byCost['Pending'] || 0) + '</span></div>');
+    }
+    if (data.avgDays != null) countPills.push('<div class="meta-pill">Avg. resolution <span>' + data.avgDays + 'd</span></div>');
+    if (countRow) countRow.innerHTML = countPills.join('');
+
+    // ── Row 2: Revenue ────────────────────────────────────────────────────────
+    var revPills = [];
+    revPills.push('<span class="meta-pill-label">Revenue:</span>');
+    revPills.push('<div class="meta-pill meta-pill-rev-in">Received <span>' + fmtPhp(data.revenueReceived != null ? data.revenueReceived : 0) + '</span></div>');
+    revPills.push('<div class="meta-pill meta-pill-rev-out">Lost (Waived) <span>' + fmtPhp(data.revenueLost != null ? data.revenueLost : 0) + '</span></div>');
+    if (data.monthlyArr && data.monthlyArr.length) {
+      var last = data.monthlyArr[data.monthlyArr.length - 1];
+      revPills.push('<div class="meta-pill">This month <span>' + last.count + ' request' + (last.count !== 1 ? 's' : '') + '</span></div>');
+    }
+    if (data.byService) {
+      var top = Object.entries(data.byService).sort(function(a,b){ return b[1]-a[1]; })[0];
+      if (top) revPills.push('<div class="meta-pill">Top service <span>' + esc(top[0]) + '</span></div>');
+    }
+    if (revenueRow) revenueRow.innerHTML = revPills.join('');
   } catch(e) {}
 }
 
@@ -1656,7 +1774,8 @@ function renderOpCard(s) {
     + '<div class="iitem"><label>Cost Status</label><select id="op-status" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">' + statusOpts + '</select></div>'
     + '<div class="iitem" style="display:flex;align-items:flex-end"><button onclick="saveOpDetails(\'' + jk + '\')" style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%" onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">Save</button></div>'
     + quotSection
-    + '</div></div></div>';
+    + '</div></div></div>'
+    + renderWaivePanel(s);
 }
 
 async function saveOpDetails(jiraKey) {
@@ -1679,6 +1798,140 @@ async function saveOpDetails(jiraKey) {
     render();
     if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
   } catch(e) { alert('Save failed: ' + e.message); }
+}
+
+// ── WAIVE REQUEST PANEL ───────────────────────────────────────────────────────
+// Rendered inside renderOpCard for admin view only.
+// Shows the waive request form — CSM reason, business justification, impact.
+// On send: fires GAS action=sendWaiveRequest which emails CTO (gdelarama@sprout.ph)
+// CC: COO (diane@sprout.ph), PlatOps Lead (gabriellef@sprout.ph), requesting CSM.
+// Email includes Approve / Reject / Request Clarification action links.
+
+function renderWaivePanel(s) {
+  if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') return '';
+  var jk       = s.jiraKey;
+  var wStatus  = s.waiveStatus  || '';   // 'Pending' | 'Sent' | 'Approved' | 'Rejected' | 'Clarification Requested'
+  var wReason  = s.waiveReason  || '';
+  var wJustify = s.waiveJustify || '';
+  var wImpact  = s.waiveImpact  || '';
+  var wSentAt  = s.waiveSentAt  || '';
+  var wNote    = s.waiveNote    || '';   // clarification note or rejection note from CTO
+
+  var statusBadge = '';
+  if (wStatus === 'Sent')                     statusBadge = '<span class="waive-status-badge waive-status-sent">● Sent — awaiting CTO/COO approval</span>';
+  else if (wStatus === 'Approved')             statusBadge = '<span class="waive-status-badge waive-status-approved">✓ Approved by CTO/COO</span>';
+  else if (wStatus === 'Rejected')             statusBadge = '<span class="waive-status-badge waive-status-rejected">✕ Rejected</span>';
+  else if (wStatus === 'Clarification Requested') statusBadge = '<span class="waive-status-badge waive-status-clarify">⚑ Clarification requested</span>';
+
+  var noteBlock = (wNote && (wStatus === 'Rejected' || wStatus === 'Clarification Requested'))
+    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid ' + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
+      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">' + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
+      + '<div style="font-size:0.8rem;color:var(--text)">' + esc(wNote) + '</div>'
+      + '</div>'
+    : '';
+
+  // Read-only view after sending
+  var formOrHistory = '';
+  if (wStatus === 'Sent' || wStatus === 'Approved' || wStatus === 'Rejected') {
+    formOrHistory = '<div class="waive-history">'
+      + (wSentAt ? '<div class="waive-hist-meta">Sent ' + wSentAt + '</div>' : '')
+      + '<div class="waive-hist-item"><strong>CSM Reason:</strong> ' + esc(wReason) + '</div>'
+      + '<div class="waive-hist-item"><strong>Business Justification:</strong> ' + esc(wJustify) + '</div>'
+      + (wImpact ? '<div class="waive-hist-item"><strong>Client Impact if Charged:</strong> ' + esc(wImpact) + '</div>' : '')
+      + noteBlock
+      + '</div>';
+    if (wStatus === 'Clarification Requested') {
+      // Allow resubmit with updated details
+      formOrHistory += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5">'
+        + '<div style="font-size:0.72rem;color:#3b1d9e;font-weight:500;margin-bottom:8px">Update your details and resubmit:</div>'
+        + renderWaiveForm(jk, wReason, wJustify, wImpact, true)
+        + '</div>';
+    }
+  } else {
+    formOrHistory = renderWaiveForm(jk, wReason, wJustify, wImpact, false);
+  }
+
+  return '<div class="waive-panel">'
+    + '<div class="dsh"><h3>Waiver Request</h3>'
+    + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '')
+    + '</div>'
+    + '<div class="waive-inner">'
+    + (statusBadge ? '<div>' + statusBadge + '</div>' : '')
+    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">To waive the service fee, provide a detailed defense below. This will be sent to the CTO (<strong style="color:var(--text)">Gian Dela Rama</strong>) with the COO on CC for approval. The requesting CSM will receive a copy for visibility.</p>'
+    + formOrHistory
+    + '</div></div>';
+}
+
+function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
+  var btn = isResubmit ? 'Resubmit Waiver Request' : 'Send Waiver Request to CTO &amp; COO';
+  return '<div class="waive-field"><label>CSM Reason for Waiver <span style="color:var(--tomato)">*</span></label>'
+    + '<input type="text" id="waive-reason" value="' + esc(reason) + '" placeholder="e.g. Client is on a paid pilot, goodwill gesture, executive-level commitment…"/></div>'
+    + '<div class="waive-field"><label>Business Justification &amp; Defense <span style="color:var(--tomato)">*</span></label>'
+    + '<textarea id="waive-justify" rows="4" placeholder="Provide a detailed defense: Why should this fee be waived? What is the strategic or commercial rationale? What precedent does this set? What approvals have been discussed with sales or leadership?">' + esc(justify) + '</textarea></div>'
+    + '<div class="waive-field"><label>Client Impact if Charged <span style="color:var(--muted);font-weight:400">(optional but recommended)</span></label>'
+    + '<input type="text" id="waive-impact" value="' + esc(impact) + '" placeholder="e.g. Client may churn, at risk of non-renewal, MRR value…"/></div>'
+    + '<button class="waive-send-btn" id="waiveSendBtn" onclick="sendWaiveRequest(\'' + jk + '\')">' + btn + '</button>'
+    + '<div class="waive-msg" id="waiveMsg"></div>';
+}
+
+async function sendWaiveRequest(jiraKey) {
+  var reason  = (document.getElementById('waive-reason')  || {}).value || '';
+  var justify = (document.getElementById('waive-justify') || {}).value || '';
+  var impact  = (document.getElementById('waive-impact')  || {}).value || '';
+  var msgEl   = document.getElementById('waiveMsg');
+  var btn     = document.getElementById('waiveSendBtn');
+
+  if (!reason.trim())  { if (msgEl) { msgEl.textContent = 'Please provide the CSM reason.';         msgEl.className = 'waive-msg waive-msg-err'; } return; }
+  if (!justify.trim()) { if (msgEl) { msgEl.textContent = 'Business justification is required.';    msgEl.className = 'waive-msg waive-msg-err'; } return; }
+
+  btn.disabled = true; btn.textContent = 'Sending…';
+  if (msgEl) { msgEl.textContent = ''; msgEl.className = 'waive-msg'; }
+
+  var s = all.find(function(x) { return x.jiraKey === jiraKey; });
+  var payload = {
+    action:      'sendWaiveRequest',
+    jiraKey:     jiraKey,
+    clientName:  s ? s.clientName  : '—',
+    serviceType: s ? s.serviceType : '—',
+    csmName:     s ? s.csmName     : '—',
+    csmEmail:    s ? s.csmEmail    : '',
+    hrUrl:       s ? s.hrUrl       : '—',
+    serviceCost: s ? s.serviceCost : '',
+    reason:      reason.trim(),
+    justify:     justify.trim(),
+    impact:      impact.trim(),
+    submittedBy: userEmail,
+  };
+
+  try {
+    // Use regular fetch (not no-cors) so we can read the response
+    var res  = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) });
+    var data = await res.json();
+    if (data.success) {
+      // Update local state
+      if (s) {
+        s.waiveStatus  = 'Sent';
+        s.waiveReason  = reason.trim();
+        s.waiveJustify = justify.trim();
+        s.waiveImpact  = impact.trim();
+        s.waiveSentAt  = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+        try {
+          var ck = 'tracker_cache_' + USER_EMAIL;
+          var ex = sessionStorage.getItem(ck);
+          if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(ck, JSON.stringify(p)); }
+        } catch(ce) {}
+      }
+      if (msgEl) { msgEl.textContent = 'Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className = 'waive-msg waive-msg-ok'; }
+      // Re-render detail to show read-only history view
+      setTimeout(function() { if (s) renderDetail(s, null); }, 1500);
+    } else {
+      if (msgEl) { msgEl.textContent = 'Failed: ' + (data.error || 'Unknown error'); msgEl.className = 'waive-msg waive-msg-err'; }
+      btn.disabled = false; btn.textContent = 'Send Waiver Request to CTO &amp; COO';
+    }
+  } catch(e) {
+    if (msgEl) { msgEl.textContent = 'Could not send. Please check your connection.'; msgEl.className = 'waive-msg waive-msg-err'; }
+    btn.disabled = false; btn.textContent = 'Send Waiver Request to CTO &amp; COO';
+  }
 }
 
 async function sendCsmComment(jiraKey) {
