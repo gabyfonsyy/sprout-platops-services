@@ -262,6 +262,79 @@
   .others-field { display: none; margin-top: 8px; }
   .others-field.visible { display: block; }
 
+  /* Category selection tiles */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .cat-option { position: relative; }
+  .cat-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+  .cat-option label {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; font-size: 0.8rem; font-weight: 400;
+    padding: 0.625rem 0.5rem; border: 1px solid var(--border); border-radius: 6px;
+    cursor: pointer; transition: all 0.15s; background: var(--white);
+    color: var(--ink-muted); line-height: 1.3; min-height: 48px; gap: 4px;
+  }
+  .cat-option input[type="radio"]:checked + label {
+    border-color: var(--green-mid); background: var(--green-light);
+    color: var(--green); font-weight: 500; box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
+  }
+  .cat-option label:hover { border-color: var(--green-muted); color: var(--green); }
+  .cat-option-count {
+    font-size: 0.62rem; color: inherit; opacity: 0.65; font-weight: 400;
+  }
+  /* Service sub-selection — shown after category is picked */
+  .svc-subselect {
+    display: none; margin-top: 10px;
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .svc-subselect.visible { display: block; }
+  .svc-subselect-head {
+    padding: 8px 12px; background: var(--green-light);
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--green-mid);
+    border-bottom: 1px solid var(--border);
+  }
+  .svc-subselect-list { display: flex; flex-direction: column; }
+  .svc-sub-option { position: relative; }
+  .svc-sub-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+  .svc-sub-option label {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; cursor: pointer; transition: background 0.12s;
+    border-bottom: 1px solid var(--border); font-size: 0.8375rem; color: var(--ink);
+    font-weight: 400; text-align: left;
+  }
+  .svc-sub-option:last-child label { border-bottom: none; }
+  .svc-sub-option label:hover { background: #f4f9f4; }
+  .svc-sub-option input[type="radio"]:checked + label {
+    background: var(--green-light); color: var(--green); font-weight: 500;
+  }
+  .svc-sub-radio-dot {
+    width: 16px; height: 16px; border: 2px solid var(--border);
+    border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.12s;
+  }
+  .svc-sub-option input[type="radio"]:checked + label .svc-sub-radio-dot {
+    border-color: var(--green-mid); background: var(--green-mid);
+    box-shadow: inset 0 0 0 3px var(--white);
+  }
+  .svc-sub-info { flex: 1; }
+  .svc-sub-name { font-size: 0.8375rem; line-height: 1.3; margin-bottom: 2px; }
+  .svc-sub-desc { font-size: 0.75rem; color: var(--ink-muted); line-height: 1.5; font-weight: 400; }
+  .svc-sub-badge {
+    font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  }
+  .svc-sub-free { background: #e0f5f8; color: #074f5a; }
+  .svc-sub-paid { background: #faeeda; color: #7a4800; }
+  .svc-sub-cost { font-size: 0.72rem; font-weight: 500; margin-top: 4px; }
+  .svc-sub-cost-free { color: #0F6E56; }
+  .svc-sub-cost-paid { color: #854F0B; }
+
   .disclaimer {
     background: var(--white);
     border: 1px solid var(--border);
@@ -785,18 +858,27 @@
 
       <div class="field" id="f-service">
         <label>Service type <span class="req">*</span></label>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div class="field-hint" style="margin-bottom:0">Showing top 6. Don't see what you need?</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="field-hint" style="margin-bottom:0">Select a category, then choose the specific service.</div>
           <button type="button" class="view-services-btn" onclick="openServicesPreview()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             View all services
           </button>
         </div>
-        <div class="service-grid" id="serviceGrid"></div>
+
+        <!-- Step 1: Category tiles -->
+        <div class="cat-grid" id="catGrid"></div>
+
+        <!-- Step 2: Services in selected category -->
+        <div class="svc-subselect" id="svcSubselect">
+          <div class="svc-subselect-head" id="svcSubselectHead">Services</div>
+          <div class="svc-subselect-list" id="svcSubselectList"></div>
+        </div>
+
         <div class="others-field" id="othersField">
           <input type="text" id="othersSpecify" name="othersSpecify" placeholder="Please specify..."/>
         </div>
-        <div class="error-msg" id="service-error" style="display:none">Please select a service type.</div>
+        <div class="error-msg" id="service-error" style="display:none">Please select a category and service.</div>
 
         <!-- Data Migration Notice -->
         <div class="migration-notice" id="migrationNotice">
@@ -1041,6 +1123,17 @@ const DEFAULT_SERVICES = [
   'Rename Database', 'Database Backup', 'Others'
 ];
 
+function getServicesCache() {
+  try {
+    var raw = localStorage.getItem('platops_services_cache');
+    if (raw) {
+      var svcs = JSON.parse(raw);
+      if (Array.isArray(svcs) && svcs.length) return svcs;
+    }
+  } catch(e) {}
+  return null;
+}
+
 function getServiceNames() {
   try {
     var raw = localStorage.getItem('platops_service_names');
@@ -1056,9 +1149,7 @@ function fetchServicesFromGAS() {
   fetch(SHEET_URL + '?action=getServices', { redirect: 'follow' })
     .then(function(r) {
       var ct = r.headers.get('content-type') || '';
-      if (!ct.includes('application/json') && !ct.includes('text/plain')) {
-        throw new Error('Non-JSON response');
-      }
+      if (!ct.includes('application/json') && !ct.includes('text/plain')) throw new Error('Non-JSON response');
       return r.json();
     })
     .then(function(d) {
@@ -1068,70 +1159,170 @@ function fetchServicesFromGAS() {
       var names = svcs.map(function(s) { return s.name; });
       if (!names.some(function(n){ return n.toLowerCase() === 'others'; })) names.push('Others');
       try { localStorage.setItem('platops_service_names', JSON.stringify(names)); } catch(e) {}
-      renderServiceTiles();
+      renderCategoryTiles();
     })
-    .catch(function(err) {
-      console.warn('fetchServicesFromGAS:', err);
-    });
+    .catch(function(err) { console.warn('fetchServicesFromGAS:', err); });
 }
 
-function renderServiceTiles() {
-  var grid = document.getElementById('serviceGrid');
+// ── Step 1: Render category tiles ────────────────────────────────────────────
+function renderCategoryTiles() {
+  var grid = document.getElementById('catGrid');
   if (!grid) return;
-  var names = getServiceNames();
-  var others  = names.filter(function(n){ return n.toLowerCase() === 'others'; });
-  var rest    = names.filter(function(n){ return n.toLowerCase() !== 'others'; });
-  var othersName = others.length ? others[0] : 'Others';
-  var visible = rest.slice(0, 5).concat([othersName]);
+  var svcs = getServicesCache();
 
-  grid.innerHTML = visible.map(function(name, idx) {
-    var id = 'svc-dyn-' + idx;
-    return '<div class="service-option">'
-      + '<input type="radio" name="serviceType" id="' + id + '" value="' + name.replace(/"/g,'&quot;') + '"/>'
-      + '<label for="' + id + '">' + name + '</label>'
+  // Build category list from cache, or fall back to unique names as single category
+  var cats = [];
+  if (svcs && svcs.length) {
+    var seen = {};
+    svcs.forEach(function(s) {
+      var cat = (s.category || 'Other').trim();
+      if (!seen[cat]) { seen[cat] = 0; }
+      seen[cat]++;
+    });
+    // Sort alphabetically, put 'Other' last
+    cats = Object.keys(seen).sort(function(a, b) {
+      if (a === 'Other') return 1;
+      if (b === 'Other') return -1;
+      return a.localeCompare(b);
+    });
+    // Always append an "Others" option for anything not in the list
+    cats.push('Others');
+  } else {
+    // No cache yet — show generic placeholder categories
+    cats = ['Database', 'Configuration', 'Others'];
+  }
+
+  grid.innerHTML = cats.map(function(cat, i) {
+    var id    = 'cat-' + i;
+    var count = svcs ? (svcs.filter(function(s) { return (s.category||'Other').trim() === cat; }).length || '') : '';
+    var countHtml = (count && cat !== 'Others') ? '<span class="cat-option-count">' + count + ' service' + (count !== 1 ? 's' : '') + '</span>' : '';
+    return '<div class="cat-option">'
+      + '<input type="radio" name="serviceCategory" id="' + id + '" value="' + cat.replace(/"/g,'&quot;') + '"/>'
+      + '<label for="' + id + '">' + cat + countHtml + '</label>'
       + '</div>';
   }).join('');
 
-  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
+  // Attach change listeners
+  document.querySelectorAll('input[name="serviceCategory"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      onCategorySelected(this.value);
+    });
+  });
+}
+
+// ── Step 2: Render service sub-list for selected category ────────────────────
+function onCategorySelected(category) {
+  var subselect = document.getElementById('svcSubselect');
+  var head      = document.getElementById('svcSubselectHead');
+  var list      = document.getElementById('svcSubselectList');
+  var others    = document.getElementById('othersField');
+
+  // Clear any previous service selection
+  document.querySelectorAll('input[name="serviceType"]').forEach(function(r) { r.checked = false; });
+  others.classList.remove('visible');
+  document.getElementById('othersSpecify').value = '';
+  hideAllNotices();
+
+  if (category === 'Others') {
+    subselect.classList.remove('visible');
+    // Show directly as a free-text entry
+    others.classList.add('visible');
+    head.textContent = 'Others';
+    // Inject a virtual checked radio so validation passes and payload has a value
+    injectServiceRadio('Others', true);
+    return;
+  }
+
+  var svcs = getServicesCache();
+  var filtered = svcs ? svcs.filter(function(s) { return (s.category||'Other').trim() === category; }) : [];
+
+  if (!filtered.length) {
+    // No cached services for this category yet — show a text fallback
+    subselect.classList.remove('visible');
+    return;
+  }
+
+  head.textContent = category;
+  list.innerHTML = filtered.map(function(svc, i) {
+    var id       = 'sub-svc-' + i;
+    var isFree   = svc.costType === 'Free';
+    var badge    = isFree
+      ? '<span class="svc-sub-badge svc-sub-free">Free</span>'
+      : '<span class="svc-sub-badge svc-sub-paid">With Cost</span>';
+    var descHtml = svc.description
+      ? '<div class="svc-sub-desc">' + svc.description + '</div>'
+      : '';
+    var costHtml = '';
+    if (isFree) {
+      costHtml = '<div class="svc-sub-cost svc-sub-cost-free">Free — no charge to client</div>';
+    } else if (svc.price) {
+      costHtml = '<div class="svc-sub-cost svc-sub-cost-paid">Est. ' + svc.price + '</div>';
+    }
+    return '<div class="svc-sub-option">'
+      + '<input type="radio" name="serviceType" id="' + id + '" value="' + svc.name.replace(/"/g,'&quot;') + '"/>'
+      + '<label for="' + id + '">'
+      + '<span class="svc-sub-radio-dot"></span>'
+      + '<span class="svc-sub-info"><span class="svc-sub-name">' + svc.name + '</span>' + descHtml + costHtml + '</span>'
+      + badge
+      + '</label>'
+      + '</div>';
+  }).join('');
+
+  subselect.classList.add('visible');
+
+  // Attach change listeners to service radios
+  list.querySelectorAll('input[name="serviceType"]').forEach(function(r) {
     r.addEventListener('change', function() {
       var val = this.value;
-      if (val === 'Others') {
-        document.getElementById('othersField').classList.add('visible');
-      } else {
-        document.getElementById('othersField').classList.remove('visible');
-        document.getElementById('othersSpecify').value = '';
-      }
+      others.classList.remove('visible');
+      document.getElementById('othersSpecify').value = '';
       showNoticeFor(val);
     });
   });
 }
 
+// Injects a hidden checked radio for "Others" so validation + payload still work
+function injectServiceRadio(name, checked) {
+  var existing = document.getElementById('svc-injected');
+  if (existing) existing.remove();
+  var inp = document.createElement('input');
+  inp.type = 'radio'; inp.name = 'serviceType'; inp.id = 'svc-injected';
+  inp.value = name; inp.checked = !!checked;
+  inp.style.cssText = 'position:absolute;opacity:0;width:0;height:0';
+  document.getElementById('f-service').appendChild(inp);
+}
+
+// ── Pre-select by service name (used by ?service= URL param and preview modal) ─
 function tryPreSelectService(serviceName) {
-  var radio = document.querySelector('input[name="serviceType"][value="' + serviceName.replace(/"/g, '&quot;') + '"]');
-  if (radio) {
-    radio.checked = true;
-    radio.dispatchEvent(new Event('change'));
+  if (!serviceName) return false;
+  var svcs = getServicesCache();
+
+  if (serviceName === 'Others') {
+    var catRadio = document.querySelector('input[name="serviceCategory"][value="Others"]');
+    if (catRadio) { catRadio.checked = true; onCategorySelected('Others'); return true; }
+    return false;
+  }
+
+  // Find which category this service belongs to
+  var match = svcs ? svcs.find(function(s) { return s.name.toLowerCase() === serviceName.toLowerCase(); }) : null;
+  var targetCat = match ? (match.category || 'Other').trim() : null;
+
+  if (!targetCat) return false;
+
+  // Select the category tile
+  var catRadio = document.querySelector('input[name="serviceCategory"][value="' + targetCat.replace(/"/g,'&quot;') + '"]');
+  if (!catRadio) return false;
+  catRadio.checked = true;
+  onCategorySelected(targetCat);
+
+  // Now select the service within that category
+  var svcRadio = document.querySelector('input[name="serviceType"][value="' + serviceName.replace(/"/g,'&quot;') + '"]');
+  if (svcRadio) {
+    svcRadio.checked = true;
+    showNoticeFor(serviceName);
     return true;
   }
-  var grid = document.getElementById('serviceGrid');
-  if (!grid) return false;
-  var tempId = 'svc-url-preselect';
-  var existing = document.getElementById(tempId);
-  if (existing) existing.parentElement.remove();
-  var div = document.createElement('div');
-  div.className = 'service-option';
-  div.innerHTML = '<input type="radio" name="serviceType" id="' + tempId + '" value="' + serviceName.replace(/"/g, '&quot;') + '" checked/>'
-    + '<label for="' + tempId + '">' + serviceName + '</label>';
-  grid.appendChild(div);
-  var newRadio = document.getElementById(tempId);
-  newRadio.addEventListener('change', function() {
-    var val = this.value;
-    document.getElementById('othersField').classList[val === 'Others' ? 'add' : 'remove']('visible');
-    if (val !== 'Others') document.getElementById('othersSpecify').value = '';
-    showNoticeFor(val);
-  });
-  showNoticeFor(serviceName);
-  return true;
+  return false;
 }
 
 function initUrlPreSelect() {
@@ -1191,35 +1382,13 @@ function closeServicesPreview() {
 
 function selectServiceFromPreview(name) {
   closeServicesPreview();
-  var existingRadio = document.querySelector('input[name="serviceType"][value="' + name.replace(/"/g,'&quot;') + '"]');
-  if (existingRadio) {
-    existingRadio.checked = true;
-    existingRadio.dispatchEvent(new Event('change'));
-    return;
-  }
-  var grid = document.getElementById('serviceGrid');
-  var tempId = 'svc-temp-selected';
-  var existing = document.getElementById(tempId);
-  if (existing) existing.parentElement.remove();
-  var div = document.createElement('div');
-  div.className = 'service-option';
-  div.innerHTML = '<input type="radio" name="serviceType" id="' + tempId + '" value="' + name.replace(/"/g,'&quot;') + '" checked/>'
-    + '<label for="' + tempId + '">' + name + '</label>';
-  grid.appendChild(div);
-  var radio = document.getElementById(tempId);
-  radio.addEventListener('change', function() {
-    var val = this.value;
-    document.getElementById('othersField').classList[val === 'Others' ? 'add' : 'remove']('visible');
-    if (val !== 'Others') document.getElementById('othersSpecify').value = '';
-    showNoticeFor(val);
-  });
-  if (name === 'Others') {
+  // Reuse tryPreSelectService which handles category→service two-step
+  if (!tryPreSelectService(name)) {
+    // Service not in cache — fall back to injecting directly as Others
     document.getElementById('othersField').classList.add('visible');
-  } else {
-    document.getElementById('othersField').classList.remove('visible');
-    document.getElementById('othersSpecify').value = '';
+    document.getElementById('othersSpecify').value = name;
+    injectServiceRadio('Others', true);
   }
-  showNoticeFor(name);
 }
 
 document.getElementById('svcPreviewOverlay').addEventListener('click', function(e) {
@@ -1242,7 +1411,7 @@ function toProperCase(str) {
 
 document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
 
-renderServiceTiles();
+renderCategoryTiles();
 fetchServicesFromGAS();
 initUrlPreSelect();
 
@@ -1557,10 +1726,13 @@ function resetForm() {
   document.getElementById('submitBtn').disabled = false;
   document.getElementById('submitBtn').textContent = 'Submit inquiry';
   document.getElementById('othersField').classList.remove('visible');
+  document.getElementById('svcSubselect').classList.remove('visible');
+  var injected = document.getElementById('svc-injected');
+  if (injected) injected.remove();
   ['service-error','desc-error','ack-error','sig-error'].forEach(id => document.getElementById(id).style.display = 'none');
   hideAllNotices();
   document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-  renderServiceTiles();
+  renderCategoryTiles();
   document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
   const ratio = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
