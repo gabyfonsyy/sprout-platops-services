@@ -377,6 +377,23 @@ tr:hover td{background:var(--bg)}
 .waive-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
 .waive-msg-ok{color:#3b1d9e;font-weight:500}
 .waive-msg-err{color:var(--tomato)}
+/* Config panel inside waive section */
+.waive-config{background:var(--surface);border:1px solid #c5b8f5;border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.waive-config-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.waive-config-head span{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e}
+.waive-config-toggle{font-family:'Rubik',sans-serif;font-size:0.7rem;color:#3b1d9e;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.waive-config-body{display:none;padding-top:8px;border-top:1px solid #c5b8f5;margin-top:8px}
+.waive-config-body.open{display:block}
+.waive-config-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.waive-config-row .waive-field{margin-bottom:0}
+.waive-config-save{font-family:'Rubik',sans-serif;font-size:0.75rem;font-weight:500;padding:5px 14px;border-radius:6px;cursor:pointer;background:var(--lavender);border:none;color:#fff;transition:background 0.15s}
+.waive-config-save:hover{background:#5c3dd8}
+.waive-config-preview{font-size:0.72rem;color:var(--muted);line-height:1.6}
+.waive-config-preview strong{color:var(--text);font-weight:500}
+/* Test email button */
+.waive-test-btn{font-family:'Rubik',sans-serif;font-size:0.75rem;font-weight:500;padding:5px 14px;border-radius:6px;cursor:pointer;background:var(--surface);border:1.5px solid #c5b8f5;color:#3b1d9e;transition:all 0.15s;margin-top:6px;width:100%}
+.waive-test-btn:hover{background:#ede9ff}
+.waive-test-btn:disabled{opacity:0.55;cursor:not-allowed}
 .waive-history{margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5}
 .waive-history-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e;margin-bottom:6px}
 .waive-hist-item{background:var(--surface);border-radius:6px;padding:8px 10px;margin-bottom:5px;font-size:0.78rem;color:var(--text);border-left:2px solid var(--lavender)}
@@ -1803,34 +1820,71 @@ async function saveOpDetails(jiraKey) {
 // ── WAIVE REQUEST PANEL ───────────────────────────────────────────────────────
 // Rendered inside renderOpCard for admin view only.
 // Shows the waive request form — CSM reason, business justification, impact.
-// On send: fires GAS action=sendWaiveRequest which emails CTO (gdelarama@sprout.ph)
-// CC: COO (diane@sprout.ph), PlatOps Lead (gabriellef@sprout.ph), requesting CSM.
+// On send: fires GAS action=sendWaiveRequest which emails CTO + COO (configurable).
 // Email includes Approve / Reject / Request Clarification action links.
+
+var WAIVE_CONFIG_KEY = 'platops_waive_config';
+
+function getWaiveConfig() {
+  try { return JSON.parse(localStorage.getItem(WAIVE_CONFIG_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveWaiveConfig(cfg) {
+  try { localStorage.setItem(WAIVE_CONFIG_KEY, JSON.stringify(cfg)); } catch(e) {}
+}
 
 function renderWaivePanel(s) {
   if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') return '';
   var jk       = s.jiraKey;
-  var wStatus  = s.waiveStatus  || '';   // 'Pending' | 'Sent' | 'Approved' | 'Rejected' | 'Clarification Requested'
+  var wStatus  = s.waiveStatus  || '';
   var wReason  = s.waiveReason  || '';
   var wJustify = s.waiveJustify || '';
   var wImpact  = s.waiveImpact  || '';
   var wSentAt  = s.waiveSentAt  || '';
-  var wNote    = s.waiveNote    || '';   // clarification note or rejection note from CTO
+  var wNote    = s.waiveNote    || '';
+
+  var cfg     = getWaiveConfig();
+  var ctoEmail= cfg.ctoEmail  || 'gdelarama@sprout.ph';
+  var cooEmail= cfg.cooEmail  || 'diane@sprout.ph';
+  var ccEmails= cfg.ccEmails  || 'afrancisco@sprout.ph, gabriellef@sprout.ph';
+
+  // Email config panel — always shown so admin can verify/change before sending
+  var configPanel = '<div class="waive-config">'
+    + '<div class="waive-config-head">'
+    + '<span>Email Recipients</span>'
+    + '<button class="waive-config-toggle" onclick="toggleWaiveConfig()">Edit</button>'
+    + '</div>'
+    + '<div class="waive-config-preview" id="waiveConfigPreview">'
+    + '<strong>To:</strong> ' + esc(ctoEmail) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(cooEmail) + (ccEmails ? ', ' + esc(ccEmails) : '')
+    + '</div>'
+    + '<div class="waive-config-body" id="waiveConfigBody">'
+    + '<div class="waive-config-row">'
+    + '<div class="waive-field"><label>CTO Email (To)</label><input type="email" id="wcto" value="' + esc(ctoEmail) + '" placeholder="cto@sprout.ph"/></div>'
+    + '<div class="waive-field"><label>COO Email (CC)</label><input type="email" id="wcoo" value="' + esc(cooEmail) + '" placeholder="coo@sprout.ph"/></div>'
+    + '</div>'
+    + '<div class="waive-field" style="margin-bottom:8px"><label>Additional CC <span style="font-weight:400;color:var(--muted)">(comma-separated)</span></label>'
+    + '<input type="text" id="wcc" value="' + esc(ccEmails) + '" placeholder="e.g. name@sprout.ph, name2@sprout.ph"/></div>'
+    + '<div style="display:flex;align-items:center;gap:8px">'
+    + '<button class="waive-config-save" onclick="saveWaiveEmailConfig()">Save Recipients</button>'
+    + '<span id="wcSaveMsg" style="font-size:0.72rem;color:#3b1d9e;font-weight:500"></span>'
+    + '</div>'
+    + '</div>'
+    + '</div>';
 
   var statusBadge = '';
-  if (wStatus === 'Sent')                     statusBadge = '<span class="waive-status-badge waive-status-sent">● Sent — awaiting CTO/COO approval</span>';
-  else if (wStatus === 'Approved')             statusBadge = '<span class="waive-status-badge waive-status-approved">✓ Approved by CTO/COO</span>';
-  else if (wStatus === 'Rejected')             statusBadge = '<span class="waive-status-badge waive-status-rejected">✕ Rejected</span>';
+  if (wStatus === 'Sent')                        statusBadge = '<span class="waive-status-badge waive-status-sent">● Awaiting CTO/COO approval</span>';
+  else if (wStatus === 'Approved')               statusBadge = '<span class="waive-status-badge waive-status-approved">✓ Approved by CTO/COO</span>';
+  else if (wStatus === 'Rejected')               statusBadge = '<span class="waive-status-badge waive-status-rejected">✕ Rejected</span>';
   else if (wStatus === 'Clarification Requested') statusBadge = '<span class="waive-status-badge waive-status-clarify">⚑ Clarification requested</span>';
 
   var noteBlock = (wNote && (wStatus === 'Rejected' || wStatus === 'Clarification Requested'))
-    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid ' + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
-      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">' + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
+    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid '
+      + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
+      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">'
+      + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
       + '<div style="font-size:0.8rem;color:var(--text)">' + esc(wNote) + '</div>'
       + '</div>'
     : '';
 
-  // Read-only view after sending
   var formOrHistory = '';
   if (wStatus === 'Sent' || wStatus === 'Approved' || wStatus === 'Rejected') {
     formOrHistory = '<div class="waive-history">'
@@ -1841,7 +1895,6 @@ function renderWaivePanel(s) {
       + noteBlock
       + '</div>';
     if (wStatus === 'Clarification Requested') {
-      // Allow resubmit with updated details
       formOrHistory += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5">'
         + '<div style="font-size:0.72rem;color:#3b1d9e;font-weight:500;margin-bottom:8px">Update your details and resubmit:</div>'
         + renderWaiveForm(jk, wReason, wJustify, wImpact, true)
@@ -1856,81 +1909,124 @@ function renderWaivePanel(s) {
     + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '')
     + '</div>'
     + '<div class="waive-inner">'
-    + (statusBadge ? '<div>' + statusBadge + '</div>' : '')
-    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">To waive the service fee, provide a detailed defense below. This will be sent to the CTO (<strong style="color:var(--text)">Gian Dela Rama</strong>) with the COO on CC for approval. The requesting CSM will receive a copy for visibility.</p>'
+    + configPanel
+    + (statusBadge ? '<div style="margin-bottom:10px">' + statusBadge + '</div>' : '')
+    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Provide a detailed defense below. This will be emailed to the CTO for approval with COO on CC. The requesting CSM receives a copy for visibility.</p>'
     + formOrHistory
     + '</div></div>';
 }
 
 function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
-  var btn = isResubmit ? 'Resubmit Waiver Request' : 'Send Waiver Request to CTO &amp; COO';
+  var btnLabel = isResubmit ? 'Resubmit Waiver Request' : 'Send Waiver Request to CTO &amp; COO';
   return '<div class="waive-field"><label>CSM Reason for Waiver <span style="color:var(--tomato)">*</span></label>'
-    + '<input type="text" id="waive-reason" value="' + esc(reason) + '" placeholder="e.g. Client is on a paid pilot, goodwill gesture, executive-level commitment…"/></div>'
+    + '<input type="text" id="waive-reason" value="' + esc(reason) + '" placeholder="e.g. Client on paid pilot, goodwill gesture, executive commitment…"/></div>'
     + '<div class="waive-field"><label>Business Justification &amp; Defense <span style="color:var(--tomato)">*</span></label>'
-    + '<textarea id="waive-justify" rows="4" placeholder="Provide a detailed defense: Why should this fee be waived? What is the strategic or commercial rationale? What precedent does this set? What approvals have been discussed with sales or leadership?">' + esc(justify) + '</textarea></div>'
+    + '<textarea id="waive-justify" rows="4" placeholder="Why should this fee be waived? What is the strategic or commercial rationale? What precedent does this set? What approvals have already been discussed?">' + esc(justify) + '</textarea></div>'
     + '<div class="waive-field"><label>Client Impact if Charged <span style="color:var(--muted);font-weight:400">(optional but recommended)</span></label>'
     + '<input type="text" id="waive-impact" value="' + esc(impact) + '" placeholder="e.g. Client may churn, at risk of non-renewal, MRR value…"/></div>'
-    + '<button class="waive-send-btn" id="waiveSendBtn" onclick="sendWaiveRequest(\'' + jk + '\')">' + btn + '</button>'
+    + '<button class="waive-send-btn" id="waiveSendBtn" onclick="sendWaiveRequest(\'' + jk + '\')">' + btnLabel + '</button>'
+    + '<button class="waive-test-btn" id="waiveTestBtn" onclick="sendWaiveRequest(\'' + jk + '\', true)">📧 Send Test Email to Me</button>'
     + '<div class="waive-msg" id="waiveMsg"></div>';
 }
 
-async function sendWaiveRequest(jiraKey) {
+function toggleWaiveConfig() {
+  var body    = document.getElementById('waiveConfigBody');
+  var preview = document.getElementById('waiveConfigPreview');
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  if (preview) preview.style.display = isOpen ? 'block' : 'none';
+}
+
+function saveWaiveEmailConfig() {
+  var cto = (document.getElementById('wcto') || {}).value || '';
+  var coo = (document.getElementById('wcoo') || {}).value || '';
+  var cc  = (document.getElementById('wcc')  || {}).value || '';
+  saveWaiveConfig({ ctoEmail: cto.trim(), cooEmail: coo.trim(), ccEmails: cc.trim() });
+  // Update preview
+  var preview = document.getElementById('waiveConfigPreview');
+  if (preview) preview.innerHTML = '<strong>To:</strong> ' + esc(cto) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(coo) + (cc ? ', ' + esc(cc) : '');
+  // Close body
+  var body = document.getElementById('waiveConfigBody');
+  if (body) body.classList.remove('open');
+  if (preview) preview.style.display = 'block';
+  var msg = document.getElementById('wcSaveMsg');
+  if (msg) { msg.textContent = 'Saved ✓'; setTimeout(function(){ msg.textContent = ''; }, 2500); }
+}
+
+async function sendWaiveRequest(jiraKey, isTest) {
   var reason  = (document.getElementById('waive-reason')  || {}).value || '';
   var justify = (document.getElementById('waive-justify') || {}).value || '';
   var impact  = (document.getElementById('waive-impact')  || {}).value || '';
   var msgEl   = document.getElementById('waiveMsg');
-  var btn     = document.getElementById('waiveSendBtn');
+  var btn     = document.getElementById(isTest ? 'waiveTestBtn' : 'waiveSendBtn');
 
-  if (!reason.trim())  { if (msgEl) { msgEl.textContent = 'Please provide the CSM reason.';         msgEl.className = 'waive-msg waive-msg-err'; } return; }
-  if (!justify.trim()) { if (msgEl) { msgEl.textContent = 'Business justification is required.';    msgEl.className = 'waive-msg waive-msg-err'; } return; }
+  if (!isTest) {
+    if (!reason.trim())  { if (msgEl) { msgEl.textContent = 'Please provide the CSM reason.';      msgEl.className = 'waive-msg waive-msg-err'; } return; }
+    if (!justify.trim()) { if (msgEl) { msgEl.textContent = 'Business justification is required.'; msgEl.className = 'waive-msg waive-msg-err'; } return; }
+  }
 
-  btn.disabled = true; btn.textContent = 'Sending…';
+  if (btn) { btn.disabled = true; btn.textContent = isTest ? 'Sending test…' : 'Sending…'; }
   if (msgEl) { msgEl.textContent = ''; msgEl.className = 'waive-msg'; }
 
-  var s = all.find(function(x) { return x.jiraKey === jiraKey; });
+  var cfg = getWaiveConfig();
+  var s   = all.find(function(x) { return x.jiraKey === jiraKey; });
+
   var payload = {
     action:      'sendWaiveRequest',
+    isTest:      !!isTest,
     jiraKey:     jiraKey,
-    clientName:  s ? s.clientName  : '—',
-    serviceType: s ? s.serviceType : '—',
-    csmName:     s ? s.csmName     : '—',
+    // Recipient config — passed from portal so GAS doesn't need them hardcoded
+    ctoEmail:    cfg.ctoEmail  || 'gdelarama@sprout.ph',
+    cooEmail:    cfg.cooEmail  || 'diane@sprout.ph',
+    ccEmails:    cfg.ccEmails  || 'afrancisco@sprout.ph, gabriellef@sprout.ph',
+    // Ticket context
+    clientName:  s ? s.clientName  : (isTest ? 'Test Client'    : '—'),
+    serviceType: s ? s.serviceType : (isTest ? 'Test Service'   : '—'),
+    csmName:     s ? s.csmName     : (isTest ? 'Test CSM'       : '—'),
     csmEmail:    s ? s.csmEmail    : '',
-    hrUrl:       s ? s.hrUrl       : '—',
-    serviceCost: s ? s.serviceCost : '',
-    reason:      reason.trim(),
-    justify:     justify.trim(),
-    impact:      impact.trim(),
+    hrUrl:       s ? s.hrUrl       : (isTest ? 'testclient.hrhub.ph' : '—'),
+    serviceCost: s ? s.serviceCost : (isTest ? 5000 : ''),
+    // Waive details
+    reason:      reason.trim()  || (isTest ? '[TEST] This is a test waiver reason'         : ''),
+    justify:     justify.trim() || (isTest ? '[TEST] This is a test business justification' : ''),
+    impact:      impact.trim()  || (isTest ? '[TEST] This is a test client impact note'     : ''),
     submittedBy: userEmail,
   };
 
   try {
-    // Use regular fetch (not no-cors) so we can read the response
     var res  = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) });
     var data = await res.json();
     if (data.success) {
-      // Update local state
-      if (s) {
-        s.waiveStatus  = 'Sent';
-        s.waiveReason  = reason.trim();
-        s.waiveJustify = justify.trim();
-        s.waiveImpact  = impact.trim();
-        s.waiveSentAt  = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-        try {
-          var ck = 'tracker_cache_' + USER_EMAIL;
-          var ex = sessionStorage.getItem(ck);
-          if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(ck, JSON.stringify(p)); }
-        } catch(ce) {}
+      if (isTest) {
+        if (msgEl) {
+          msgEl.innerHTML = '📧 Test email sent to <strong>' + esc(userEmail) + '</strong>. Check your inbox to verify the format and links.';
+          msgEl.className = 'waive-msg waive-msg-ok';
+        }
+        if (btn) { btn.disabled = false; btn.textContent = '📧 Send Test Email to Me'; }
+      } else {
+        if (s) {
+          s.waiveStatus  = 'Sent';
+          s.waiveReason  = reason.trim();
+          s.waiveJustify = justify.trim();
+          s.waiveImpact  = impact.trim();
+          s.waiveSentAt  = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+          try {
+            var ck = 'tracker_cache_' + USER_EMAIL;
+            var ex = sessionStorage.getItem(ck);
+            if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(ck, JSON.stringify(p)); }
+          } catch(ce) {}
+        }
+        if (msgEl) { msgEl.textContent = 'Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className = 'waive-msg waive-msg-ok'; }
+        setTimeout(function() { if (s) renderDetail(s, null); }, 1500);
       }
-      if (msgEl) { msgEl.textContent = 'Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className = 'waive-msg waive-msg-ok'; }
-      // Re-render detail to show read-only history view
-      setTimeout(function() { if (s) renderDetail(s, null); }, 1500);
     } else {
       if (msgEl) { msgEl.textContent = 'Failed: ' + (data.error || 'Unknown error'); msgEl.className = 'waive-msg waive-msg-err'; }
-      btn.disabled = false; btn.textContent = 'Send Waiver Request to CTO &amp; COO';
+      if (btn) { btn.disabled = false; btn.textContent = isTest ? '📧 Send Test Email to Me' : 'Send Waiver Request to CTO &amp; COO'; }
     }
   } catch(e) {
     if (msgEl) { msgEl.textContent = 'Could not send. Please check your connection.'; msgEl.className = 'waive-msg waive-msg-err'; }
-    btn.disabled = false; btn.textContent = 'Send Waiver Request to CTO &amp; COO';
+    if (btn) { btn.disabled = false; btn.textContent = isTest ? '📧 Send Test Email to Me' : 'Send Waiver Request to CTO &amp; COO'; }
   }
 }
 
