@@ -1402,36 +1402,104 @@ async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
   throw lastErr;
 }
 
+// In-memory detail cache: { jiraKey: { data, ts } } — 5 min TTL
+var _detailCache = {};
+var DETAIL_CACHE_TTL = 5 * 60 * 1000;
+
 async function loadList() {
   if (_listLoading) return;
   _listLoading = true;
-  var cacheKey = 'tracker_cache_' + USER_EMAIL;
-  var cached   = sessionStorage.getItem(cacheKey);
+  var cacheKey  = 'tracker_cache_' + USER_EMAIL;
+  var cached    = sessionStorage.getItem(cacheKey);
   var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
-  var url = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
+  var baseUrl   = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
+
+  // ── Step 1: Serve from sessionStorage immediately if available ────────────
   if (cached) {
-    try { var cd = JSON.parse(cached); all = normaliseSubmissions(cd.data.submissions || []); renderCatPills(); render(); } catch(e) {}
+    try {
+      var cd = JSON.parse(cached);
+      all = normaliseSubmissions(cd.data.submissions || []);
+      renderCatPills(); render();
+    } catch(e) {}
   } else {
     document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
   }
+
+  // ── Step 2: Shallow fetch (no Jira calls) — instant sheet data ────────────
+  // Uses sheet-cached lifecycle so GAS returns immediately without hitting Jira.
   var onSlow = function() {
     var el = document.getElementById('sbList');
-    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Still extracting latest data — hang tight…</span></div>';
+    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
   };
   try {
-    var d = await fetchListWithRetry(url, 3, onSlow);
+    var shallowUrl = baseUrl + '&shallow=1';
+    var d = await fetchListWithRetry(shallowUrl, 3, onSlow);
     sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
     all = normaliseSubmissions(d.submissions || []);
     renderCatPills(); render();
+
+    // ── Step 3: Background refresh — calls Jira and updates lifecycle cache ─
+    // Fires after the sidebar is already visible. Updates come back as a
+    // patch map so only changed tickets re-render, not the whole list.
+    backgroundRefreshLifecycle(baseUrl);
   } catch(e) {
-    var el = document.getElementById('sbList');
-    if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
-    console.warn('loadList: all retries exhausted', e);
+    // Shallow failed — fall back to full (Jira-hitting) fetch
+    try {
+      var d2 = await fetchListWithRetry(baseUrl, 2, null);
+      sessionStorage.setItem(cacheKey, JSON.stringify({ data: d2, ts: Date.now() }));
+      all = normaliseSubmissions(d2.submissions || []);
+      renderCatPills(); render();
+    } catch(e2) {
+      var el = document.getElementById('sbList');
+      if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb" style="color:var(--muted);font-size:0.8rem">Could not reach the server.<br>Please check your connection and try refreshing.</div>';
+      console.warn('loadList: all retries exhausted', e2);
+    }
   } finally { _listLoading = false; }
+}
+
+// Fires after shallow load. Hits GAS refreshLifecycle which calls Jira for
+// non-terminal tickets, updates the sheet cache, and returns changed values.
+// Patches in-memory `all` and re-renders only if something changed.
+async function backgroundRefreshLifecycle(baseUrl) {
+  try {
+    var refreshUrl = GAS_URL + '?action=refreshLifecycle&email=' + encodeURIComponent(USER_EMAIL)
+      + '&role=' + encodeURIComponent(USER_ROLE);
+    var res = await fetch(refreshUrl);
+    var data = await res.json();
+    if (!data || !data.updates) return;
+    var changed = false;
+    Object.keys(data.updates).forEach(function(jiraKey) {
+      var upd   = data.updates[jiraKey];
+      var entry = all.find(function(s) { return s.jiraKey === jiraKey; });
+      if (entry) {
+        if (entry.lifecycle !== upd.lifecycle || entry.stKey !== upd.stKey) {
+          entry.lifecycle = upd.lifecycle;
+          entry.stKey     = upd.stKey;
+          entry.status    = upd.status;
+          changed = true;
+        }
+      }
+    });
+    if (changed) {
+      // Update sessionStorage so next load gets fresh lifecycle
+      try {
+        var cacheKey = 'tracker_cache_' + USER_EMAIL;
+        var ex = sessionStorage.getItem(cacheKey);
+        if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(p)); }
+      } catch(ce) {}
+      // Re-render scorecard counts and list (sidebar cards show lifecycle badges)
+      renderCatPills(); render();
+      // Update analytics meta counts if visible
+      if (IS_INTERNAL) loadAnalytics();
+    }
+  } catch(e) {
+    console.warn('backgroundRefreshLifecycle:', e);
+  }
 }
 
 async function refresh() {
   if (_listLoading) return;
+  _detailCache = {}; // clear detail cache on manual refresh
   sessionStorage.removeItem('tracker_cache_' + USER_EMAIL);
   all = []; activeKey = null;
   document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Refreshing…</span></div>';
@@ -1510,14 +1578,26 @@ async function select(jiraKey, el) {
   document.querySelectorAll('.rcard').forEach(c => c.classList.remove('on'));
   if (el) el.classList.add('on');
   var panel = document.getElementById('detail');
-  panel.innerHTML = '<div class="state"><span class="spinner"></span></div>';
   var s = all.find(x => x.jiraKey === jiraKey);
-  if (!jiraKey || jiraKey === 'ERROR') { renderDetail(s, null); return; }
+
+  // Serve from detail cache instantly if fresh (< 5 min)
+  var cached = _detailCache[jiraKey];
+  if (cached && (Date.now() - cached.ts) < DETAIL_CACHE_TTL) {
+    renderDetail(s, cached.data);
+    return;
+  }
+
+  // Show skeleton with sheet data immediately, then load Jira detail
+  renderDetail(s, null);
+  if (!jiraKey || jiraKey === 'ERROR') return;
+
   try {
-    var res = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
+    var res    = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
     var detail = await res.json();
-    renderDetail(s, detail);
-  } catch(e) { renderDetail(s, null); }
+    _detailCache[jiraKey] = { data: detail, ts: Date.now() };
+    // Only update if this ticket is still selected
+    if (activeKey === jiraKey) renderDetail(s, detail);
+  } catch(e) { /* already showing sheet data — silent fail */ }
 }
 
 function renderDetail(s, d) {
