@@ -355,6 +355,19 @@ tr:hover td{background:var(--bg)}
 /* Services section divider */
 .sv-section-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:8px 2px 6px;grid-column:1/-1;display:flex;align-items:center;gap:10px}
 .sv-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Section jump nav */
+.sv-jump-head{padding:10px 14px 6px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);border-top:1px solid var(--border);margin-top:4px}
+.sv-jump-list{padding:0 8px 8px;display:flex;flex-direction:column;gap:4px}
+.sv-jump-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-family:'Rubik',sans-serif;font-size:0.78rem;font-weight:500;color:var(--text);text-align:left;transition:background 0.12s,border-color 0.12s}
+.sv-jump-btn:hover{background:var(--bg);border-color:var(--primary)}
+.sv-jump-btn.flash{background:var(--primary-lt);border-color:var(--primary)}
+.sv-jump-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sv-jump-count{margin-left:auto;font-size:0.7rem;color:var(--muted);font-weight:400}
+/* Back to top */
+.sv-backtop-wrap{padding:8px;border-top:1px solid var(--border);opacity:0;pointer-events:none;transition:opacity 0.2s}
+.sv-backtop-wrap.visible{opacity:1;pointer-events:auto}
+.sv-backtop-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-family:'Rubik',sans-serif;font-size:0.78rem;color:var(--muted);transition:background 0.12s,color 0.12s,border-color 0.12s}
+.sv-backtop-btn:hover{background:var(--bg);color:var(--text);border-color:var(--primary)}
 /* Waive request panel */
 .waive-panel{background:var(--lavender-lt);border:1.5px solid #c5b8f5;border-radius:10px;margin-bottom:1rem;overflow:hidden}
 .waive-panel .dsh{background:#ede9ff;border-bottom:1px solid #c5b8f5}
@@ -812,6 +825,26 @@ tr:hover td{background:var(--bg)}
               <span class="sv-cat-count" id="sv-count-all">—</span>
             </div>
           </div>
+          <div class="sv-jump-head">Jump to</div>
+          <div class="sv-jump-list">
+            <button class="sv-jump-btn" id="sv-jump-paid" onclick="svJumpTo('sv-section-paid')">
+              <span class="sv-jump-dot" style="background:#c9a227"></span>
+              With Cost
+              <span class="sv-jump-count" id="sv-jump-paid-count"></span>
+            </button>
+            <button class="sv-jump-btn" id="sv-jump-free" onclick="svJumpTo('sv-section-free')">
+              <span class="sv-jump-dot" style="background:#0F6E56"></span>
+              Free Services
+              <span class="sv-jump-count" id="sv-jump-free-count"></span>
+            </button>
+          </div>
+          <div style="flex:1"></div>
+          <div class="sv-backtop-wrap" id="svBackTopWrap">
+            <button class="sv-backtop-btn" onclick="svScrollTop()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              Back to top
+            </button>
+          </div>
         </div>
         <div class="sv-main">
           <div class="sv-topbar">
@@ -1114,7 +1147,18 @@ function switchTab(name) {
   }
   openView(name);
   if (name === 'tracker' && !trackerInit) { trackerInit = true; USER_EMAIL = userEmail; USER_ROLE = userRole; IS_INTERNAL = isInternal; init_tracker(); }
-  if (name === 'services') { renderServicesView(); }
+  if (name === 'services') {
+    renderServicesView();
+    // Attach scroll listener once — controls back-to-top visibility
+    var svContent = document.querySelector('.sv-content');
+    var svBackTop = document.getElementById('svBackTopWrap');
+    if (svContent && svBackTop && !svContent._backTopBound) {
+      svContent._backTopBound = true;
+      svContent.addEventListener('scroll', function() {
+        svBackTop.classList.toggle('visible', svContent.scrollTop > 80);
+      });
+    }
+  }
   if (name === 'enhancements' && !enhInit) { enhInit = true; loadEnhancements(); }
   if (name === 'analytics' && !analyticsInit) {
     analyticsInit = true;
@@ -1241,14 +1285,25 @@ function renderServicesView() {
 
   var html = '';
   if (paidItems.length) {
-    html += '<div class="sv-section-label">With Cost <span style="font-size:0.6rem;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— requires CTO &amp; COO approval to waive</span></div>';
+    html += '<div class="sv-section-label" id="sv-section-paid">With Cost <span style="font-size:0.6rem;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— requires CTO &amp; COO approval to waive</span></div>';
     html += paidItems.map(renderCard).join('');
   }
   if (freeItems.length) {
-    html += '<div class="sv-section-label">Free Services</div>';
+    html += '<div class="sv-section-label" id="sv-section-free">Free Services</div>';
     html += freeItems.map(renderCard).join('');
   }
   grid.innerHTML = html;
+
+  // Update jump-to counts
+  var paidCountEl = document.getElementById('sv-jump-paid-count');
+  var freeCountEl = document.getElementById('sv-jump-free-count');
+  if (paidCountEl) paidCountEl.textContent = paidItems.length || '';
+  if (freeCountEl) freeCountEl.textContent = freeItems.length || '';
+  // Hide jump buttons when a section is empty or search is active
+  var jumpPaid = document.getElementById('sv-jump-paid');
+  var jumpFree = document.getElementById('sv-jump-free');
+  if (jumpPaid) jumpPaid.style.display = paidItems.length ? 'flex' : 'none';
+  if (jumpFree) jumpFree.style.display = freeItems.length ? 'flex' : 'none';
 }
 
 var editingServiceId = null;
@@ -1323,6 +1378,26 @@ function toggleSvCard(cardId) {
   document.querySelectorAll('.sv-card.expanded').forEach(function(c) { if (c.id !== cardId) { c.classList.remove('expanded'); var p = document.getElementById(c.id + '-expand'); if (p) p.classList.remove('open'); } });
   if (isOpen) { panel.classList.remove('open'); card.classList.remove('expanded'); } else { panel.classList.add('open'); card.classList.add('expanded'); }
 }
+
+function svJumpTo(anchorId) {
+  var content = document.querySelector('.sv-content');
+  var anchor  = document.getElementById(anchorId);
+  if (!content || !anchor) return;
+  content.scrollTo({ top: anchor.offsetTop - content.offsetTop - 6, behavior: 'smooth' });
+  var btnId = anchorId === 'sv-section-paid' ? 'sv-jump-paid' : 'sv-jump-free';
+  var btn   = document.getElementById(btnId);
+  if (btn) {
+    btn.classList.add('flash');
+    setTimeout(function() { btn.classList.remove('flash'); }, 900);
+  }
+}
+
+function svScrollTop() {
+  var content = document.querySelector('.sv-content');
+  if (content) content.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Attach scroll listener for back-to-top visibility once DOM is ready
 function showToast(msg) { var t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 3000); }
 document.getElementById('svcModal').addEventListener('click', function(e) { if (e.target === this) closeSvcModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSvcModal(); });
