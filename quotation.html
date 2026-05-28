@@ -800,7 +800,6 @@ function renderRows() {
     var isLast  = idx === rows.length - 1;
     var tr = document.createElement('tr');
     tr.id = 'row-' + r.id;
-    tr.draggable = true;
     tr.innerHTML = [
       // Order column: drag handle + up/down arrows
       '<td class="col-order no-print">',
@@ -872,13 +871,27 @@ var dragSrcId = null;
 
 function initDragDrop() {
   var tbody = document.getElementById('itemsBody');
-  var trs = tbody.querySelectorAll('tr');
+  var trs   = tbody.querySelectorAll('tr');
 
   trs.forEach(function(tr) {
+    // Find the drag handle inside this row
+    var handle = tr.querySelector('.row-drag');
+    if (!handle) return;
+
+    // ── Handle-only drag: enable draggable only while mousedown on the handle.
+    // This is the canonical cross-browser fix — setting draggable on the <tr>
+    // globally causes e.target in dragstart to be the <tr> or a child input,
+    // never the handle, so the handle check always fails.
+    handle.addEventListener('mousedown', function() {
+      tr.draggable = true;
+    });
+    handle.addEventListener('mouseup', function() {
+      // Don't clear immediately — dragstart fires after mouseup in some browsers
+      setTimeout(function() { tr.draggable = false; }, 0);
+    });
+
     tr.addEventListener('dragstart', function(e) {
-      // Only start drag from the handle
-      var handle = e.target.closest('.row-drag');
-      if (!handle) { e.preventDefault(); return; }
+      if (!tr.draggable) { e.preventDefault(); return; }
       dragSrcId = parseInt(tr.id.replace('row-', ''));
       tr.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
@@ -886,8 +899,9 @@ function initDragDrop() {
     });
 
     tr.addEventListener('dragend', function() {
+      tr.draggable = false;
       tr.classList.remove('dragging');
-      tbody.querySelectorAll('tr').forEach(function(r){ r.classList.remove('drag-over'); });
+      tbody.querySelectorAll('tr').forEach(function(r) { r.classList.remove('drag-over'); });
       dragSrcId = null;
     });
 
@@ -895,12 +909,15 @@ function initDragDrop() {
       if (dragSrcId === null) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
-      tbody.querySelectorAll('tr').forEach(function(r){ r.classList.remove('drag-over'); });
+      tbody.querySelectorAll('tr').forEach(function(r) { r.classList.remove('drag-over'); });
       tr.classList.add('drag-over');
     });
 
-    tr.addEventListener('dragleave', function() {
-      tr.classList.remove('drag-over');
+    tr.addEventListener('dragleave', function(e) {
+      // Only remove highlight when truly leaving this row, not entering a child
+      if (!tr.contains(e.relatedTarget)) {
+        tr.classList.remove('drag-over');
+      }
     });
 
     tr.addEventListener('drop', function(e) {
@@ -911,8 +928,8 @@ function initDragDrop() {
       if (dragSrcId === targetId) return;
 
       syncAllRowsFromDOM();
-      var fromIdx = rows.findIndex(function(r){ return r.id === dragSrcId; });
-      var toIdx   = rows.findIndex(function(r){ return r.id === targetId; });
+      var fromIdx = rows.findIndex(function(r) { return r.id === dragSrcId; });
+      var toIdx   = rows.findIndex(function(r) { return r.id === targetId; });
       if (fromIdx < 0 || toIdx < 0) return;
 
       var moved = rows.splice(fromIdx, 1)[0];
