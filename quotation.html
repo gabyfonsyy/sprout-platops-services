@@ -100,6 +100,38 @@ body {
 .btn-icon      { padding: 6px 8px; }
 .btn svg       { flex-shrink: 0; }
 
+/* ── SORT BUTTONS ─────────────────────────────────────── */
+.sort-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.btn-sort {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 5px;
+  background: var(--mushroom-50);
+  border: 1.5px solid var(--border);
+  color: var(--mushroom-400);
+  cursor: pointer;
+  transition: all .15s;
+  font-family: 'Rubik', sans-serif;
+  line-height: 1;
+}
+.btn-sort:hover:not(:disabled) {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+.btn-sort:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
 /* ── LAYOUT ───────────────────────────────────────────── */
 .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 52px); }
 
@@ -117,12 +149,11 @@ body {
   color: var(--text-muted); padding: 10px 8px 4px;
 }
 
-/* Template item: pills row on top, name row below */
 .template-item {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 9px 32px 9px 10px; /* right padding leaves room for delete btn */
+  padding: 9px 32px 9px 10px;
   border-radius: 8px;
   cursor: pointer;
   border: 1.5px solid transparent;
@@ -132,14 +163,12 @@ body {
 .template-item:hover { background: var(--mushroom-50); border-color: var(--border); }
 .template-item.active { background: var(--primary-light); border-color: var(--primary); }
 
-/* Row 1 inside template item: type + category pills */
 .template-item-pills {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-wrap: wrap;
 }
-/* Service Type pill — green tint */
 .template-item-type {
   font-size: 10px;
   font-weight: 600;
@@ -149,7 +178,6 @@ body {
   padding: 1px 6px;
   white-space: nowrap;
 }
-/* Category pill — neutral gray */
 .template-item-category {
   font-size: 10px;
   font-weight: 500;
@@ -159,7 +187,6 @@ body {
   padding: 1px 6px;
   white-space: nowrap;
 }
-/* Row 2 inside template item: template name */
 .template-item-name {
   font-size: 13px;
   font-weight: 500;
@@ -226,7 +253,7 @@ textarea { resize: vertical; min-height: 60px; }
 
 /* ── ITEMS TABLE ──────────────────────────────────────── */
 .items-table-wrap { overflow-x: auto; }
-.items-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+.items-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .items-table th {
   background: var(--mushroom-50); font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted);
@@ -239,9 +266,19 @@ textarea { resize: vertical; min-height: 60px; }
 .items-table tr:last-child td { border-bottom: none; }
 .items-table tr:hover td { background: var(--mushroom-50); }
 
+/* Drag-over highlight */
+.items-table tr.drag-over td {
+  background: var(--primary-light);
+  border-top: 2px solid var(--primary);
+}
+.items-table tr.dragging {
+  opacity: 0.45;
+}
+
+.col-order { width: 44px; text-align: center; }
 .col-num   { width: 36px; text-align: center; color: var(--text-muted); font-size: 12px; }
-.col-step  { min-width: 260px; }
-.col-desc  { min-width: 160px; }
+.col-step  { min-width: 240px; }
+.col-desc  { min-width: 150px; }
 .col-effort{ width: 90px; }
 .col-rate  { width: 110px; }
 .col-cost  { width: 110px; text-align: right; font-weight: 600; color: var(--primary-dark); }
@@ -252,10 +289,21 @@ textarea { resize: vertical; min-height: 60px; }
 }
 .items-table select { padding: 6px 8px; font-size: 13px; border-radius: 6px; }
 
+/* Drag handle */
 .row-drag {
-  cursor: grab; color: var(--text-muted); padding: 0 4px;
-  display: inline-block; font-size: 16px; user-select: none;
+  cursor: grab;
+  color: var(--mushroom-200);
+  padding: 0 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color .15s;
+  user-select: none;
+  touch-action: none;
 }
+.row-drag:hover { color: var(--mushroom-400); }
+.row-drag:active { cursor: grabbing; }
 
 /* ── TOTALS ───────────────────────────────────────────── */
 .totals-row { display: flex; justify-content: flex-end; margin-top: 12px; }
@@ -311,7 +359,7 @@ textarea { resize: vertical; min-height: 60px; }
   img { display: block !important; max-width: 100% !important; }
   body { background: #fff !important; font-size: 12px; }
   .topbar, .sidebar, .toolbar, .no-print, .card-header button,
-  .btn, .template-delete, .row-drag, .col-act,
+  .btn, .template-delete, .row-drag, .col-act, .col-order,
   .items-table input, .items-table select, .items-table textarea,
   input, select, textarea { display: none !important; }
   .layout { display: block !important; }
@@ -349,6 +397,7 @@ textarea { resize: vertical; min-height: 60px; }
   .print-sig-box .sig-name { font-size: 12px; font-weight: 600; }
   .print-sig-box .sig-role { font-size: 10px; color: #7a7b7a; }
   .col-act  { display: none !important; }
+  .col-order { display: none !important; }
   .items-table .print-value { display: inline !important; font-size: 11px; font-weight: 500; color: #131413; }
   .input-prefix > span { display: none !important; }
   .input-prefix { display: block !important; }
@@ -502,6 +551,9 @@ textarea { resize: vertical; min-height: 60px; }
           <table class="items-table" id="itemsTable">
             <thead>
               <tr>
+                <th class="col-order no-print" title="Drag to reorder, or use arrows">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="opacity:.5"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+                </th>
                 <th class="col-num">#</th>
                 <th class="col-step">Step / Activity</th>
                 <th class="col-desc">Description / Notes</th>
@@ -628,8 +680,6 @@ var rows = [];
 var rowId = 0;
 var templates = [];
 var activeTemplateIdx = -1;
-
-// Map of service name → category, built from the services cache shared with the portal
 var serviceCategoryMap = {};
 
 var CURRENCY_SYMBOLS = { PHP: '₱', USD: '$' };
@@ -637,8 +687,6 @@ function currSym() { return CURRENCY_SYMBOLS[document.getElementById('currency')
 function fmt(n) { return currSym() + ' ' + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
 // ── LOAD SERVICE OPTIONS ──────────────────────────────────────
-// Reads from the portal's localStorage services cache.
-// Also builds serviceCategoryMap so saveTemplate() can store the category.
 function loadServiceOptions() {
   var options = DEFAULT_SERVICE_OPTIONS;
   serviceCategoryMap = {};
@@ -692,6 +740,24 @@ function setToday() {
   document.getElementById('quotNum').value = 'PSRV-' + new Date().getFullYear() + '-001';
 }
 
+// ── ROW DATA: sync from DOM into rows[] ───────────────────────
+function syncRowFromDOM(id) {
+  var tr = document.getElementById('row-' + id);
+  if (!tr) return;
+  var effort = parseFloat(tr.querySelector('.f-effort').value) || 0;
+  var rate   = parseFloat(tr.querySelector('.f-rate').value)   || 0;
+  var step   = tr.querySelector('.f-step').value;
+  var desc   = tr.querySelector('.f-desc').value;
+  rows = rows.map(function(r) {
+    return r.id === id ? { id:id, step:step, desc:desc, effort:effort, unit:'hours', rate:rate } : r;
+  });
+}
+
+// Sync ALL rows from DOM (needed before reorder)
+function syncAllRowsFromDOM() {
+  rows.forEach(function(r) { syncRowFromDOM(r.id); });
+}
+
 // ── ROW MANAGEMENT ────────────────────────────────────────────
 function addRow(data) {
   var id = ++rowId;
@@ -701,8 +767,28 @@ function addRow(data) {
 }
 
 function deleteRow(id) {
+  syncAllRowsFromDOM();
   rows = rows.filter(function(r){ return r.id !== id; });
   renderRows(); recalc();
+}
+
+// Move row at index `fromIdx` to `toIdx`
+function moveRow(fromIdx, toIdx) {
+  if (toIdx < 0 || toIdx >= rows.length) return;
+  syncAllRowsFromDOM();
+  var moved = rows.splice(fromIdx, 1)[0];
+  rows.splice(toIdx, 0, moved);
+  renderRows(); recalc();
+}
+
+function moveRowUp(id) {
+  var idx = rows.findIndex(function(r){ return r.id === id; });
+  if (idx > 0) moveRow(idx, idx - 1);
+}
+
+function moveRowDown(id) {
+  var idx = rows.findIndex(function(r){ return r.id === id; });
+  if (idx < rows.length - 1) moveRow(idx, idx + 1);
 }
 
 function renderRows() {
@@ -710,9 +796,32 @@ function renderRows() {
   tbody.innerHTML = '';
   rows.forEach(function(r, idx) {
     var lineTotal = r.effort * r.rate;
+    var isFirst = idx === 0;
+    var isLast  = idx === rows.length - 1;
     var tr = document.createElement('tr');
     tr.id = 'row-' + r.id;
+    tr.draggable = true;
     tr.innerHTML = [
+      // Order column: drag handle + up/down arrows
+      '<td class="col-order no-print">',
+        '<div style="display:flex;align-items:center;gap:3px">',
+          '<span class="row-drag" title="Drag to reorder">',
+            '<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">',
+              '<circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>',
+              '<circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>',
+              '<circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>',
+            '</svg>',
+          '</span>',
+          '<div class="sort-btns">',
+            '<button class="btn-sort" onclick="moveRowUp(' + r.id + ')" title="Move up"' + (isFirst ? ' disabled' : '') + '>',
+              '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18,15 12,9 6,15"/></svg>',
+            '</button>',
+            '<button class="btn-sort" onclick="moveRowDown(' + r.id + ')" title="Move down"' + (isLast ? ' disabled' : '') + '>',
+              '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></svg>',
+            '</button>',
+          '</div>',
+        '</div>',
+      '</td>',
       '<td class="col-num">' + (idx+1) + '</td>',
       '<td class="col-step"><input type="text" class="f-step" value="' + esc(r.step) + '" placeholder="e.g. Pre-migration audit" oninput="updateRow(' + r.id + ')"/></td>',
       '<td class="col-desc"><input type="text" class="f-desc" value="' + esc(r.desc) + '" placeholder="Optional notes" oninput="updateRow(' + r.id + ')"/></td>',
@@ -723,19 +832,18 @@ function renderRows() {
     ].join('');
     tbody.appendChild(tr);
   });
+
+  // Attach drag-and-drop events after rendering
+  initDragDrop();
 }
 
 function updateRow(id) {
+  syncRowFromDOM(id);
   var tr = document.getElementById('row-' + id);
   if (!tr) return;
   var effort = parseFloat(tr.querySelector('.f-effort').value) || 0;
   var rate   = parseFloat(tr.querySelector('.f-rate').value)   || 0;
-  var step   = tr.querySelector('.f-step').value;
-  var desc   = tr.querySelector('.f-desc').value;
   document.getElementById('lc-' + id).textContent = fmt(effort * rate);
-  rows = rows.map(function(r) {
-    return r.id === id ? { id:id, step:step, desc:desc, effort:effort, unit:'hours', rate:rate } : r;
-  });
   recalc();
 }
 
@@ -757,6 +865,62 @@ function recalc() {
   document.getElementById('discountAmt').textContent = '- ' + fmt(discAmt);
   document.getElementById('grandTotal').textContent  = fmt(grand);
   document.getElementById('discountRow').style.display = discPct > 0 ? '' : 'none';
+}
+
+// ── DRAG-AND-DROP ─────────────────────────────────────────────
+var dragSrcId = null;
+
+function initDragDrop() {
+  var tbody = document.getElementById('itemsBody');
+  var trs = tbody.querySelectorAll('tr');
+
+  trs.forEach(function(tr) {
+    tr.addEventListener('dragstart', function(e) {
+      // Only start drag from the handle
+      var handle = e.target.closest('.row-drag');
+      if (!handle) { e.preventDefault(); return; }
+      dragSrcId = parseInt(tr.id.replace('row-', ''));
+      tr.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(dragSrcId));
+    });
+
+    tr.addEventListener('dragend', function() {
+      tr.classList.remove('dragging');
+      tbody.querySelectorAll('tr').forEach(function(r){ r.classList.remove('drag-over'); });
+      dragSrcId = null;
+    });
+
+    tr.addEventListener('dragover', function(e) {
+      if (dragSrcId === null) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      tbody.querySelectorAll('tr').forEach(function(r){ r.classList.remove('drag-over'); });
+      tr.classList.add('drag-over');
+    });
+
+    tr.addEventListener('dragleave', function() {
+      tr.classList.remove('drag-over');
+    });
+
+    tr.addEventListener('drop', function(e) {
+      e.preventDefault();
+      tr.classList.remove('drag-over');
+      if (dragSrcId === null) return;
+      var targetId = parseInt(tr.id.replace('row-', ''));
+      if (dragSrcId === targetId) return;
+
+      syncAllRowsFromDOM();
+      var fromIdx = rows.findIndex(function(r){ return r.id === dragSrcId; });
+      var toIdx   = rows.findIndex(function(r){ return r.id === targetId; });
+      if (fromIdx < 0 || toIdx < 0) return;
+
+      var moved = rows.splice(fromIdx, 1)[0];
+      rows.splice(toIdx, 0, moved);
+      dragSrcId = null;
+      renderRows(); recalc();
+    });
+  });
 }
 
 // ── TEMPLATES ─────────────────────────────────────────────────
@@ -809,8 +973,6 @@ function deleteTemplateFromServer(name) {
   fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'deleteTemplate', name:name }) }).catch(function(){});
 }
 
-// ── RENDER TEMPLATES ──────────────────────────────────────────
-// Each template item shows: [Service Type pill] [Category pill] on row 1, then name on row 2.
 function renderTemplates() {
   var el = document.getElementById('templateList');
   if (!templates.length) {
@@ -818,9 +980,7 @@ function renderTemplates() {
     return;
   }
   el.innerHTML = templates.map(function(t, idx) {
-    // Resolve category: prefer stored t.category, fall back to live map lookup
     var cat = t.category || serviceCategoryMap[t.type] || '';
-
     var pillsHtml = '';
     if (t.type)  pillsHtml += '<span class="template-item-type">'     + esc(t.type) + '</span>';
     if (cat)     pillsHtml += '<span class="template-item-category">' + esc(cat)    + '</span>';
@@ -839,15 +999,9 @@ function saveTemplate() {
   var name = document.getElementById('templateNameInput').value.trim();
   if (!name) { alert('Please enter a template name.'); return; }
 
+  syncAllRowsFromDOM();
   var rowSnapshot = rows.map(function(r) {
-    var tr = document.getElementById('row-' + r.id);
-    return {
-      step:   tr ? tr.querySelector('.f-step').value   : r.step,
-      desc:   tr ? tr.querySelector('.f-desc').value   : r.desc,
-      effort: tr ? parseFloat(tr.querySelector('.f-effort').value)||0 : r.effort,
-      unit:   'hours',
-      rate:   tr ? parseFloat(tr.querySelector('.f-rate').value)||0   : r.rate
-    };
+    return { step:r.step, desc:r.desc, effort:r.effort, unit:'hours', rate:r.rate };
   });
 
   var selectedType = document.getElementById('templateTypeInput').value;
@@ -855,7 +1009,7 @@ function saveTemplate() {
   var tmpl = {
     name:        name,
     type:        selectedType,
-    category:    serviceCategoryMap[selectedType] || '',  // stored so renderTemplates can use it without a live lookup
+    category:    serviceCategoryMap[selectedType] || '',
     rows:        rowSnapshot,
     scopeDesc:   document.getElementById('scopeDesc').value,
     addlNotes:   document.getElementById('addlNotes').value,
