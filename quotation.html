@@ -732,12 +732,21 @@ document.addEventListener('DOMContentLoaded', function() {
   loadServiceOptions();
   loadTemplates();
   addRow(); addRow(); addRow();
+  // Re-apply date after a tick in case iframe rendering delayed the input
+  setTimeout(setToday, 0);
 });
 
 function setToday() {
-  var today = new Date().toISOString().split('T')[0];
-  document.getElementById('quotDate').value = today;
-  document.getElementById('quotNum').value = 'PSRV-' + new Date().getFullYear() + '-001';
+  // Use local date (not UTC) so PHT users don't get yesterday's date
+  var now   = new Date();
+  var y     = now.getFullYear();
+  var m     = String(now.getMonth() + 1).padStart(2, '0');
+  var d     = String(now.getDate()).padStart(2, '0');
+  var today = y + '-' + m + '-' + d;
+  var dateEl = document.getElementById('quotDate');
+  var numEl  = document.getElementById('quotNum');
+  if (dateEl) dateEl.value = today;
+  if (numEl  && !numEl.value) numEl.value = 'PSRV-' + y + '-001';
 }
 
 // ── ROW DATA: sync from DOM into rows[] ───────────────────────
