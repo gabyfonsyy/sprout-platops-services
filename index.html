@@ -1073,45 +1073,71 @@ var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=fal
 var GOOGLE_CLIENT_ID = '32164233896-7us7hgll8adt8hooclcmk4ugrab12rp5.apps.googleusercontent.com';
 var ALLOWED_DOMAIN   = 'sprout.ph';
 
+// ── Google Sign-In via OAuth2 token client (reliable popup) ──────────────────
+// Uses google.accounts.oauth2.initTokenClient which always opens a real
+// popup window — unlike One Tap / prompt() which silently fails when
+// third-party cookies are blocked or the browser suppresses the overlay.
+var _tokenClient = null;
+
 function startGoogleLogin() {
-  document.getElementById('gErr').textContent = '';
-  document.getElementById('gGoogleBtn').disabled = true;
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleGoogleCredential,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-  });
-  google.accounts.id.prompt(function(notification) {
-    if (notification.isNotDisplayed() || notification.isSkippedMoment()) showGooglePopup();
-  });
-}
-
-function showGooglePopup() {
-  var container = document.createElement('div');
-  container.style.display = 'none';
-  document.body.appendChild(container);
-  google.accounts.id.renderButton(container, { type:'standard', theme:'outline', size:'large' });
-  var btn = container.querySelector('div[role="button"]');
-  if (btn) btn.click();
-  setTimeout(function() { document.body.removeChild(container); }, 1000);
-}
-
-async function handleGoogleCredential(response) {
   var errEl = document.getElementById('gErr');
   var btn   = document.getElementById('gGoogleBtn');
+  errEl.textContent = '';
+  btn.disabled = true;
+
+  // Wait for GSI library to be ready
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+    errEl.textContent = 'Google Sign-In is still loading. Please wait a moment and try again.';
+    btn.disabled = false;
+    return;
+  }
+
+  if (!_tokenClient) {
+    _tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'email profile',
+      callback: handleOAuthToken,
+      error_callback: function(err) {
+        errEl.textContent = err && err.message ? err.message : 'Sign-in cancelled or failed.';
+        btn.disabled = false;
+      },
+    });
+  }
+
+  // requestAccessToken always opens the real Google OAuth popup
+  _tokenClient.requestAccessToken({ prompt: 'select_account' });
+}
+
+async function handleOAuthToken(tokenResponse) {
+  var errEl = document.getElementById('gErr');
+  var btn   = document.getElementById('gGoogleBtn');
+
+  if (tokenResponse.error) {
+    errEl.textContent = tokenResponse.error_description || 'Sign-in failed.';
+    btn.disabled = false;
+    return;
+  }
+
+  btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
+
   try {
-    var b64 = response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-    var payload = JSON.parse(atob(b64));
-    var email = (payload.email || '').toLowerCase();
+    // Fetch the user profile using the access token
+    var resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
+    });
+    var profile = await resp.json();
+    var email = (profile.email || '').toLowerCase();
+
+    if (!email) {
+      throw new Error('Could not retrieve email from Google.');
+    }
     if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
       errEl.textContent = 'Access restricted to @sprout.ph accounts.';
       btn.disabled = false;
-      google.accounts.id.disableAutoSelect();
+      btn.innerHTML = GOOGLE_BTN_HTML;
       return;
     }
-    btn.disabled = true;
-    btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
+
     var role = 'client';
     try {
       var cached = sessionStorage.getItem('role_' + email);
@@ -1127,19 +1153,26 @@ async function handleGoogleCredential(response) {
         sessionStorage.setItem('role_' + email, role);
       }
     } catch(e) { role = 'client'; }
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, role, ts: Date.now() }));
+
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: email, role: role, ts: Date.now() }));
     document.getElementById('gate').classList.add('out');
     setTimeout(function() { document.getElementById('gate').style.display = 'none'; }, 400);
     initApp(email, role);
+
   } catch(e) {
-    errEl.textContent = 'Sign-in failed. Please try again.';
+    errEl.textContent = 'Sign-in failed: ' + (e.message || 'Unknown error');
     btn.disabled = false;
-    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Sign in with Google';
+    btn.innerHTML = GOOGLE_BTN_HTML;
   }
 }
 
+var GOOGLE_BTN_HTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Sign in with Google';
+
 function logout() {
-  google.accounts.id.disableAutoSelect();
+  // Revoke token if one exists, then clear session
+  if (_tokenClient && google && google.accounts && google.accounts.oauth2) {
+    try { google.accounts.oauth2.revoke('', function(){}); } catch(e) {}
+  }
   sessionStorage.removeItem(SESSION_KEY);
   location.reload();
 }
