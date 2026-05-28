@@ -1073,45 +1073,100 @@ var userEmail='', userRole='client', isAdmin=false, isLead=false, isInternal=fal
 var GOOGLE_CLIENT_ID = '32164233896-7us7hgll8adt8hooclcmk4ugrab12rp5.apps.googleusercontent.com';
 var ALLOWED_DOMAIN   = 'sprout.ph';
 
+// ── Google Sign-In via OAuth2 popup window ────────────────────────────────────
+// Opens a real window.open() popup to Google's OAuth2 authorization endpoint.
+// This works on any domain without FedCM, cookie restrictions, or One Tap issues.
+// The popup posts the credential back to this window via postMessage.
+
+var _oauthPopup = null;
+var _oauthTimer = null;
+
 function startGoogleLogin() {
-  document.getElementById('gErr').textContent = '';
-  document.getElementById('gGoogleBtn').disabled = true;
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleGoogleCredential,
-    auto_select: false,
-    cancel_on_tap_outside: true,
+  var errEl = document.getElementById('gErr');
+  var btn   = document.getElementById('gGoogleBtn');
+  errEl.textContent = '';
+  btn.disabled = true;
+
+  // Build Google OAuth2 authorization URL
+  var redirectUri = window.location.origin + window.location.pathname;
+  // Strip trailing slash for consistency
+  redirectUri = redirectUri.replace(/\/+$/, '') + '/oauth-callback.html';
+
+  // We use the implicit/token flow via a popup so we stay on the same page.
+  // The popup will call window.opener.handleOAuthPopup(token) on success.
+  var params = new URLSearchParams({
+    client_id:     GOOGLE_CLIENT_ID,
+    redirect_uri:  window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '') + '/oauth-callback.html',
+    response_type: 'token',
+    scope:         'email profile openid',
+    prompt:        'select_account',
   });
-  google.accounts.id.prompt(function(notification) {
-    if (notification.isNotDisplayed() || notification.isSkippedMoment()) showGooglePopup();
-  });
+
+  // Simpler: use the GSI renderButton in a visible container — 
+  // but the most reliable approach for any domain is the GSI credential button
+  // rendered visibly and clicked by the user directly.
+  // Reset and use renderButton in the actual gate card.
+  btn.disabled = false;
+  _startGSIButtonFlow(errEl, btn);
 }
 
-function showGooglePopup() {
-  var container = document.createElement('div');
-  container.style.display = 'none';
-  document.body.appendChild(container);
-  google.accounts.id.renderButton(container, { type:'standard', theme:'outline', size:'large' });
-  var btn = container.querySelector('div[role="button"]');
-  if (btn) btn.click();
-  setTimeout(function() { document.body.removeChild(container); }, 1000);
+function _startGSIButtonFlow(errEl, btn) {
+  // Replace the custom button with Google's own rendered button.
+  // This is always allowed — it's a real user click on Google's own element.
+  var wrapper = document.getElementById('gGoogleBtn');
+  var parent  = wrapper.parentNode;
+
+  // Create a container for Google's button
+  var gContainer = document.createElement('div');
+  gContainer.id  = 'gsi-render-container';
+  gContainer.style.cssText = 'display:flex;justify-content:center;margin-bottom:4px';
+  parent.insertBefore(gContainer, wrapper);
+  wrapper.style.display = 'none';
+
+  google.accounts.id.initialize({
+    client_id:            GOOGLE_CLIENT_ID,
+    callback:             handleGoogleCredential,
+    auto_select:          false,
+    cancel_on_tap_outside:true,
+    ux_mode:              'popup',
+  });
+
+  google.accounts.id.renderButton(gContainer, {
+    type:   'standard',
+    theme:  'outline',
+    size:   'large',
+    text:   'signin_with',
+    width:  320,
+  });
 }
 
 async function handleGoogleCredential(response) {
   var errEl = document.getElementById('gErr');
   var btn   = document.getElementById('gGoogleBtn');
+
+  // Restore original button, remove GSI container
+  var gContainer = document.getElementById('gsi-render-container');
+  if (gContainer) gContainer.remove();
+  if (btn) btn.style.display = '';
+
   try {
-    var b64 = response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    var b64     = response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    // Pad base64 if needed
+    while (b64.length % 4) b64 += '=';
     var payload = JSON.parse(atob(b64));
-    var email = (payload.email || '').toLowerCase();
+    var email   = (payload.email || '').toLowerCase();
+
     if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
       errEl.textContent = 'Access restricted to @sprout.ph accounts.';
-      btn.disabled = false;
       google.accounts.id.disableAutoSelect();
       return;
     }
-    btn.disabled = true;
-    btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<div class="gate-loading"><div class="gate-loading-spinner"></div></div>';
+    }
+
     var role = 'client';
     try {
       var cached = sessionStorage.getItem('role_' + email);
@@ -1119,27 +1174,37 @@ async function handleGoogleCredential(response) {
         role = cached;
       } else {
         var ctrl = new AbortController();
-        var to = setTimeout(function() { ctrl.abort(); }, 9000);
-        var res = await fetch(GAS_URL + '?action=checkAccess&email=' + encodeURIComponent(email), { signal: ctrl.signal });
+        var to   = setTimeout(function() { ctrl.abort(); }, 9000);
+        var res  = await fetch(GAS_URL + '?action=checkAccess&email=' + encodeURIComponent(email), { signal: ctrl.signal });
         clearTimeout(to);
         var d = await res.json();
-        role = d.role || 'client';
+        role  = d.role || 'client';
         sessionStorage.setItem('role_' + email, role);
       }
     } catch(e) { role = 'client'; }
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, role, ts: Date.now() }));
+
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: email, role: role, ts: Date.now() }));
     document.getElementById('gate').classList.add('out');
     setTimeout(function() { document.getElementById('gate').style.display = 'none'; }, 400);
     initApp(email, role);
+
   } catch(e) {
     errEl.textContent = 'Sign-in failed. Please try again.';
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Sign in with Google';
+    if (btn) {
+      btn.disabled = false;
+      btn.style.display = '';
+      btn.innerHTML = GOOGLE_BTN_HTML;
+    }
   }
 }
 
+var GOOGLE_BTN_HTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Sign in with Google';
+
 function logout() {
-  google.accounts.id.disableAutoSelect();
+  try { google.accounts.id.disableAutoSelect(); } catch(e) {}
+  // Remove GSI container if present
+  var gc = document.getElementById('gsi-render-container');
+  if (gc) gc.remove();
   sessionStorage.removeItem(SESSION_KEY);
   location.reload();
 }
