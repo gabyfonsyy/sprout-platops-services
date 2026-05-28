@@ -66,8 +66,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .views{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .view{display:none;flex:1;overflow:hidden;flex-direction:column}
 .view.on{display:flex}
-
-/* ── LANDING — scrollable so all cards are always reachable ── */
 .landing{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:1.5rem 1.5rem 2rem}
 .landing::-webkit-scrollbar{width:4px}
 .landing::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -81,7 +79,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .lcard-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .lcard h3{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:4px}
 .lcard p{font-size:0.76rem;color:var(--muted);line-height:1.55}
-
 .analytics{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:none;flex-direction:column;gap:10px;flex-shrink:0}
 .analytics.on{display:flex}
 .analytics-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -93,11 +90,9 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc-sub{font-size:0.62rem;color:var(--muted);margin-top:2px}
 .sc.active .sc-label,.sc.active .sc-sub{color:var(--k600)}
 .sc.active .sc-value{color:var(--primary-dk)}
-/* Closed scorecard — red tint when active */
 .sc[data-lc="Closed"].active{border-color:var(--tomato);background:var(--tomato-lt)}
 .sc[data-lc="Closed"].active .sc-label,.sc[data-lc="Closed"].active .sc-sub{color:#7a1010}
 .sc[data-lc="Closed"].active .sc-value{color:var(--tomato)}
-/* For Team Assessment scorecard — amber tint when active */
 .sc[data-lc="For Team Assessment"].active{border-color:var(--mango);background:var(--mango-lt)}
 .sc[data-lc="For Team Assessment"].active .sc-label,.sc[data-lc="For Team Assessment"].active .sc-sub{color:#7a4800}
 .sc[data-lc="For Team Assessment"].active .sc-value{color:var(--mango)}
@@ -271,6 +266,21 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .enh-vote-btn{display:inline-flex;align-items:center;gap:4px;font-family:'Rubik',sans-serif;font-size:0.7rem;font-weight:500;padding:3px 9px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;margin-top:8px}
 .enh-vote-btn:hover{border-color:var(--primary);color:var(--primary)}
 .enh-vote-btn.voted{border-color:var(--primary);background:var(--primary-lt);color:var(--primary-dk)}
+/* ── ENHANCEMENT STATUS BADGES & ADMIN CONTROLS ───────────────────────────── */
+.enh-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.enh-status-logged{background:var(--m100);color:var(--m600)}
+.enh-status-planned{background:var(--blueberry-lt);color:#1c3a9e}
+.enh-status-inprogress{background:var(--wintermelon-lt);color:#074f5a}
+.enh-status-done{background:var(--primary-lt);color:var(--primary-dk)}
+.enh-status-wontfix{background:var(--tomato-lt);color:#7a1010}
+.enh-status-select{font-family:'Rubik',sans-serif;font-size:0.72rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:3px 7px;outline:none;cursor:pointer;transition:border-color .15s}
+.enh-status-select:focus{border-color:var(--primary)}
+.enh-admin-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.enh-admin-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)}
+.enh-admin-save{font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:500;padding:3px 10px;border-radius:6px;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:background .15s}
+.enh-admin-save:hover{background:var(--primary-dk)}
+.enh-admin-save:disabled{opacity:0.6;cursor:not-allowed}
+/* ────────────────────────────────────────────────────────────────────────── */
 .enh-sort-pills{display:flex;gap:5px;flex-wrap:wrap}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .toolbar h2{font-size:1.25rem;font-weight:600;color:var(--text)}
@@ -349,13 +359,10 @@ tr:hover td{background:var(--bg)}
 .sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
-/* Free badge on service cards */
 .sv-cost-free{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:#e0f5f8;color:#074f5a;white-space:nowrap;flex-shrink:0}
 .sv-cost-paid{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:var(--mango-lt);color:#7a4800;white-space:nowrap;flex-shrink:0}
-/* Services section divider */
 .sv-section-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:8px 2px 6px;grid-column:1/-1;display:flex;align-items:center;gap:10px}
 .sv-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-/* Section jump nav */
 .sv-jump-head{padding:10px 14px 6px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);border-top:1px solid var(--border);margin-top:4px}
 .sv-jump-list{padding:0 8px 8px;display:flex;flex-direction:column;gap:4px}
 .sv-jump-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-family:'Rubik',sans-serif;font-size:0.78rem;font-weight:500;color:var(--text);text-align:left;transition:background 0.12s,border-color 0.12s}
@@ -363,12 +370,10 @@ tr:hover td{background:var(--bg)}
 .sv-jump-btn.flash{background:var(--primary-lt);border-color:var(--primary)}
 .sv-jump-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .sv-jump-count{margin-left:auto;font-size:0.7rem;color:var(--muted);font-weight:400}
-/* Back to top */
 .sv-backtop-wrap{padding:8px;border-top:1px solid var(--border);opacity:0;pointer-events:none;transition:opacity 0.2s}
 .sv-backtop-wrap.visible{opacity:1;pointer-events:auto}
 .sv-backtop-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-family:'Rubik',sans-serif;font-size:0.78rem;color:var(--muted);transition:background 0.12s,color 0.12s,border-color 0.12s}
 .sv-backtop-btn:hover{background:var(--bg);color:var(--text);border-color:var(--primary)}
-/* Waive request panel */
 .waive-panel{background:var(--lavender-lt);border:1.5px solid #c5b8f5;border-radius:10px;margin-bottom:1rem;overflow:hidden}
 .waive-panel .dsh{background:#ede9ff;border-bottom:1px solid #c5b8f5}
 .waive-panel .dsh h3{color:#3b1d9e}
@@ -390,7 +395,6 @@ tr:hover td{background:var(--bg)}
 .waive-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
 .waive-msg-ok{color:#3b1d9e;font-weight:500}
 .waive-msg-err{color:var(--tomato)}
-/* Config panel inside waive section */
 .waive-config{background:var(--surface);border:1px solid #c5b8f5;border-radius:8px;padding:12px 14px;margin-bottom:12px}
 .waive-config-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .waive-config-head span{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b1d9e}
@@ -403,7 +407,6 @@ tr:hover td{background:var(--bg)}
 .waive-config-save:hover{background:#5c3dd8}
 .waive-config-preview{font-size:0.72rem;color:var(--muted);line-height:1.6}
 .waive-config-preview strong{color:var(--text);font-weight:500}
-/* Test email button */
 .waive-test-btn{font-family:'Rubik',sans-serif;font-size:0.75rem;font-weight:500;padding:5px 14px;border-radius:6px;cursor:pointer;background:var(--surface);border:1.5px solid #c5b8f5;color:#3b1d9e;transition:all 0.15s;margin-top:6px;width:100%}
 .waive-test-btn:hover{background:#ede9ff}
 .waive-test-btn:disabled{opacity:0.55;cursor:not-allowed}
@@ -944,6 +947,7 @@ tr:hover td{background:var(--bg)}
                 <div class="enh-sort-pills">
                   <span class="pill on" data-esort="newest" onclick="setEnhSort(this)">Newest</span>
                   <span class="pill" data-esort="votes" onclick="setEnhSort(this)">Most Voted</span>
+                  <span class="pill" data-esort="status" onclick="setEnhSort(this)">By Status</span>
                 </div>
               </div>
               <div id="enhList"><div class="enh-empty"><span class="spinner"></span></div></div>
@@ -1149,7 +1153,6 @@ function switchTab(name) {
   if (name === 'tracker' && !trackerInit) { trackerInit = true; USER_EMAIL = userEmail; USER_ROLE = userRole; IS_INTERNAL = isInternal; init_tracker(); }
   if (name === 'services') {
     renderServicesView();
-    // Attach scroll listener once — controls back-to-top visibility
     var svContent = document.querySelector('.sv-content');
     var svBackTop = document.getElementById('svBackTopWrap');
     if (svContent && svBackTop && !svContent._backTopBound) {
@@ -1248,9 +1251,8 @@ function renderServicesView() {
   if (countEl) countEl.textContent = filtered.length + ' of ' + servicesList.length + ' service' + (servicesList.length !== 1 ? 's' : '');
   if (!filtered.length) { grid.innerHTML = '<div class="sv-empty"><p>No services match your search.</p></div>'; return; }
 
-  // Split into Free and With Cost
-  var freeItems   = filtered.filter(function(s) { return s.costType === 'Free'; });
-  var paidItems   = filtered.filter(function(s) { return s.costType !== 'Free'; });
+  var freeItems = filtered.filter(function(s) { return s.costType === 'Free'; });
+  var paidItems = filtered.filter(function(s) { return s.costType !== 'Free'; });
 
   function renderCard(svc) {
     var cardId = 'svcard-' + svc.id.replace(/[^a-z0-9]/gi, '-');
@@ -1262,9 +1264,7 @@ function renderServicesView() {
     var chevron = '<svg class="sv-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
     var isFree = svc.costType === 'Free';
     var expandRows = '';
-    // Always show Cost Type
     expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Cost Type</span><span class="sv-card-expand-value">' + (isFree ? '<span class="sv-cost-free" style="font-size:0.7rem">Free</span>' : '<span class="sv-cost-paid" style="font-size:0.7rem">With Cost</span>') + '</span></div>';
-    // Always show Estimated Cost — "Free" label for free services, price or "Quoted per request" for paid
     var costDisplay = isFree ? 'Free — no charge to client' : (svc.price || 'Quoted per request');
     expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(costDisplay) + '</span></div>';
     if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
@@ -1294,12 +1294,10 @@ function renderServicesView() {
   }
   grid.innerHTML = html;
 
-  // Update jump-to counts
   var paidCountEl = document.getElementById('sv-jump-paid-count');
   var freeCountEl = document.getElementById('sv-jump-free-count');
   if (paidCountEl) paidCountEl.textContent = paidItems.length || '';
   if (freeCountEl) freeCountEl.textContent = freeItems.length || '';
-  // Hide jump buttons when a section is empty or search is active
   var jumpPaid = document.getElementById('sv-jump-paid');
   var jumpFree = document.getElementById('sv-jump-free');
   if (jumpPaid) jumpPaid.style.display = paidItems.length ? 'flex' : 'none';
@@ -1397,7 +1395,6 @@ function svScrollTop() {
   if (content) content.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Attach scroll listener for back-to-top visibility once DOM is ready
 function showToast(msg) { var t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 3000); }
 document.getElementById('svcModal').addEventListener('click', function(e) { if (e.target === this) closeSvcModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSvcModal(); });
@@ -1441,7 +1438,6 @@ function matches(s) {
     if (activeCat === '__uncategorized__') { if (sCat) return false; }
     else { if (sCat.toLowerCase() !== activeCat.toLowerCase()) return false; }
   }
-  // Closed scorecard groups both terminal statuses
   if (activeSC === 'Closed') {
     var slc = s.lifecycle || '';
     if (slc !== 'Not doable or out of scope' && slc !== 'Request no longer needed') return false;
@@ -1477,7 +1473,6 @@ async function fetchListWithRetry(url, maxAttempts, onSlowCallback) {
   throw lastErr;
 }
 
-// In-memory detail cache: { jiraKey: { data, ts } } — 5 min TTL
 var _detailCache = {};
 var DETAIL_CACHE_TTL = 5 * 60 * 1000;
 
@@ -1489,7 +1484,6 @@ async function loadList() {
   var roleParam = '&role=' + encodeURIComponent(USER_ROLE);
   var baseUrl   = GAS_URL + '?action=list&email=' + encodeURIComponent(USER_EMAIL) + roleParam;
 
-  // ── Step 1: Serve from sessionStorage immediately if available ────────────
   if (cached) {
     try {
       var cd = JSON.parse(cached);
@@ -1500,8 +1494,6 @@ async function loadList() {
     document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
   }
 
-  // ── Step 2: Shallow fetch (no Jira calls) — instant sheet data ────────────
-  // Uses sheet-cached lifecycle so GAS returns immediately without hitting Jira.
   var onSlow = function() {
     var el = document.getElementById('sbList');
     if (el && (!all || !all.length)) el.innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Loading requests…</span></div>';
@@ -1512,13 +1504,8 @@ async function loadList() {
     sessionStorage.setItem(cacheKey, JSON.stringify({ data: d, ts: Date.now() }));
     all = normaliseSubmissions(d.submissions || []);
     renderCatPills(); render();
-
-    // ── Step 3: Background refresh — calls Jira and updates lifecycle cache ─
-    // Fires after the sidebar is already visible. Updates come back as a
-    // patch map so only changed tickets re-render, not the whole list.
     backgroundRefreshLifecycle(baseUrl);
   } catch(e) {
-    // Shallow failed — fall back to full (Jira-hitting) fetch
     try {
       var d2 = await fetchListWithRetry(baseUrl, 2, null);
       sessionStorage.setItem(cacheKey, JSON.stringify({ data: d2, ts: Date.now() }));
@@ -1532,9 +1519,6 @@ async function loadList() {
   } finally { _listLoading = false; }
 }
 
-// Fires after shallow load. Hits GAS refreshLifecycle which calls Jira for
-// non-terminal tickets, updates the sheet cache, and returns changed values.
-// Patches in-memory `all` and re-renders only if something changed.
 async function backgroundRefreshLifecycle(baseUrl) {
   try {
     var refreshUrl = GAS_URL + '?action=refreshLifecycle&email=' + encodeURIComponent(USER_EMAIL)
@@ -1556,15 +1540,12 @@ async function backgroundRefreshLifecycle(baseUrl) {
       }
     });
     if (changed) {
-      // Update sessionStorage so next load gets fresh lifecycle
       try {
         var cacheKey = 'tracker_cache_' + USER_EMAIL;
         var ex = sessionStorage.getItem(cacheKey);
         if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(p)); }
       } catch(ce) {}
-      // Re-render scorecard counts and list (sidebar cards show lifecycle badges)
       renderCatPills(); render();
-      // Update analytics meta counts if visible
       if (IS_INTERNAL) loadAnalytics();
     }
   } catch(e) {
@@ -1574,7 +1555,7 @@ async function backgroundRefreshLifecycle(baseUrl) {
 
 async function refresh() {
   if (_listLoading) return;
-  _detailCache = {}; // clear detail cache on manual refresh
+  _detailCache = {};
   sessionStorage.removeItem('tracker_cache_' + USER_EMAIL);
   all = []; activeKey = null;
   document.getElementById('sbList').innerHTML = '<div class="empty-sb"><span class="spinner"></span><br><span style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:inline-block">Refreshing…</span></div>';
@@ -1600,8 +1581,6 @@ async function loadAnalytics() {
     document.getElementById('sc-cl').textContent  = ((lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0)) || '—';
     var countRow   = document.getElementById('analyticsMetaCounts');
     var revenueRow = document.getElementById('analyticsMetaRevenue');
-
-    // ── Row 1: Service cost status counts + Free services ────────────────────
     var countPills = [];
     countPills.push('<span class="meta-pill-label">Requests:</span>');
     if (data.byCost) {
@@ -1613,8 +1592,6 @@ async function loadAnalytics() {
     }
     if (data.avgDays != null) countPills.push('<div class="meta-pill">Avg. resolution <span>' + data.avgDays + 'd</span></div>');
     if (countRow) countRow.innerHTML = countPills.join('');
-
-    // ── Row 2: Revenue ────────────────────────────────────────────────────────
     var revPills = [];
     revPills.push('<span class="meta-pill-label">Revenue:</span>');
     revPills.push('<div class="meta-pill meta-pill-rev-in">Received <span>' + fmtPhp(data.revenueReceived != null ? data.revenueReceived : 0) + '</span></div>');
@@ -1655,14 +1632,12 @@ async function select(jiraKey, el) {
   var panel = document.getElementById('detail');
   var s = all.find(x => x.jiraKey === jiraKey);
 
-  // Serve from detail cache instantly if fresh (< 5 min)
   var cached = _detailCache[jiraKey];
   if (cached && (Date.now() - cached.ts) < DETAIL_CACHE_TTL) {
     renderDetail(s, cached.data);
     return;
   }
 
-  // Show skeleton with sheet data immediately, then load Jira detail
   renderDetail(s, null);
   if (!jiraKey || jiraKey === 'ERROR') return;
 
@@ -1670,9 +1645,8 @@ async function select(jiraKey, el) {
     var res    = await fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey));
     var detail = await res.json();
     _detailCache[jiraKey] = { data: detail, ts: Date.now() };
-    // Only update if this ticket is still selected
     if (activeKey === jiraKey) renderDetail(s, detail);
-  } catch(e) { /* already showing sheet data — silent fail */ }
+  } catch(e) {}
 }
 
 function renderDetail(s, d) {
@@ -1690,7 +1664,6 @@ function renderDetail(s, d) {
     + (s && s.urgency ? '<span>·</span><span>' + esc(s.urgency) + ' urgency</span>' : '')
     + '</div></div>';
 
-  // Closed statuses — red banner with tailored copy
   if (lc === 'Not doable or out of scope' || lc === 'Request no longer needed') {
     var closedLabel = lc === 'Request no longer needed' ? 'This request has been cancelled.' : 'This request has been closed — not doable or out of scope.';
     var closedDetail = lc === 'Request no longer needed'
@@ -1702,7 +1675,6 @@ function renderDetail(s, d) {
       + '</div>';
   }
 
-  // For Team Assessment — amber banner
   if (lc === 'For Team Assessment') {
     html += '<div style="background:var(--mango-lt);border:1.5px solid #fde8b0;border-radius:8px;padding:12px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px">'
       + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--mango)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
@@ -1770,9 +1742,6 @@ function renderDetail(s, d) {
     if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
   }
 
-  // ── COMMENT BOX — visible to all roles ───────────────────────────────────
-  // Admins: see a Jira redirect nudge (they must comment in Jira directly)
-  // All others (client / lead): get the active textarea to post to Jira
   if (s && s.jiraKey && s.jiraKey !== 'ERROR') {
     var jiraUrl = psrv ? psrv.url : '';
     html += '<div class="csm-comment-box">'
@@ -1798,7 +1767,6 @@ function renderDetail(s, d) {
 }
 
 function renderStepper(currentLc) {
-  // Terminal states — red branch appended after greyed-out linear steps
   if (currentLc === 'Not doable or out of scope' || currentLc === 'Request no longer needed') {
     var label = currentLc;
     return LIFECYCLE_STEPS.map(function(lc) {
@@ -1806,14 +1774,12 @@ function renderStepper(currentLc) {
     }).join('')
       + '<div class="step current"><div class="step-dot" style="border-color:var(--tomato);background:var(--tomato);box-shadow:0 0 0 3px rgba(201,42,42,0.15)"></div><div class="step-label" style="color:var(--tomato);font-weight:700">' + esc(label) + '</div></div>';
   }
-  // For Team Assessment — amber pause node appended
   if (currentLc === 'For Team Assessment') {
     return LIFECYCLE_STEPS.map(function(lc) {
       return '<div class="step"><div class="step-dot" style="border-color:var(--mango-lt);background:var(--mango-lt)"></div><div class="step-label" style="color:var(--muted)">' + esc(lc) + '</div></div>';
     }).join('')
       + '<div class="step current"><div class="step-dot" style="border-color:var(--mango);background:var(--surface);box-shadow:0 0 0 3px rgba(240,140,0,0.15)"><span style="width:8px;height:8px;border-radius:50%;background:var(--mango);display:block"></span></div><div class="step-label" style="color:var(--mango);font-weight:700">Team Assessment</div></div>';
   }
-  // Normal linear stepper
   return LIFECYCLE_STEPS.map(function(lc) {
     var cIdx = LIFECYCLE_STEPS.indexOf(currentLc);
     var lIdx = LIFECYCLE_STEPS.indexOf(lc);
@@ -1833,15 +1799,9 @@ function tog(id) { document.getElementById(id).classList.toggle('on'); }
 
 function lcBadge(lc) {
   var map = {
-    'Request Logged':'b-gray',
-    'For Scoping':'b-blue',
-    'For Quotation':'b-teal',
-    'For Team Assessment':'b-amber',
-    'Quotation Done':'b-purple',
-    'For Execution':'b-amber',
-    'Execution Done':'b-green',
-    'Not doable or out of scope':'b-red',
-    'Request no longer needed':'b-red'
+    'Request Logged':'b-gray','For Scoping':'b-blue','For Quotation':'b-teal',
+    'For Team Assessment':'b-amber','Quotation Done':'b-purple','For Execution':'b-amber',
+    'Execution Done':'b-green','Not doable or out of scope':'b-red','Request no longer needed':'b-red'
   };
   return map[lc] || 'b-gray';
 }
@@ -1914,7 +1874,6 @@ function render_analytics(data) {
     if (typeof Chart === 'undefined') return;
     var monthly = data.monthlyArr || [];
     var lcLabels = ['Request Logged','For Scoping','For Quotation','For Team Assessment','Quotation Done','For Execution','Execution Done','Closed'];
-    var lcShort  = lcLabels;
     var lcValues = lcLabels.map(function(l) {
       if (l === 'Closed') return (lc['Not doable or out of scope'] || 0) + (lc['Request no longer needed'] || 0);
       return lc[l] || 0;
@@ -1923,7 +1882,7 @@ function render_analytics(data) {
     var LC_BORDERS_CHART = [COLORS.gray, COLORS.blue, COLORS.teal, COLORS.amber, COLORS.purple, COLORS.amber, COLORS.green, COLORS.red];
     var svcColors = [COLORS.green,COLORS.blue,COLORS.amber,COLORS.purple,COLORS.teal,COLORS.red,COLORS.gray];
     buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
-    buildChart('an-chartLifecycle','bar',{labels:lcShort,datasets:[{label:'Requests',data:lcValues,backgroundColor:LC_COLORS_CHART,borderColor:LC_BORDERS_CHART,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
+    buildChart('an-chartLifecycle','bar',{labels:lcLabels,datasets:[{label:'Requests',data:lcValues,backgroundColor:LC_COLORS_CHART,borderColor:LC_BORDERS_CHART,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Withdrawn','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Withdrawn||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.amber,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
@@ -1945,9 +1904,6 @@ function applyFilter() { load_analytics(document.getElementById('an-fromDate').v
 function clearFilter() { document.getElementById('an-fromDate').value = ''; document.getElementById('an-toDate').value = ''; load_analytics(); }
 function fmtMonth(ym) { if (!ym) return ''; var p = ym.split('-'); var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return (names[parseInt(p[1],10)-1]||p[1]) + ' ' + p[0]; }
 
-// ── normaliseSubmissions ──────────────────────────────────────────────────────
-// Post-processes the submissions array from GAS to normalise activityDate into
-// YYYY-MM-DD so the <input type="date"> always gets a valid value on first load.
 function normaliseSubmissions(submissions) {
   return submissions.map(function(s) {
     if (s.activityDate) s.activityDate = normDateToYMD(s.activityDate) || s.activityDate;
@@ -1955,34 +1911,17 @@ function normaliseSubmissions(submissions) {
   });
 }
 
-// ── normDateToYMD ─────────────────────────────────────────────────────────────
-// Converts any date string the sheet might return into YYYY-MM-DD for the
-// <input type="date"> value attribute. Handles:
-//   • Already YYYY-MM-DD (passthrough)
-//   • ISO 8601:  "2025-06-15T00:00:00.000Z"
-//   • Locale strings: "6/15/2025", "Jun 15 2025", "2025-06-15 00:00:00"
-//   • Google Sheets serial numbers (numeric strings like "46020")
-// Returns '' if the input is empty or unparseable.
 function normDateToYMD(raw) {
   if (!raw) return '';
   var s = String(raw).trim();
   if (!s || s === 'null' || s === 'undefined') return '';
-
-  // Already YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-
-  // ISO with time component — take the date part
   if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return s.substring(0, 10);
-
-  // YYYY-MM-DD HH:mm:ss (GAS Utilities.formatDate output)
   if (/^\d{4}-\d{2}-\d{2} /.test(s)) return s.substring(0, 10);
-
-  // Google Sheets numeric serial (days since 1899-12-30)
   if (/^\d+$/.test(s)) {
     var serial = parseInt(s);
-    // Plausible sheet serial range: 30000–60000 (roughly 1982–2064)
     if (serial > 25569 && serial < 80000) {
-      var ms = (serial - 25569) * 86400000; // convert to Unix ms (25569 = days from 1899-12-30 to 1970-01-01)
+      var ms = (serial - 25569) * 86400000;
       var d  = new Date(ms);
       if (!isNaN(d)) {
         var y = d.getUTCFullYear();
@@ -1993,8 +1932,6 @@ function normDateToYMD(raw) {
     }
     return '';
   }
-
-  // Try native Date parsing for everything else (locale strings, RFC strings, etc.)
   var parsed = new Date(s);
   if (!isNaN(parsed.getTime())) {
     var py  = parsed.getFullYear();
@@ -2002,15 +1939,12 @@ function normDateToYMD(raw) {
     var pd  = String(parsed.getDate()).padStart(2, '0');
     return py + '-' + pm + '-' + pd;
   }
-
   return '';
 }
 
 function renderOpCard(s) {
   if (!IS_INTERNAL || !isAdmin) return '';
   var cost  = s && s.serviceCost != null ? s.serviceCost : '';
-  // Normalise activityDate from the sheet to YYYY-MM-DD for the date input.
-  // Sheet can return ISO strings, locale strings, Date.toString(), or blank.
   var adate = s && s.activityDate ? normDateToYMD(s.activityDate) : '';
   var cstat = s && s.costStatus ? s.costStatus : 'Pending';
   var jk    = s && s.jiraKey ? s.jiraKey : '';
@@ -2070,20 +2004,9 @@ async function saveOpDetails(jiraKey) {
   } catch(e) { alert('Save failed: ' + e.message); }
 }
 
-// ── WAIVE REQUEST PANEL ───────────────────────────────────────────────────────
-// Rendered inside renderOpCard for admin view only.
-// Shows the waive request form — CSM reason, business justification, impact.
-// On send: fires GAS action=sendWaiveRequest which emails CTO + COO (configurable).
-// Email includes Approve / Reject / Request Clarification action links.
-
 var WAIVE_CONFIG_KEY = 'platops_waive_config';
-
-function getWaiveConfig() {
-  try { return JSON.parse(localStorage.getItem(WAIVE_CONFIG_KEY) || '{}'); } catch(e) { return {}; }
-}
-function saveWaiveConfig(cfg) {
-  try { localStorage.setItem(WAIVE_CONFIG_KEY, JSON.stringify(cfg)); } catch(e) {}
-}
+function getWaiveConfig() { try { return JSON.parse(localStorage.getItem(WAIVE_CONFIG_KEY) || '{}'); } catch(e) { return {}; } }
+function saveWaiveConfig(cfg) { try { localStorage.setItem(WAIVE_CONFIG_KEY, JSON.stringify(cfg)); } catch(e) {} }
 
 function renderWaivePanel(s) {
   if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') return '';
@@ -2094,50 +2017,30 @@ function renderWaivePanel(s) {
   var wImpact  = s.waiveImpact  || '';
   var wSentAt  = s.waiveSentAt  || '';
   var wNote    = s.waiveNote    || '';
-
   var cfg     = getWaiveConfig();
   var ctoEmail= cfg.ctoEmail  || 'gdelarama@sprout.ph';
   var cooEmail= cfg.cooEmail  || 'kislayc@sprout.ph';
   var ccEmails= cfg.ccEmails  || 'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph';
-
-  // Email config panel — always shown so admin can verify/change before sending
   var configPanel = '<div class="waive-config">'
-    + '<div class="waive-config-head">'
-    + '<span>Email Recipients</span>'
-    + '<button class="waive-config-toggle" onclick="toggleWaiveConfig()">Edit</button>'
-    + '</div>'
-    + '<div class="waive-config-preview" id="waiveConfigPreview">'
-    + '<strong>To:</strong> ' + esc(ctoEmail) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(cooEmail) + (ccEmails ? ', ' + esc(ccEmails) : '')
-    + '</div>'
+    + '<div class="waive-config-head"><span>Email Recipients</span><button class="waive-config-toggle" onclick="toggleWaiveConfig()">Edit</button></div>'
+    + '<div class="waive-config-preview" id="waiveConfigPreview"><strong>To:</strong> ' + esc(ctoEmail) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(cooEmail) + (ccEmails ? ', ' + esc(ccEmails) : '') + '</div>'
     + '<div class="waive-config-body" id="waiveConfigBody">'
-    + '<div class="waive-config-row">'
-    + '<div class="waive-field"><label>CTO Email (To)</label><input type="email" id="wcto" value="' + esc(ctoEmail) + '" placeholder="cto@sprout.ph"/></div>'
-    + '<div class="waive-field"><label>COO Email (CC)</label><input type="email" id="wcoo" value="' + esc(cooEmail) + '" placeholder="coo@sprout.ph"/></div>'
-    + '</div>'
+    + '<div class="waive-config-row"><div class="waive-field"><label>CTO Email (To)</label><input type="email" id="wcto" value="' + esc(ctoEmail) + '" placeholder="cto@sprout.ph"/></div>'
+    + '<div class="waive-field"><label>COO Email (CC)</label><input type="email" id="wcoo" value="' + esc(cooEmail) + '" placeholder="coo@sprout.ph"/></div></div>'
     + '<div class="waive-field" style="margin-bottom:8px"><label>Additional CC <span style="font-weight:400;color:var(--muted)">(comma-separated)</span></label>'
     + '<input type="text" id="wcc" value="' + esc(ccEmails) + '" placeholder="e.g. name@sprout.ph, name2@sprout.ph"/></div>'
-    + '<div style="display:flex;align-items:center;gap:8px">'
-    + '<button class="waive-config-save" onclick="saveWaiveEmailConfig()">Save Recipients</button>'
-    + '<span id="wcSaveMsg" style="font-size:0.72rem;color:#3b1d9e;font-weight:500"></span>'
-    + '</div>'
-    + '</div>'
-    + '</div>';
-
+    + '<div style="display:flex;align-items:center;gap:8px"><button class="waive-config-save" onclick="saveWaiveEmailConfig()">Save Recipients</button>'
+    + '<span id="wcSaveMsg" style="font-size:0.72rem;color:#3b1d9e;font-weight:500"></span></div>'
+    + '</div></div>';
   var statusBadge = '';
   if (wStatus === 'Sent')                        statusBadge = '<span class="waive-status-badge waive-status-sent">● Awaiting CTO/COO approval</span>';
   else if (wStatus === 'Approved')               statusBadge = '<span class="waive-status-badge waive-status-approved">✓ Approved by CTO/COO</span>';
   else if (wStatus === 'Rejected')               statusBadge = '<span class="waive-status-badge waive-status-rejected">✕ Rejected</span>';
   else if (wStatus === 'Clarification Requested') statusBadge = '<span class="waive-status-badge waive-status-clarify">⚑ Clarification requested</span>';
-
   var noteBlock = (wNote && (wStatus === 'Rejected' || wStatus === 'Clarification Requested'))
-    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid '
-      + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
-      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">'
-      + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
-      + '<div style="font-size:0.8rem;color:var(--text)">' + esc(wNote) + '</div>'
-      + '</div>'
-    : '';
-
+    ? '<div style="background:var(--surface);border-radius:6px;padding:8px 10px;margin-top:8px;border-left:2px solid ' + (wStatus === 'Rejected' ? 'var(--tomato)' : 'var(--mango)') + '">'
+      + '<div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:3px">' + (wStatus === 'Rejected' ? 'Rejection note' : 'Clarification requested') + '</div>'
+      + '<div style="font-size:0.8rem;color:var(--text)">' + esc(wNote) + '</div></div>' : '';
   var formOrHistory = '';
   if (wStatus === 'Sent' || wStatus === 'Approved' || wStatus === 'Rejected') {
     formOrHistory = '<div class="waive-history">'
@@ -2145,28 +2048,19 @@ function renderWaivePanel(s) {
       + '<div class="waive-hist-item"><strong>CSM Reason:</strong> ' + esc(wReason) + '</div>'
       + '<div class="waive-hist-item"><strong>Business Justification:</strong> ' + esc(wJustify) + '</div>'
       + (wImpact ? '<div class="waive-hist-item"><strong>Client Impact if Charged:</strong> ' + esc(wImpact) + '</div>' : '')
-      + noteBlock
-      + '</div>';
+      + noteBlock + '</div>';
     if (wStatus === 'Clarification Requested') {
       formOrHistory += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #c5b8f5">'
         + '<div style="font-size:0.72rem;color:#3b1d9e;font-weight:500;margin-bottom:8px">Update your details and resubmit:</div>'
-        + renderWaiveForm(jk, wReason, wJustify, wImpact, true)
-        + '</div>';
+        + renderWaiveForm(jk, wReason, wJustify, wImpact, true) + '</div>';
     }
   } else {
     formOrHistory = renderWaiveForm(jk, wReason, wJustify, wImpact, false);
   }
-
-  return '<div class="waive-panel">'
-    + '<div class="dsh"><h3>Waiver Request</h3>'
-    + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '')
-    + '</div>'
-    + '<div class="waive-inner">'
-    + configPanel
-    + (statusBadge ? '<div style="margin-bottom:10px">' + statusBadge + '</div>' : '')
+  return '<div class="waive-panel"><div class="dsh"><h3>Waiver Request</h3>' + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '') + '</div>'
+    + '<div class="waive-inner">' + configPanel + (statusBadge ? '<div style="margin-bottom:10px">' + statusBadge + '</div>' : '')
     + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Provide a detailed defense below. This will be emailed to the CTO for approval with COO on CC. The requesting CSM receives a copy for visibility.</p>'
-    + formOrHistory
-    + '</div></div>';
+    + formOrHistory + '</div></div>';
 }
 
 function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
@@ -2174,7 +2068,7 @@ function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
   return '<div class="waive-field"><label>CSM Reason for Waiver <span style="color:var(--tomato)">*</span></label>'
     + '<input type="text" id="waive-reason" value="' + esc(reason) + '" placeholder="e.g. Client on paid pilot, goodwill gesture, executive commitment…"/></div>'
     + '<div class="waive-field"><label>Business Justification &amp; Defense <span style="color:var(--tomato)">*</span></label>'
-    + '<textarea id="waive-justify" rows="4" placeholder="Why should this fee be waived? What is the strategic or commercial rationale? What precedent does this set? What approvals have already been discussed?">' + esc(justify) + '</textarea></div>'
+    + '<textarea id="waive-justify" rows="4" placeholder="Why should this fee be waived?">' + esc(justify) + '</textarea></div>'
     + '<div class="waive-field"><label>Client Impact if Charged <span style="color:var(--muted);font-weight:400">(optional but recommended)</span></label>'
     + '<input type="text" id="waive-impact" value="' + esc(impact) + '" placeholder="e.g. Client may churn, at risk of non-renewal, MRR value…"/></div>'
     + '<button class="waive-send-btn" id="waiveSendBtn" onclick="sendWaiveRequest(\'' + jk + '\')">' + btnLabel + '</button>'
@@ -2196,10 +2090,8 @@ function saveWaiveEmailConfig() {
   var coo = (document.getElementById('wcoo') || {}).value || '';
   var cc  = (document.getElementById('wcc')  || {}).value || '';
   saveWaiveConfig({ ctoEmail: cto.trim(), cooEmail: coo.trim(), ccEmails: cc.trim() });
-  // Update preview
   var preview = document.getElementById('waiveConfigPreview');
   if (preview) preview.innerHTML = '<strong>To:</strong> ' + esc(cto) + ' &nbsp;·&nbsp; <strong>CC:</strong> ' + esc(coo) + (cc ? ', ' + esc(cc) : '');
-  // Close body
   var body = document.getElementById('waiveConfigBody');
   if (body) body.classList.remove('open');
   if (preview) preview.style.display = 'block';
@@ -2213,75 +2105,50 @@ async function sendWaiveRequest(jiraKey, isTest) {
   var impact  = (document.getElementById('waive-impact')  || {}).value || '';
   var msgEl   = document.getElementById('waiveMsg');
   var btn     = document.getElementById(isTest ? 'waiveTestBtn' : 'waiveSendBtn');
-
   if (!isTest) {
     if (!reason.trim())  { if (msgEl) { msgEl.textContent = 'Please provide the CSM reason.';      msgEl.className = 'waive-msg waive-msg-err'; } return; }
     if (!justify.trim()) { if (msgEl) { msgEl.textContent = 'Business justification is required.'; msgEl.className = 'waive-msg waive-msg-err'; } return; }
   }
-
   if (btn) { btn.disabled = true; btn.textContent = isTest ? 'Sending test…' : 'Sending…'; }
   if (msgEl) { msgEl.textContent = ''; msgEl.className = 'waive-msg'; }
-
   var cfg = getWaiveConfig();
   var s   = all.find(function(x) { return x.jiraKey === jiraKey; });
-
   var payload = {
-    action:      'sendWaiveRequest',
-    isTest:      !!isTest,
-    jiraKey:     jiraKey,
-    // Recipient config — passed from portal so GAS doesn't need them hardcoded
-    ctoEmail:    cfg.ctoEmail  || 'gdelarama@sprout.ph',
-    cooEmail:    cfg.cooEmail  || 'kislayc@sprout.ph',
-    ccEmails:    cfg.ccEmails  || 'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph',
-    // Ticket context
-    clientName:  s ? s.clientName  : (isTest ? 'Test Client'    : '—'),
-    serviceType: s ? s.serviceType : (isTest ? 'Test Service'   : '—'),
-    category:    s ? s.category    : (isTest ? 'Database'       : '—'),
-    description: s ? s.description : (isTest ? '[TEST] Sample request description for testing purposes.' : '—'),
-    csmName:     s ? s.csmName     : (isTest ? 'Test CSM'       : '—'),
-    csmEmail:    s ? s.csmEmail    : '',
-    hrUrl:       s ? s.hrUrl       : (isTest ? 'testclient.hrhub.ph' : '—'),
-    serviceCost: s ? s.serviceCost : (isTest ? 5000 : ''),
-    // Waive details
-    reason:      reason.trim()  || (isTest ? '[TEST] This is a test waiver reason'         : ''),
-    justify:     justify.trim() || (isTest ? '[TEST] This is a test business justification' : ''),
-    impact:      impact.trim()  || (isTest ? '[TEST] This is a test client impact note'     : ''),
-    submittedBy: userEmail,
+    action:'sendWaiveRequest', isTest:!!isTest, jiraKey:jiraKey,
+    ctoEmail:cfg.ctoEmail||'gdelarama@sprout.ph', cooEmail:cfg.cooEmail||'kislayc@sprout.ph', ccEmails:cfg.ccEmails||'gabriellef@sprout.ph, diane@sprout.ph, afrancisco@sprout.ph',
+    clientName:s?s.clientName:(isTest?'Test Client':'—'), serviceType:s?s.serviceType:(isTest?'Test Service':'—'),
+    category:s?s.category:(isTest?'Database':'—'), description:s?s.description:(isTest?'[TEST] Sample request description.':'—'),
+    csmName:s?s.csmName:(isTest?'Test CSM':'—'), csmEmail:s?s.csmEmail:'', hrUrl:s?s.hrUrl:(isTest?'testclient.hrhub.ph':'—'),
+    serviceCost:s?s.serviceCost:(isTest?5000:''),
+    reason:reason.trim()||(isTest?'[TEST] This is a test waiver reason':''),
+    justify:justify.trim()||(isTest?'[TEST] This is a test business justification':''),
+    impact:impact.trim()||(isTest?'[TEST] This is a test client impact note':''),
+    submittedBy:userEmail,
   };
-
   try {
     var res  = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) });
     var data = await res.json();
     if (data.success) {
       if (isTest) {
-        if (msgEl) {
-          msgEl.innerHTML = '📧 Test email sent to <strong>' + esc(userEmail) + '</strong>. Check your inbox to verify the format and links.';
-          msgEl.className = 'waive-msg waive-msg-ok';
-        }
+        if (msgEl) { msgEl.innerHTML = '📧 Test email sent to <strong>' + esc(userEmail) + '</strong>. Check your inbox to verify the format and links.'; msgEl.className = 'waive-msg waive-msg-ok'; }
         if (btn) { btn.disabled = false; btn.textContent = '📧 Send Test Email to Me'; }
       } else {
         if (s) {
-          s.waiveStatus  = 'Sent';
-          s.waiveReason  = reason.trim();
-          s.waiveJustify = justify.trim();
-          s.waiveImpact  = impact.trim();
-          s.waiveSentAt  = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-          try {
-            var ck = 'tracker_cache_' + USER_EMAIL;
-            var ex = sessionStorage.getItem(ck);
-            if (ex) { var p = JSON.parse(ex); p.data.submissions = all; sessionStorage.setItem(ck, JSON.stringify(p)); }
-          } catch(ce) {}
+          s.waiveStatus=s.waiveReason=s.waiveJustify=s.waiveImpact='';
+          s.waiveStatus='Sent'; s.waiveReason=reason.trim(); s.waiveJustify=justify.trim(); s.waiveImpact=impact.trim();
+          s.waiveSentAt=new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+          try { var ck='tracker_cache_'+USER_EMAIL; var ex=sessionStorage.getItem(ck); if(ex){var p=JSON.parse(ex);p.data.submissions=all;sessionStorage.setItem(ck,JSON.stringify(p));} } catch(ce) {}
         }
-        if (msgEl) { msgEl.textContent = 'Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className = 'waive-msg waive-msg-ok'; }
+        if (msgEl) { msgEl.textContent='Waiver request sent ✓ CTO and COO have been notified.'; msgEl.className='waive-msg waive-msg-ok'; }
         setTimeout(function() { if (s) renderDetail(s, null); }, 1500);
       }
     } else {
-      if (msgEl) { msgEl.textContent = 'Failed: ' + (data.error || 'Unknown error'); msgEl.className = 'waive-msg waive-msg-err'; }
-      if (btn) { btn.disabled = false; btn.textContent = isTest ? '📧 Send Test Email to Me' : 'Send Waiver Request to CTO &amp; COO'; }
+      if (msgEl) { msgEl.textContent='Failed: '+(data.error||'Unknown error'); msgEl.className='waive-msg waive-msg-err'; }
+      if (btn) { btn.disabled=false; btn.textContent=isTest?'📧 Send Test Email to Me':'Send Waiver Request to CTO &amp; COO'; }
     }
   } catch(e) {
-    if (msgEl) { msgEl.textContent = 'Could not send. Please check your connection.'; msgEl.className = 'waive-msg waive-msg-err'; }
-    if (btn) { btn.disabled = false; btn.textContent = isTest ? '📧 Send Test Email to Me' : 'Send Waiver Request to CTO &amp; COO'; }
+    if (msgEl) { msgEl.textContent='Could not send. Please check your connection.'; msgEl.className='waive-msg waive-msg-err'; }
+    if (btn) { btn.disabled=false; btn.textContent=isTest?'📧 Send Test Email to Me':'Send Waiver Request to CTO &amp; COO'; }
   }
 }
 
@@ -2297,10 +2164,10 @@ async function sendCsmComment(jiraKey) {
   btn.disabled = true; btn.textContent = 'Posting…';
   if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; }
   try {
-    await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'addComment', jiraKey: jiraKey, comment: body, email: userEmail }) });
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'addComment', jiraKey:jiraKey, comment:body, email:userEmail }) });
     textarea.value = '';
     if (msgEl) { msgEl.textContent = 'Comment posted to Jira ✓'; msgEl.className = 'csm-comment-msg csm-comment-ok'; }
-    setTimeout(function() { if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; } }, 4000);
+    setTimeout(function() { if (msgEl) { msgEl.textContent=''; msgEl.className='csm-comment-msg'; } }, 4000);
   } catch(e) {
     if (msgEl) { msgEl.textContent = 'Failed to post. Please try again.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
   }
@@ -2312,103 +2179,259 @@ function handleFileSelect(input) { if (input.files && input.files[0]) setUploadF
 function handleDrop(e) { e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag'); if (e.dataTransfer.files && e.dataTransfer.files[0]) setUploadFile(e.dataTransfer.files[0]); }
 function setUploadFile(file) {
   _uploadFile = file;
-  var preview = document.getElementById('uploadPreview'); var name = document.getElementById('uploadFileName'); var btn = document.getElementById('uploadBtn');
-  if (preview) preview.classList.add('show'); if (name) name.textContent = file.name; if (btn) btn.style.display = 'block';
-  var msg = document.getElementById('uploadMsg'); if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+  var preview=document.getElementById('uploadPreview'); var name=document.getElementById('uploadFileName'); var btn=document.getElementById('uploadBtn');
+  if (preview) preview.classList.add('show'); if (name) name.textContent=file.name; if (btn) btn.style.display='block';
+  var msg=document.getElementById('uploadMsg'); if (msg) { msg.textContent=''; msg.className='upload-msg'; }
 }
 function clearUpload() {
-  _uploadFile = null;
-  var preview = document.getElementById('uploadPreview'); var btn = document.getElementById('uploadBtn'); var input = document.getElementById('quotFile');
-  if (preview) preview.classList.remove('show'); if (btn) btn.style.display = 'none'; if (input) input.value = '';
+  _uploadFile=null;
+  var preview=document.getElementById('uploadPreview'); var btn=document.getElementById('uploadBtn'); var input=document.getElementById('quotFile');
+  if (preview) preview.classList.remove('show'); if (btn) btn.style.display='none'; if (input) input.value='';
 }
 async function uploadQuotation(jiraKey) {
   if (!_uploadFile) return;
-  var btn = document.getElementById('uploadBtn'); var msg = document.getElementById('uploadMsg');
-  btn.disabled = true; btn.textContent = 'Uploading…';
-  if (msg) { msg.textContent = ''; msg.className = 'upload-msg'; }
+  var btn=document.getElementById('uploadBtn'); var msg=document.getElementById('uploadMsg');
+  btn.disabled=true; btn.textContent='Uploading…';
+  if (msg) { msg.textContent=''; msg.className='upload-msg'; }
   try {
-    var b64 = await new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { resolve(e.target.result.split(',')[1]); }; reader.onerror = reject; reader.readAsDataURL(_uploadFile); });
-    var payload = { action:'uploadCostDocument', jiraKey:jiraKey, fileData:b64, filename:_uploadFile.name, mimeType:_uploadFile.type||'application/octet-stream', uploadedBy:userEmail };
-    var res = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
-    var data = await res.json();
+    var b64=await new Promise(function(resolve,reject){var reader=new FileReader();reader.onload=function(e){resolve(e.target.result.split(',')[1]);};reader.onerror=reject;reader.readAsDataURL(_uploadFile);});
+    var payload={action:'uploadCostDocument',jiraKey:jiraKey,fileData:b64,filename:_uploadFile.name,mimeType:_uploadFile.type||'application/octet-stream',uploadedBy:userEmail};
+    var res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    var data=await res.json();
     if (data.success) {
-      if (msg) { msg.textContent = 'Uploaded and CSM notified ✓'; msg.className = 'upload-msg upload-ok'; }
+      if (msg) { msg.textContent='Uploaded and CSM notified ✓'; msg.className='upload-msg upload-ok'; }
       clearUpload();
-      var entry = all.find(function(x) { return x.jiraKey === jiraKey; });
-      if (entry) { entry.quotationUrl = data.fileUrl; entry.quotationFilename = data.filename; entry.quotationUploadedBy = userEmail; entry.quotationUploadedAt = data.uploadedAt; try { var cacheKey = 'tracker_cache_' + USER_EMAIL; var existing = sessionStorage.getItem(cacheKey); if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); } } catch(ce) {} }
-      var s = all.find(function(x) { return x.jiraKey === jiraKey; }); if (s) renderDetail(s, null);
-    } else { if (msg) { msg.textContent = 'Upload failed: ' + (data.error || 'Unknown error'); msg.className = 'upload-msg upload-err'; } }
-  } catch(e) { if (msg) { msg.textContent = 'Upload failed. Please try again.'; msg.className = 'upload-msg upload-err'; } console.error('uploadQuotation error:', e); }
-  btn.disabled = false; btn.textContent = 'Upload & Notify CSM';
+      var entry=all.find(function(x){return x.jiraKey===jiraKey;});
+      if (entry){entry.quotationUrl=data.fileUrl;entry.quotationFilename=data.filename;entry.quotationUploadedBy=userEmail;entry.quotationUploadedAt=data.uploadedAt;try{var cacheKey='tracker_cache_'+USER_EMAIL;var existing=sessionStorage.getItem(cacheKey);if(existing){var parsed=JSON.parse(existing);parsed.data.submissions=all;sessionStorage.setItem(cacheKey,JSON.stringify(parsed));}}catch(ce){}}
+      var s=all.find(function(x){return x.jiraKey===jiraKey;});if(s)renderDetail(s,null);
+    } else { if (msg) { msg.textContent='Upload failed: '+(data.error||'Unknown error'); msg.className='upload-msg upload-err'; } }
+  } catch(e) { if (msg) { msg.textContent='Upload failed. Please try again.'; msg.className='upload-msg upload-err'; } console.error('uploadQuotation error:',e); }
+  btn.disabled=false; btn.textContent='Upload & Notify CSM';
 }
 
+// ── ENHANCEMENTS ──────────────────────────────────────────────────────────────
 var ENH_KEY = 'platops_enhancements', enhList = [], enhSort = 'newest', ENH_VOTED = 'platops_enh_voted';
 function lsReadEnh()   { try { return JSON.parse(localStorage.getItem(ENH_KEY) || '[]'); } catch(e) { return []; } }
 function lsWriteEnh(a) { try { localStorage.setItem(ENH_KEY, JSON.stringify(a)); } catch(e) {} }
 function getVoted()    { try { return JSON.parse(localStorage.getItem(ENH_VOTED) || '{}'); } catch(e) { return {}; } }
 function setVoted(id)  { var v = getVoted(); v[id] = true; try { localStorage.setItem(ENH_VOTED, JSON.stringify(v)); } catch(e) {} }
 
+// Status config
+var ENH_STATUSES = ['Logged', 'Planned', 'In Progress', 'Done', "Won't Fix"];
+var ENH_STATUS_CLASS = {
+  'Logged':      'enh-status-logged',
+  'Planned':     'enh-status-planned',
+  'In Progress': 'enh-status-inprogress',
+  'Done':        'enh-status-done',
+  "Won't Fix":   'enh-status-wontfix'
+};
+// Status sort order — lower = appears first when sorting by status
+var ENH_STATUS_ORDER = { 'In Progress': 0, 'Planned': 1, 'Logged': 2, "Won't Fix": 3, 'Done': 4 };
+
 async function loadEnhancements() {
   var cached = lsReadEnh();
   if (cached.length) { enhList = cached; renderEnhList(); }
   try {
-    var res = await fetch(GAS_URL + '?action=getEnhancements'); var d = await res.json();
+    var res = await fetch(GAS_URL + '?action=getEnhancements');
+    var d   = await res.json();
     if (d.enhancements) { enhList = d.enhancements; lsWriteEnh(enhList); renderEnhList(); }
   } catch(e) {
-    if (!cached.length) document.getElementById('enhList').innerHTML = '<div class="enh-empty">Could not load enhancements. <span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadEnhancements()">Retry</span></div>';
+    if (!cached.length) {
+      document.getElementById('enhList').innerHTML =
+        '<div class="enh-empty">Could not load enhancements. '
+        + '<span style="color:var(--primary);cursor:pointer;text-decoration:underline" onclick="loadEnhancements()">Retry</span></div>';
+    }
   }
 }
 
-function setEnhSort(el) { document.querySelectorAll('.enh-sort-pills .pill').forEach(function(p) { p.classList.remove('on'); }); el.classList.add('on'); enhSort = el.dataset.esort; renderEnhList(); }
+function setEnhSort(el) {
+  document.querySelectorAll('.enh-sort-pills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  enhSort = el.dataset.esort;
+  renderEnhList();
+}
 
 function renderEnhList() {
   var container = document.getElementById('enhList');
   if (!container) return;
-  if (!enhList.length) { container.innerHTML = '<div class="enh-empty">No enhancement requests yet.<br>Be the first to submit one!</div>'; return; }
-  var sorted = enhList.slice().sort(function(a, b) { if (enhSort === 'votes') return (b.votes || 0) - (a.votes || 0); return new Date(b.timestamp) - new Date(a.timestamp); });
-  var voted = getVoted(); var typeClass = { 'Feature':'enh-type-feature', 'UI':'enh-type-ui', 'Performance':'enh-type-perf', 'Other':'enh-type-other' };
+  if (!enhList.length) {
+    container.innerHTML = '<div class="enh-empty">No enhancement requests yet.<br>Be the first to submit one!</div>';
+    return;
+  }
+
+  var sorted = enhList.slice().sort(function(a, b) {
+    if (enhSort === 'votes') return (b.votes || 0) - (a.votes || 0);
+    if (enhSort === 'status') {
+      var ao = ENH_STATUS_ORDER[a.status] != null ? ENH_STATUS_ORDER[a.status] : 2;
+      var bo = ENH_STATUS_ORDER[b.status] != null ? ENH_STATUS_ORDER[b.status] : 2;
+      if (ao !== bo) return ao - bo;
+    }
+    return new Date(b.timestamp) - new Date(a.timestamp);
+  });
+
+  var voted     = getVoted();
+  var typeClass = { 'Feature': 'enh-type-feature', 'UI': 'enh-type-ui', 'Performance': 'enh-type-perf', 'Other': 'enh-type-other' };
+
   container.innerHTML = sorted.map(function(e) {
-    var tc = typeClass[e.type] || 'enh-type-other'; var isV = !!voted[e.id];
-    var dateStr = e.timestamp ? new Date(e.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
-    var expandId = 'enh-expand-' + e.id;
-    return '<div class="enh-item" onclick="toggleEnh(\'' + expandId + '\')">'
-      + '<div class="enh-item-top"><span class="enh-item-title">' + esc(e.title) + '</span><span class="enh-type-badge ' + tc + '">' + esc(e.type) + '</span></div>'
-      + '<div class="enh-item-meta"><span class="enh-item-by">by ' + esc(e.submittedBy || '—') + '</span><span class="enh-item-by">·</span><span class="enh-item-by">' + dateStr + '</span></div>'
+    var tc      = typeClass[e.type] || 'enh-type-other';
+    var isV     = !!voted[e.id];
+    var eStatus = e.status || 'Logged';
+    var sCls    = ENH_STATUS_CLASS[eStatus] || 'enh-status-logged';
+    var dateStr = e.timestamp
+      ? new Date(e.timestamp).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+      : '—';
+    var expandId  = 'enh-expand-' + e.id;
+    // Fade completed / won't-fix items slightly
+    var doneStyle = (eStatus === 'Done' || eStatus === "Won't Fix") ? ' style="opacity:0.65"' : '';
+
+    // Admin-only status control (inside the expand panel)
+    var adminHtml = '';
+    if (isAdmin) {
+      var statusOpts = ENH_STATUSES.map(function(s) {
+        return '<option value="' + esc(s) + '"' + (eStatus === s ? ' selected' : '') + '>' + esc(s) + '</option>';
+      }).join('');
+      adminHtml =
+        '<div class="enh-admin-row">'
+        + '<span class="enh-admin-label">Status:</span>'
+        + '<select class="enh-status-select" id="enh-status-sel-' + e.id + '" onclick="event.stopPropagation()">'
+        + statusOpts + '</select>'
+        + '<button class="enh-admin-save" id="enh-status-btn-' + e.id + '" '
+        + 'onclick="event.stopPropagation();updateEnhStatus(\'' + e.id + '\')">Save</button>'
+        + '<span id="enh-status-msg-' + e.id + '" style="font-size:0.68rem;color:var(--primary-dk);font-weight:500"></span>'
+        + '</div>';
+    }
+
+    return '<div class="enh-item"' + doneStyle + ' onclick="toggleEnh(\'' + expandId + '\')">'
+      + '<div class="enh-item-top">'
+      + '<span class="enh-item-title">' + esc(e.title) + '</span>'
+      + '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+      + '<span class="enh-status-badge ' + sCls + '">' + esc(eStatus) + '</span>'
+      + '<span class="enh-type-badge ' + tc + '">' + esc(e.type) + '</span>'
+      + '</div>'
+      + '</div>'
+      + '<div class="enh-item-meta">'
+      + '<span class="enh-item-by">by ' + esc(e.submittedBy || '—') + '</span>'
+      + '<span class="enh-item-by">·</span>'
+      + '<span class="enh-item-by">' + dateStr + '</span>'
+      + '</div>'
       + '<div class="enh-item-desc">' + esc(e.description) + '</div>'
-      + '<div class="enh-item-expand" id="' + expandId + '">' + (e.benefit ? '<p style="font-size:0.78rem;color:var(--muted);margin-top:4px"><strong style="color:var(--text)">Expected benefit:</strong> ' + esc(e.benefit) + '</p>' : '') + '</div>'
-      + '<button class="enh-vote-btn' + (isV ? ' voted' : '') + '" onclick="event.stopPropagation();voteEnh(\'' + e.id + '\')" title="' + (isV ? 'You voted for this' : 'Upvote') + '">'
-      + '<svg width="11" height="11" viewBox="0 0 24 24" fill="' + (isV ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>'
-      + (e.votes || 0) + ' ' + ((e.votes || 0) === 1 ? 'vote' : 'votes') + '</button></div>';
+      + '<div class="enh-item-expand" id="' + expandId + '">'
+      + (e.benefit
+        ? '<p style="font-size:0.78rem;color:var(--muted);margin-top:4px">'
+          + '<strong style="color:var(--text)">Expected benefit:</strong> ' + esc(e.benefit) + '</p>'
+        : '')
+      + adminHtml
+      + '</div>'
+      + '<button class="enh-vote-btn' + (isV ? ' voted' : '') + '" '
+      + 'onclick="event.stopPropagation();voteEnh(\'' + e.id + '\')" '
+      + 'title="' + (isV ? 'You voted for this' : 'Upvote') + '">'
+      + '<svg width="11" height="11" viewBox="0 0 24 24" fill="' + (isV ? 'currentColor' : 'none') + '" '
+      + 'stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>'
+      + (e.votes || 0) + ' ' + ((e.votes || 0) === 1 ? 'vote' : 'votes')
+      + '</button>'
+      + '</div>';
   }).join('');
 }
 
-function toggleEnh(expandId) { var el = document.getElementById(expandId); if (el) el.classList.toggle('open'); }
+function toggleEnh(expandId) {
+  var el = document.getElementById(expandId);
+  if (el) el.classList.toggle('open');
+}
+
+async function updateEnhStatus(id) {
+  var selEl = document.getElementById('enh-status-sel-' + id);
+  var btn   = document.getElementById('enh-status-btn-' + id);
+  var msgEl = document.getElementById('enh-status-msg-' + id);
+  if (!selEl) return;
+
+  var newStatus = selEl.value;
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+  // Update in-memory list and localStorage immediately
+  var entry = enhList.find(function(e) { return e.id === id; });
+  if (entry) entry.status = newStatus;
+  lsWriteEnh(enhList);
+
+  // Persist to GAS — add a handler for action:'updateEnhancement' on your GAS side
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'updateEnhancement', id: id, status: newStatus })
+    });
+  } catch(e) { /* silent — already saved to localStorage */ }
+
+  // Show inline confirmation
+  if (msgEl) {
+    msgEl.textContent = 'Saved ✓';
+    setTimeout(function() { msgEl.textContent = ''; }, 2500);
+  }
+
+  // Re-render keeping currently expanded panels open
+  var openExpands = [];
+  document.querySelectorAll('.enh-item-expand.open').forEach(function(el) { openExpands.push(el.id); });
+  renderEnhList();
+  openExpands.forEach(function(eid) { var el = document.getElementById(eid); if (el) el.classList.add('open'); });
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+}
 
 async function voteEnh(id) {
-  var voted = getVoted(); if (voted[id]) return;
-  var entry = enhList.find(function(e) { return e.id === id; }); if (!entry) return;
-  entry.votes = (entry.votes || 0) + 1; setVoted(id); lsWriteEnh(enhList); renderEnhList();
-  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ action:'voteEnhancement', id:id }) }); } catch(e) {}
+  var voted = getVoted();
+  if (voted[id]) return;
+  var entry = enhList.find(function(e) { return e.id === id; });
+  if (!entry) return;
+  entry.votes = (entry.votes || 0) + 1;
+  setVoted(id);
+  lsWriteEnh(enhList);
+  renderEnhList();
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'voteEnhancement', id: id })
+    });
+  } catch(e) {}
 }
 
 async function submitEnhancement() {
-  var title = (document.getElementById('enh-title').value || '').trim();
-  var type  = (document.getElementById('enh-type').value  || 'Feature');
-  var desc  = (document.getElementById('enh-desc').value  || '').trim();
+  var title   = (document.getElementById('enh-title').value   || '').trim();
+  var type    = (document.getElementById('enh-type').value    || 'Feature');
+  var desc    = (document.getElementById('enh-desc').value    || '').trim();
   var benefit = (document.getElementById('enh-benefit').value || '').trim();
-  var msgEl = document.getElementById('enhFormMsg'); var btn = document.getElementById('enhSubmitBtn');
+  var msgEl   = document.getElementById('enhFormMsg');
+  var btn     = document.getElementById('enhSubmitBtn');
+
   if (!title) { document.getElementById('enh-title').focus(); return; }
   if (!desc)  { document.getElementById('enh-desc').focus();  return; }
+
   btn.disabled = true; btn.textContent = 'Submitting…';
   if (msgEl) { msgEl.textContent = ''; msgEl.style.color = ''; }
-  var entry = { id:'enh_'+Date.now(), title, type, description:desc, benefit, submittedBy:userEmail, timestamp:new Date().toISOString(), votes:0 };
-  enhList.unshift(entry); lsWriteEnh(enhList); renderEnhList();
-  ['enh-title','enh-desc','enh-benefit'].forEach(function(id) { document.getElementById(id).value = ''; });
+
+  // New entries always start as 'Logged'
+  var entry = {
+    id: 'enh_' + Date.now(), title, type, description: desc, benefit,
+    submittedBy: userEmail, timestamp: new Date().toISOString(), votes: 0, status: 'Logged'
+  };
+
+  enhList.unshift(entry);
+  lsWriteEnh(enhList);
+  renderEnhList();
+  ['enh-title', 'enh-desc', 'enh-benefit'].forEach(function(id) { document.getElementById(id).value = ''; });
   document.getElementById('enh-type').value = 'Feature';
+
   try {
-    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ action:'saveEnhancement', enhancement:entry }) });
+    await fetch(GAS_URL, {
+      method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'saveEnhancement', enhancement: entry })
+    });
     if (msgEl) { msgEl.textContent = 'Submitted! ✓'; msgEl.style.color = 'var(--primary-dk)'; }
-  } catch(e) { if (msgEl) { msgEl.textContent = 'Saved locally — will sync when online.'; msgEl.style.color = 'var(--muted)'; } }
+  } catch(e) {
+    if (msgEl) { msgEl.textContent = 'Saved locally — will sync when online.'; msgEl.style.color = 'var(--muted)'; }
+  }
+
   btn.disabled = false; btn.textContent = 'Submit Request';
   setTimeout(function() { if (msgEl) { msgEl.textContent = ''; } }, 4000);
 }
