@@ -98,7 +98,8 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .sc[data-lc="For Team Assessment"].active .sc-value{color:var(--mango)}
 .analytics-meta{display:flex;gap:6px;flex-wrap:wrap;flex-direction:column}
 .analytics-meta-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:20px}
-.meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
+.meta-pill{font-size:0.72rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap;transition:box-shadow 0.15s,opacity 0.15s}
+.meta-pill.meta-pill-active{box-shadow:0 0 0 2px currentColor;opacity:1;font-weight:600}
 .meta-pill span{color:var(--text);font-weight:600}
 .meta-pill-paid{background:#e8ecfd;border-color:#b8c9f9;color:#1c3a9e}
 .meta-pill-paid span{color:#1c3a9e;font-weight:700}
@@ -167,6 +168,15 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .dsec{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
 .dsh{padding:9px 14px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
 .dsh h3{font-size:0.67rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted)}
+
+/* ── DETAIL SECTION ACCORDION ──────────────────────────────────────────────── */
+.dsh-accordion{cursor:pointer;user-select:none}
+.dsh-accordion:hover{background:var(--m100)}
+.dsh-chevron{margin-left:auto;transition:transform 0.2s;color:var(--muted);flex-shrink:0}
+.dsec.collapsed .dsh-chevron{transform:rotate(-90deg)}
+.dsec.collapsed .dsb{display:none}
+.dsec.collapsed .tc-bd{display:none}
+/* ────────────────────────────────────────────────────────────────────────── */
 .dsb{padding:14px}
 .igrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .iitem label{display:block;font-size:0.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px}
@@ -459,6 +469,30 @@ tr:hover td{background:var(--bg)}
 .svc-modal-actions .btn-save:disabled{opacity:0.6;cursor:not-allowed}
 .toast{position:fixed;bottom:20px;right:28px;background:var(--k800);color:#fff;padding:10px 16px;border-radius:8px;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;box-shadow:0 6px 32px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:9999;display:flex;align-items:center;gap:8px}
 .toast.show{transform:translateY(0);opacity:1}
+
+/* ── WAIVER DRAWER ─────────────────────────────────────────────────────────── */
+.waiver-drawer-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:800;
+  background:var(--lavender);color:#fff;border:none;border-radius:8px 0 0 8px;
+  padding:12px 8px;cursor:pointer;font-family:'Rubik',sans-serif;font-size:0.72rem;font-weight:600;
+  writing-mode:vertical-rl;text-orientation:mixed;letter-spacing:0.07em;
+  box-shadow:-2px 0 12px rgba(0,0,0,0.15);transition:background 0.15s,right 0.3s;display:none}
+.waiver-drawer-toggle:hover{background:#5c3dd8}
+.waiver-drawer-toggle.has-status{background:var(--primary)}
+.waiver-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:801;backdrop-filter:blur(1px)}
+.waiver-drawer-overlay.open{display:block}
+.waiver-drawer{position:fixed;right:-480px;top:0;height:100%;width:480px;max-width:94vw;
+  background:var(--surface);z-index:802;box-shadow:-4px 0 32px rgba(0,0,0,0.15);
+  display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(0.4,0,0.2,1);overflow:hidden}
+.waiver-drawer.open{right:0}
+.waiver-drawer-head{background:#3b1d9e;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.waiver-drawer-head h3{font-size:0.9rem;font-weight:600;color:#fff;margin:0}
+.waiver-drawer-close{background:rgba(255,255,255,0.12);border:none;color:#fff;border-radius:6px;
+  padding:5px 10px;cursor:pointer;font-family:'Rubik',sans-serif;font-size:0.8rem;transition:background 0.15s}
+.waiver-drawer-close:hover{background:rgba(255,255,255,0.22)}
+.waiver-drawer-body{flex:1;overflow-y:auto;padding:16px}
+.waiver-drawer-body::-webkit-scrollbar{width:4px}
+.waiver-drawer-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* ────────────────────────────────────────────────────────────────────────── */
 .process-scroll{flex:1;overflow-y:auto;padding:0}
 .process-scroll::-webkit-scrollbar{width:4px}
 .process-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -1012,6 +1046,19 @@ tr:hover td{background:var(--bg)}
   </div>
 </div>
 
+<!-- WAIVER DRAWER -->
+<div class="waiver-drawer-overlay" id="waiverOverlay" onclick="closeWaiverDrawer()"></div>
+<div class="waiver-drawer" id="waiverDrawer">
+  <div class="waiver-drawer-head">
+    <h3>Waiver Request</h3>
+    <button class="waiver-drawer-close" onclick="closeWaiverDrawer()">✕ Close</button>
+  </div>
+  <div class="waiver-drawer-body" id="waiverDrawerBody"></div>
+</div>
+<button class="waiver-drawer-toggle" id="waiverToggleBtn" onclick="openWaiverDrawer()" title="Open waiver request panel">
+  Waiver Request
+</button>
+
 <!-- TOAST -->
 <div class="toast" id="toast">
   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
@@ -1401,7 +1448,7 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 
 var USER_EMAIL = '', USER_ROLE = 'client', IS_INTERNAL = false;
 var LIFECYCLE_STEPS = ['Request Logged','For Scoping','For Quotation','Quotation Done','For Execution','Execution Done'];
-var all = [], activeCat = 'all', activeSC = 'all', activeKey = null, initialized = false;
+var all = [], activeCat = 'all', activeSC = 'all', activeCostFilter = 'all', activeKey = null, initialized = false;
 
 function renderCatPills() {
   var container = document.getElementById('catPills');
@@ -1442,10 +1489,28 @@ function matches(s) {
     var slc = s.lifecycle || '';
     if (slc !== 'Not doable or out of scope' && slc !== 'Request no longer needed') return false;
   } else if (activeSC !== 'all' && (s.lifecycle || '') !== activeSC) return false;
+  // Cost-type filter from the meta pills
+  if (activeCostFilter !== 'all') {
+    var cs = (s.costStatus || 'Pending');
+    if (activeCostFilter === 'Paid'      && cs !== 'Paid')      return false;
+    if (activeCostFilter === 'Waived'    && cs !== 'Waived')    return false;
+    if (activeCostFilter === 'Free'      && cs !== 'Free')      return false;
+    if (activeCostFilter === 'Withdrawn' && cs !== 'Withdrawn') return false;
+    if (activeCostFilter === 'Pending'   && cs !== 'Pending')   return false;
+  }
   var q = document.getElementById('srch').value.toLowerCase();
   if (!q) return true;
   return [s.clientName, s.requesterName, s.requesterEmail, s.jiraKey, s.serviceType, s.hrUrl, s.csmName]
     .some(function(v) { return (v || '').toLowerCase().includes(q); });
+}
+
+function setCostFilter(costStatus) {
+  // Toggle off if already active
+  if (activeCostFilter === costStatus) { activeCostFilter = 'all'; }
+  else { activeCostFilter = costStatus; }
+  // Re-render pills to update active state
+  loadAnalytics();
+  render();
 }
 
 async function init_tracker() {
@@ -1584,11 +1649,16 @@ async function loadAnalytics() {
     var countPills = [];
     countPills.push('<span class="meta-pill-label">Requests:</span>');
     if (data.byCost) {
-      countPills.push('<div class="meta-pill meta-pill-paid">Paid <span>' + (data.byCost['Paid'] || 0) + '</span></div>');
-      countPills.push('<div class="meta-pill meta-pill-waived">Waived <span>' + (data.byCost['Waived'] || 0) + '</span></div>');
-      countPills.push('<div class="meta-pill meta-pill-free">Free Services <span>' + (data.byCost['Free'] || 0) + '</span></div>');
-      if ((data.byCost['Withdrawn'] || 0) > 0) countPills.push('<div class="meta-pill meta-pill-withdrawn">Withdrawn <span>' + data.byCost['Withdrawn'] + '</span></div>');
-      countPills.push('<div class="meta-pill">Cost TBD <span>' + (data.byCost['Pending'] || 0) + '</span></div>');
+      function cpill(cls, label, count, costKey) {
+        var isActive = activeCostFilter === costKey ? ' meta-pill-active' : '';
+        return '<div class="meta-pill ' + cls + isActive + '" style="cursor:pointer" onclick="setCostFilter('' + costKey + '')" title="Filter by ' + label + '">' + label + ' <span>' + count + '</span></div>';
+      }
+      countPills.push(cpill('meta-pill-paid',      'Paid',         data.byCost['Paid']      || 0, 'Paid'));
+      countPills.push(cpill('meta-pill-waived',     'Waived',       data.byCost['Waived']    || 0, 'Waived'));
+      countPills.push(cpill('meta-pill-free',       'Free Services',data.byCost['Free']      || 0, 'Free'));
+      if ((data.byCost['Withdrawn'] || 0) > 0)
+        countPills.push(cpill('meta-pill-withdrawn','Withdrawn',    data.byCost['Withdrawn'] || 0, 'Withdrawn'));
+      countPills.push(cpill('',                     'Cost TBD',     data.byCost['Pending']   || 0, 'Pending'));
     }
     if (data.avgDays != null) countPills.push('<div class="meta-pill">Avg. resolution <span>' + data.avgDays + 'd</span></div>');
     if (countRow) countRow.innerHTML = countPills.join('');
@@ -1683,6 +1753,7 @@ function renderDetail(s, d) {
   }
 
   html += renderOpCard(s);
+  // Note: mountWaiverDrawer(s) is called inside renderOpCard via setTimeout
   if (s && s.quotationUrl) {
     html += '<div class="dsec"><div class="dsh"><h3>Quotation document</h3></div>'
       + '<div class="dsb" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
@@ -1713,12 +1784,12 @@ function renderDetail(s, d) {
       + '</div></div></div>';
   }
   if (psrv) {
-    html += '<div class="dsec"><div class="dsh"><h3>Inquiry ticket — ' + psrv.key + '</h3><span class="badge ' + lcBadgeFromJira(psrv.status) + '">' + esc(psrv.status) + '</span></div><div class="dsb">'
+    html += '<div class="dsec"><div class="dsh dsh-accordion" onclick="toggleDsec(this)"><h3>Inquiry ticket — ' + psrv.key + '</h3><span class="badge ' + lcBadgeFromJira(psrv.status) + '">' + esc(psrv.status) + '</span><svg class="dsh-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="dsb">'
       + '<div class="igrid" style="margin-bottom:10px"><div class="iitem"><label>Assignee</label><span>' + esc(psrv.assignee) + '</span></div><div class="iitem"><label>Last updated</label><span>' + (psrv.updated || '').substring(0, 10) + '</span></div></div>'
       + renderComments(psrv.comments) + '</div></div>';
   }
   if (linked.length) {
-    html += '<div class="dsec"><div class="dsh"><h3>Activity tickets (CRF &amp; execution)</h3></div><div class="dsb">';
+    html += '<div class="dsec"><div class="dsh dsh-accordion" onclick="toggleDsec(this)"><h3>Activity tickets (CRF &amp; execution)</h3><svg class="dsh-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="dsb">';
     linked.forEach(function(t, i) {
       var tid = 'tc' + i;
       html += '<div class="tcard"><div class="tc-hd" onclick="tog(\'' + tid + '\')">'
@@ -1739,7 +1810,7 @@ function renderDetail(s, d) {
     html += '</div></div>';
   } else if (lc !== 'Not doable or out of scope' && lc !== 'Request no longer needed') {
     var noST = ['Request Logged','For Scoping','For Quotation'].includes(lc);
-    if (noST) html += '<div class="dsec"><div class="dsh"><h3>Activity tickets</h3></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
+    if (noST) html += '<div class="dsec"><div class="dsh dsh-accordion" onclick="toggleDsec(this)"><h3>Activity tickets</h3><svg class="dsh-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="dsb"><p class="no-c">No CRF tickets linked yet. Activity tickets will appear here once a CRF is raised.</p></div></div>';
   }
 
   if (s && s.jiraKey && s.jiraKey !== 'ERROR') {
@@ -1764,6 +1835,15 @@ function renderDetail(s, d) {
   }
 
   panel.innerHTML = html;
+  // Reset drawer toggle visibility — mountWaiverDrawer will re-show it if needed
+  var btn = document.getElementById('waiverToggleBtn');
+  if (btn && (!s || !isAdmin || !s.jiraKey || s.jiraKey === 'ERROR')) btn.style.display = 'none';
+}
+
+
+function toggleDsec(el) {
+  var dsec = el.closest('.dsec');
+  if (dsec) dsec.classList.toggle('collapsed');
 }
 
 function renderStepper(currentLc) {
@@ -1962,7 +2042,7 @@ function renderOpCard(s) {
   }
   quotSection += '<div class="upload-zone" id="uploadZone">'
     + '<input type="file" id="quotFile" accept=".pdf,.xlsx,.xls,.doc,.docx,.png,.jpg" onchange="handleFileSelect(this)"/>'
-    + '<div class="upload-zone-label"><strong>Click to upload</strong> or drag and drop<br><span style="font-size:0.68rem">PDF, Excel, Word, or image</span></div>'
+    + '<div class="upload-zone-label" style="font-size:0.78rem"><strong>Click to upload</strong> or drag and drop<br><span style="font-size:0.63rem">PDF, Excel, Word, or image</span></div>'
     + '</div>'
     + '<div class="upload-file-preview" id="uploadPreview">'
     + '<span class="upload-file-name" id="uploadFileName"></span>'
@@ -1978,8 +2058,7 @@ function renderOpCard(s) {
     + '<div class="iitem"><label>Cost Status</label><select id="op-status" style="width:100%;font-family:\'Rubik\',sans-serif;font-size:0.8125rem;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;color:var(--text);background:var(--bg);outline:none">' + statusOpts + '</select></div>'
     + '<div class="iitem" style="display:flex;align-items:flex-end"><button onclick="saveOpDetails(\'' + jk + '\')" style="font-family:\'Rubik\',sans-serif;font-size:0.8rem;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:none;background:var(--primary);color:#fff;transition:background .15s;width:100%" onmouseover="this.style.background=\'var(--primary-dk)\'" onmouseout="this.style.background=\'var(--primary)\'">Save</button></div>'
     + quotSection
-    + '</div></div></div>'
-    + renderWaivePanel(s);
+    + '</div></div></div>';
 }
 
 async function saveOpDetails(jiraKey) {
@@ -2008,7 +2087,7 @@ var WAIVE_CONFIG_KEY = 'platops_waive_config';
 function getWaiveConfig() { try { return JSON.parse(localStorage.getItem(WAIVE_CONFIG_KEY) || '{}'); } catch(e) { return {}; } }
 function saveWaiveConfig(cfg) { try { localStorage.setItem(WAIVE_CONFIG_KEY, JSON.stringify(cfg)); } catch(e) {} }
 
-function renderWaivePanel(s) {
+function renderWaivePanelInner(s) {
   if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') return '';
   var jk       = s.jiraKey;
   var wStatus  = s.waiveStatus  || '';
@@ -2057,10 +2136,14 @@ function renderWaivePanel(s) {
   } else {
     formOrHistory = renderWaiveForm(jk, wReason, wJustify, wImpact, false);
   }
-  return '<div class="waive-panel"><div class="dsh"><h3>Waiver Request</h3>' + (wStatus ? '<span style="font-size:0.7rem;color:#3b1d9e">' + esc(wStatus) + '</span>' : '') + '</div>'
-    + '<div class="waive-inner">' + configPanel + (statusBadge ? '<div style="margin-bottom:10px">' + statusBadge + '</div>' : '')
-    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Provide a detailed defense below. This will be emailed to the CTO for approval with COO on CC. The requesting CSM receives a copy for visibility.</p>'
-    + formOrHistory + '</div></div>';
+  // Status indicator at top of drawer
+  var statusChip = wStatus
+    ? '<div style="margin-bottom:12px">' + statusBadge + '</div>'
+    : '';
+  return statusChip
+    + '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;line-height:1.6">Provide a detailed defense below. This will be emailed to the CTO for approval with COO on CC. The requesting CSM receives a copy for visibility.</p>'
+    + configPanel
+    + formOrHistory;
 }
 
 function renderWaiveForm(jk, reason, justify, impact, isResubmit) {
@@ -2097,6 +2180,33 @@ function saveWaiveEmailConfig() {
   if (preview) preview.style.display = 'block';
   var msg = document.getElementById('wcSaveMsg');
   if (msg) { msg.textContent = 'Saved ✓'; setTimeout(function(){ msg.textContent = ''; }, 2500); }
+}
+
+
+// ── WAIVER DRAWER ─────────────────────────────────────────────────────────────
+function openWaiverDrawer() {
+  document.getElementById('waiverDrawer').classList.add('open');
+  document.getElementById('waiverOverlay').classList.add('open');
+}
+function closeWaiverDrawer() {
+  document.getElementById('waiverDrawer').classList.remove('open');
+  document.getElementById('waiverOverlay').classList.remove('open');
+}
+// Populates the drawer body and shows the toggle button for the current ticket
+function mountWaiverDrawer(s) {
+  var btn = document.getElementById('waiverToggleBtn');
+  if (!isAdmin || !s || !s.jiraKey || s.jiraKey === 'ERROR') {
+    if (btn) btn.style.display = 'none';
+    return;
+  }
+  var wStatus = s.waiveStatus || '';
+  if (btn) {
+    btn.style.display = 'flex';
+    btn.className = 'waiver-drawer-toggle' + (wStatus ? ' has-status' : '');
+    btn.title = wStatus ? 'Waiver: ' + wStatus : 'Open waiver request panel';
+  }
+  var body = document.getElementById('waiverDrawerBody');
+  if (body) body.innerHTML = renderWaivePanelInner(s);
 }
 
 async function sendWaiveRequest(jiraKey, isTest) {
