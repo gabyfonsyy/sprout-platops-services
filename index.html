@@ -1753,7 +1753,6 @@ function renderDetail(s, d) {
   }
 
   html += renderOpCard(s);
-  // Note: mountWaiverDrawer(s) is called inside renderOpCard via setTimeout
   if (s && s.quotationUrl) {
     html += '<div class="dsec"><div class="dsh"><h3>Quotation document</h3></div>'
       + '<div class="dsb" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
@@ -1835,9 +1834,8 @@ function renderDetail(s, d) {
   }
 
   panel.innerHTML = html;
-  // Reset drawer toggle visibility — mountWaiverDrawer will re-show it if needed
-  var btn = document.getElementById('waiverToggleBtn');
-  if (btn && (!s || !isAdmin || !s.jiraKey || s.jiraKey === 'ERROR')) btn.style.display = 'none';
+  // Mount waiver drawer for this ticket (admin only)
+  mountWaiverDrawer(s);
 }
 
 
