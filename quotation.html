@@ -488,23 +488,27 @@ textarea { resize: vertical; min-height: 60px; }
     <div class="print-cost-title" id="printCostTitle"></div>
 
     <!-- TOOLBAR -->
-    <div class="toolbar no-print">
-      <span style="font-size:13px;color:var(--text-muted)">Quotation #</span>
-      <div style="display:flex;flex-direction:column;gap:2px">
-        <input type="text" id="quotNum" placeholder="e.g. PSRV-2026-001"
-          style="width:180px;padding:6px 10px;font-size:13px;border-radius:7px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif"
-          oninput="onQuotNumInput(this.value)"/>
+    <div class="no-print" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px">
+      <div class="form-group">
+        <label>Quotation #</label>
+        <input type="text" id="quotNum" placeholder="e.g. QN-2026-001"/>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="quotDate"/>
+      </div>
+      <div class="form-group">
+        <label>PSRV Ticket</label>
+        <input type="text" id="psrvTicket" placeholder="e.g. PSRV-123" oninput="onPsrvTicketInput(this.value)"/>
         <span class="psrv-lookup-status" id="psrvLookupStatus"></span>
       </div>
-      <div class="toolbar-sep"></div>
-      <span style="font-size:13px;color:var(--text-muted)">Date</span>
-      <input type="date" id="quotDate" style="width:150px;padding:6px 10px;font-size:13px;border-radius:7px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif"/>
-      <div class="toolbar-sep"></div>
-      <span style="font-size:13px;color:var(--text-muted)">Currency</span>
-      <select id="currency" onchange="recalc()" style="padding:6px 10px;font-size:13px;border-radius:7px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif">
-        <option value="PHP">PHP ₱</option>
-        <option value="USD">USD $</option>
-      </select>
+      <div class="form-group">
+        <label>Currency</label>
+        <select id="currency" onchange="recalc()">
+          <option value="PHP">PHP ₱</option>
+          <option value="USD">USD $</option>
+        </select>
+      </div>
     </div>
 
     <!-- CLIENT INFO -->
@@ -820,10 +824,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // ── PSRV AUTO-LOOKUP ──────────────────────────────────────────
 var _psrvLookupTimer = null;
 
-function onQuotNumInput(val) {
+function onPsrvTicketInput(val) {
   var statusEl = document.getElementById('psrvLookupStatus');
   clearTimeout(_psrvLookupTimer);
-  // Match PSRV-XXXX or PSRV-XXXX-XXXX etc.
   var cleaned = val.trim().toUpperCase();
   if (!/^PSRV-\d+/.test(cleaned)) { if (statusEl) statusEl.textContent = ''; return; }
   if (statusEl) { statusEl.textContent = 'Looking up…'; statusEl.className = 'psrv-lookup-status loading'; }
@@ -894,6 +897,7 @@ function fillClientInfo(sub) {
     payrollCodes: sub.payrollCodes || '',
     csm:          sub.csmName      || '',
     jiraRef:      sub.jiraKey      || '',
+    psrvTicket:   sub.jiraKey      || '',
   };
   Object.keys(map).forEach(function(id) {
     var el = document.getElementById(id);
@@ -911,7 +915,7 @@ function setToday() {
   var dateEl = document.getElementById('quotDate');
   var numEl  = document.getElementById('quotNum');
   if (dateEl) dateEl.value = today;
-  if (numEl  && !numEl.value) numEl.value = 'PSRV-' + y + '-001';
+  if (numEl  && !numEl.value) numEl.value = 'QN-' + y + '-001';
 }
 
 // ── ROW DATA: sync from DOM into rows[] ───────────────────────
@@ -1262,7 +1266,7 @@ function deleteTemplate(idx) {
 function newQuotation() {
   if (!confirm('Start a new quotation? Unsaved changes will be lost.')) return;
   activeTemplateIdx = -1;
-  ['clientName','hrUrl','payrollCodes','csm','jiraRef','scopeDesc','preparedBy','preparedByRole'].forEach(function(id) {
+  ['clientName','hrUrl','payrollCodes','csm','jiraRef','scopeDesc','preparedBy','preparedByRole','psrvTicket'].forEach(function(id) {
     document.getElementById(id).value = '';
   });
   document.getElementById('addlNotes').value   = DEFAULT_NOTES;
@@ -1279,6 +1283,8 @@ function exportPDF() {
   var qn = document.getElementById('quotNum').value || 'PSRV-—';
   var qd = document.getElementById('quotDate').value;
   document.getElementById('printQuotNum').textContent        = qn;
+  var psrvVal = document.getElementById('psrvTicket').value;
+  if (psrvVal) document.getElementById('printQuotNum').textContent = qn + '  ·  Ref: ' + psrvVal;
   document.getElementById('printDate').textContent           = qd ? 'Date: ' + formatDateDisplay(qd) : '';
   document.getElementById('printPreparedBy').textContent     = document.getElementById('preparedBy').value || '—';
   document.getElementById('printPreparedByRole').textContent = document.getElementById('preparedByRole').value || '—';
