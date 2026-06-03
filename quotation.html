@@ -279,7 +279,8 @@ textarea { resize: vertical; min-height: 60px; }
 .col-num   { width: 36px; text-align: center; color: var(--text-muted); font-size: 12px; }
 .col-step  { min-width: 240px; }
 .col-desc  { min-width: 150px; }
-.col-effort{ width: 90px; }
+.col-effort{ width: 80px; }
+.col-hours { width: 80px; }
 .col-rate  { width: 110px; }
 .col-cost  { width: 110px; text-align: right; font-weight: 600; color: var(--primary-dark); }
 .col-act   { width: 44px; text-align: center; }
@@ -337,6 +338,10 @@ textarea { resize: vertical; min-height: 60px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 
 /* ── STATUS BAR ───────────────────────────────────────── */
+.psrv-lookup-status { font-size:11px; color:var(--text-muted); margin-top:4px; min-height:14px; }
+.psrv-lookup-status.loading { color:var(--primary); }
+.psrv-lookup-status.ok  { color:var(--kangkong-600); font-weight:500; }
+.psrv-lookup-status.err { color:var(--tomato); }
 .status-bar {
   position: fixed; bottom: 20px; right: 28px;
   background: var(--kangkong-800); color: #fff;
@@ -399,6 +404,10 @@ textarea { resize: vertical; min-height: 60px; }
   .col-act  { display: none !important; }
   .col-order { display: none !important; }
   .items-table .print-value { display: inline !important; font-size: 11px; font-weight: 500; color: #131413; }
+  .print-step-desc { display: block !important; font-size: 10px; color: #7a7b7a; margin-top: 2px; white-space: pre-wrap; }
+  .col-hours { display: table-cell !important; }
+  .items-table th.col-hours::after { content: "Hours"; }
+  .items-table th.col-cost::after  { content: "Cost"; }
   .input-prefix > span { display: none !important; }
   .input-prefix { display: block !important; }
   .form-group .input-prefix .print-value { display: block !important; }
@@ -409,8 +418,9 @@ textarea { resize: vertical; min-height: 60px; }
   .terms-col textarea, .terms-col input { display: none !important; }
   .print-sig-row { display: none !important; }
   .col-num  { display: table-cell !important; }
-  .col-desc { display: none !important; }
-  .col-rate { display: none !important; }
+  .col-desc   { display: none !important; }
+  .col-effort { display: none !important; }
+  .col-rate   { display: none !important; }
   #discountRow[style*="display: none"] { display: none !important; }
 }
 
@@ -480,7 +490,12 @@ textarea { resize: vertical; min-height: 60px; }
     <!-- TOOLBAR -->
     <div class="toolbar no-print">
       <span style="font-size:13px;color:var(--text-muted)">Quotation #</span>
-      <input type="text" id="quotNum" placeholder="e.g. PSRV-2026-001" style="width:160px;padding:6px 10px;font-size:13px;border-radius:7px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif"/>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <input type="text" id="quotNum" placeholder="e.g. PSRV-2026-001"
+          style="width:180px;padding:6px 10px;font-size:13px;border-radius:7px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif"
+          oninput="onQuotNumInput(this.value)"/>
+        <span class="psrv-lookup-status" id="psrvLookupStatus"></span>
+      </div>
       <div class="toolbar-sep"></div>
       <span style="font-size:13px;color:var(--text-muted)">Date</span>
       <input type="date" id="quotDate" style="width:150px;padding:6px 10px;font-size:13px;border-radius:7px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif"/>
@@ -537,8 +552,14 @@ textarea { resize: vertical; min-height: 60px; }
       <div class="card-body" style="padding-bottom:8px">
         <div class="form-grid" style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)">
           <div class="form-group">
-            <label>Service Type</label>
-            <select id="serviceType">
+            <label>Category</label>
+            <select id="serviceCategory" onchange="onCategoryChange()">
+              <option value="">— Select —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Service</label>
+            <select id="serviceType" onchange="onServiceChange()">
               <option value="">— Select —</option>
             </select>
           </div>
@@ -558,6 +579,7 @@ textarea { resize: vertical; min-height: 60px; }
                 <th class="col-step">Step / Activity</th>
                 <th class="col-desc">Description / Notes</th>
                 <th class="col-effort">Effort</th>
+                <th class="col-hours">Hours</th>
                 <th class="col-rate">Rate</th>
                 <th class="col-cost">Line Total</th>
                 <th class="col-act no-print"></th>
@@ -566,21 +588,17 @@ textarea { resize: vertical; min-height: 60px; }
             <tbody id="itemsBody"></tbody>
           </table>
         </div>
+        <div class="timeline-row no-print" style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          <span style="font-size:13px;font-weight:500;color:var(--text)">Estimated Timeline of Completion</span>
+          <input type="number" id="timelineDays" min="1" step="1" placeholder="e.g. 5"
+            oninput="recalc()"
+            style="width:72px;padding:5px 8px;font-size:13px;border-radius:6px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif;text-align:center"/>
+          <span style="font-size:13px;color:var(--text-muted)">business days</span>
+          <span id="timelineDisplay" style="font-size:12px;color:var(--primary-dark);font-weight:600;background:var(--primary-light);border-radius:20px;padding:2px 10px;display:none"></span>
+        </div>
         <div class="totals-row">
           <div class="totals-box">
-            <div class="totals-line">
-              <span>Subtotal</span>
-              <span class="amount" id="subtotal">₱ 0.00</span>
-            </div>
-            <div class="totals-line" id="discountRow">
-              <span style="display:flex;align-items:center;gap:8px">
-                Discount
-                <input type="number" id="discountPct" min="0" max="100" value="0" onchange="recalc()" class="no-print"
-                  style="width:52px;padding:3px 6px;font-size:12px;border-radius:5px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif"/>
-                <span class="no-print" style="font-size:12px;color:var(--text-muted)">%</span>
-              </span>
-              <span class="amount" id="discountAmt" style="color:var(--tomato)">- ₱ 0.00</span>
-            </div>
             <div class="totals-line grand">
               <span>TOTAL</span>
               <span class="amount" id="grandTotal">₱ 0.00</span>
@@ -588,6 +606,12 @@ textarea { resize: vertical; min-height: 60px; }
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- PRINT-ONLY: Timeline ──────────────────────────────── -->
+    <div id="printTimeline" style="display:none;margin-top:14px;padding:10px 16px;border:1.5px solid #d4f5df;border-radius:8px;background:#f4fcf7;font-size:12px;font-weight:600;color:#1a5c2e;align-items:center;gap:8px">
+      <svg width="14" height="14" fill="none" stroke="#1a5c2e" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+      <span id="printTimelineText"></span>
     </div>
 
     <!-- TERMS & NOTES -->
@@ -686,42 +710,99 @@ var CURRENCY_SYMBOLS = { PHP: '₱', USD: '$' };
 function currSym() { return CURRENCY_SYMBOLS[document.getElementById('currency').value] || '₱'; }
 function fmt(n) { return currSym() + ' ' + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
+// ── SERVICE DATA ──────────────────────────────────────────────
+var allServices = []; // { name, category, ... }
+
 // ── LOAD SERVICE OPTIONS ──────────────────────────────────────
 function loadServiceOptions() {
-  var options = DEFAULT_SERVICE_OPTIONS;
   serviceCategoryMap = {};
+  allServices = [];
   try {
     var raw = localStorage.getItem('platops_services_cache');
     if (raw) {
       var svcs = JSON.parse(raw);
       if (Array.isArray(svcs) && svcs.length) {
-        svcs.forEach(function(s) {
+        var others = svcs.filter(function(s) { return (s.name||'').toLowerCase() === 'others'; });
+        var rest   = svcs.filter(function(s) { return (s.name||'').toLowerCase() !== 'others'; });
+        rest.sort(function(a, b) { return (a.name||'').localeCompare(b.name||''); });
+        allServices = rest.concat(others);
+        allServices.forEach(function(s) {
           if (s.name) serviceCategoryMap[s.name] = s.category || '';
         });
-        var others = svcs.filter(function(s) { return s.name.toLowerCase() === 'others'; });
-        var rest   = svcs.filter(function(s) { return s.name.toLowerCase() !== 'others'; });
-        rest.sort(function(a, b) { return a.name.localeCompare(b.name); });
-        options = rest.concat(others).map(function(s) { return s.name; });
       }
     }
   } catch(e) { console.warn('loadServiceOptions:', e); }
 
-  var optionsHtml = '<option value="">— Select —</option>'
-    + options.map(function(name) {
-        return '<option value="' + name.replace(/"/g, '&quot;') + '">' + name + '</option>';
-      }).join('');
+  if (!allServices.length) {
+    allServices = DEFAULT_SERVICE_OPTIONS.map(function(n) { return { name:n, category:'' }; });
+    allServices.forEach(function(s) { serviceCategoryMap[s.name] = ''; });
+  }
 
-  var st = document.getElementById('serviceType');
+  // Build category dropdown
+  var cats = [];
+  allServices.forEach(function(s) {
+    var c = s.category || 'Uncategorized';
+    if (cats.indexOf(c) < 0) cats.push(c);
+  });
+  cats.sort();
+
+  var catEl = document.getElementById('serviceCategory');
+  if (catEl) {
+    catEl.innerHTML = '<option value="">— Select —</option>'
+      + cats.map(function(c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('');
+  }
+
+  // Reset service dropdown
+  populateServiceDropdown('');
+
+  // Template type input: flat list of all service names
   var tt = document.getElementById('templateTypeInput');
-  if (st) st.innerHTML = optionsHtml;
-  if (tt) tt.innerHTML = optionsHtml;
+  if (tt) {
+    tt.innerHTML = '<option value="">— Select —</option>'
+      + allServices.map(function(s) {
+          return '<option value="' + esc(s.name) + '">' + esc(s.name) + '</option>';
+        }).join('');
+  }
+}
+
+function populateServiceDropdown(selectedCategory) {
+  var st = document.getElementById('serviceType');
+  if (!st) return;
+  var filtered = selectedCategory
+    ? allServices.filter(function(s) { return (s.category || 'Uncategorized') === selectedCategory; })
+    : allServices;
+  st.innerHTML = '<option value="">— Select —</option>'
+    + filtered.map(function(s) {
+        return '<option value="' + esc(s.name) + '">' + esc(s.name) + '</option>';
+      }).join('');
+}
+
+function onCategoryChange() {
+  var cat = document.getElementById('serviceCategory').value;
+  populateServiceDropdown(cat);
+  document.getElementById('serviceCategory').value = '';
+  populateServiceDropdown('');
+  document.getElementById('serviceType').value = '';
+}
+
+function onServiceChange() {
+  var svcName = document.getElementById('serviceType').value;
+  var cat = serviceCategoryMap[svcName] || '';
+  if (cat) {
+    var catEl = document.getElementById('serviceCategory');
+    if (catEl && catEl.value !== cat) {
+      catEl.value = cat;
+      populateServiceDropdown(cat);
+      document.getElementById('serviceType').value = svcName;
+    }
+  }
 }
 
 function openSaveTemplateModal() {
   loadServiceOptions();
   document.getElementById('templateNameInput').value = '';
   var st = document.getElementById('serviceType').value;
-  document.getElementById('templateTypeInput').value = st || '';
+  if (st) document.getElementById('templateTypeInput').value = st;
   document.getElementById('saveModal').classList.add('open');
   setTimeout(function(){ document.getElementById('templateNameInput').focus(); }, 100);
 }
@@ -735,6 +816,90 @@ document.addEventListener('DOMContentLoaded', function() {
   // Re-apply date after a tick in case iframe rendering delayed the input
   setTimeout(setToday, 0);
 });
+
+// ── PSRV AUTO-LOOKUP ──────────────────────────────────────────
+var _psrvLookupTimer = null;
+
+function onQuotNumInput(val) {
+  var statusEl = document.getElementById('psrvLookupStatus');
+  clearTimeout(_psrvLookupTimer);
+  // Match PSRV-XXXX or PSRV-XXXX-XXXX etc.
+  var cleaned = val.trim().toUpperCase();
+  if (!/^PSRV-\d+/.test(cleaned)) { if (statusEl) statusEl.textContent = ''; return; }
+  if (statusEl) { statusEl.textContent = 'Looking up…'; statusEl.className = 'psrv-lookup-status loading'; }
+  _psrvLookupTimer = setTimeout(function() { lookupPSRV(cleaned); }, 600);
+}
+
+function lookupPSRV(jiraKey) {
+  var statusEl = document.getElementById('psrvLookupStatus');
+  fetch(GAS_URL + '?action=detail&key=' + encodeURIComponent(jiraKey))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var s = d && d.psrv ? d : null;
+      // The detail endpoint returns { psrv:{...}, linkedTickets:[...] }
+      // Submission data is on d.submission or inside psrv summary
+      // Also try d.submission which the GAS returns for full detail
+      var sub = d.submission || null;
+      if (!sub && d.psrv) {
+        // Fallback: try to read from the tracker list cache
+        sub = findSubmissionInCache(jiraKey);
+      }
+      if (sub) {
+        fillClientInfo(sub);
+        if (statusEl) { statusEl.textContent = '✓ Client info populated from ' + jiraKey; statusEl.className = 'psrv-lookup-status ok'; }
+        setTimeout(function() { if (statusEl) statusEl.textContent = ''; }, 4000);
+      } else if (d.psrv) {
+        // Partial info from Jira ticket summary
+        if (statusEl) { statusEl.textContent = '⚠ Ticket found but no submission data — fill manually'; statusEl.className = 'psrv-lookup-status err'; }
+      } else {
+        if (statusEl) { statusEl.textContent = 'No ticket found for ' + jiraKey; statusEl.className = 'psrv-lookup-status err'; }
+      }
+    })
+    .catch(function() {
+      // Try local cache only
+      var sub = findSubmissionInCache(jiraKey);
+      if (sub) {
+        fillClientInfo(sub);
+        if (statusEl) { statusEl.textContent = '✓ Populated from local cache'; statusEl.className = 'psrv-lookup-status ok'; }
+        setTimeout(function() { if (statusEl) statusEl.textContent = ''; }, 4000);
+      } else {
+        if (statusEl) { statusEl.textContent = 'Could not reach server — check connection'; statusEl.className = 'psrv-lookup-status err'; }
+      }
+    });
+}
+
+function findSubmissionInCache(jiraKey) {
+  // Look in the tracker sessionStorage cache used by index.html
+  var keys = [];
+  for (var i = 0; i < sessionStorage.length; i++) {
+    var k = sessionStorage.key(i);
+    if (k && k.startsWith('tracker_cache_')) keys.push(k);
+  }
+  for (var ki = 0; ki < keys.length; ki++) {
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(keys[ki]));
+      var subs = (cached && cached.data && cached.data.submissions) ? cached.data.submissions : [];
+      for (var si = 0; si < subs.length; si++) {
+        if ((subs[si].jiraKey || '').toUpperCase() === jiraKey.toUpperCase()) return subs[si];
+      }
+    } catch(e) {}
+  }
+  return null;
+}
+
+function fillClientInfo(sub) {
+  var map = {
+    clientName:   sub.clientName   || '',
+    hrUrl:        sub.hrUrl        || '',
+    payrollCodes: sub.payrollCodes || '',
+    csm:          sub.csmName      || '',
+    jiraRef:      sub.jiraKey      || '',
+  };
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && map[id]) el.value = map[id];
+  });
+}
 
 function setToday() {
   // Use local date (not UTC) so PHT users don't get yesterday's date
@@ -754,11 +919,12 @@ function syncRowFromDOM(id) {
   var tr = document.getElementById('row-' + id);
   if (!tr) return;
   var effort = parseFloat(tr.querySelector('.f-effort').value) || 0;
+  var hours  = parseFloat(tr.querySelector('.f-hours').value)  || 0;
   var rate   = parseFloat(tr.querySelector('.f-rate').value)   || 0;
   var step   = tr.querySelector('.f-step').value;
   var desc   = tr.querySelector('.f-desc').value;
   rows = rows.map(function(r) {
-    return r.id === id ? { id:id, step:step, desc:desc, effort:effort, unit:'hours', rate:rate } : r;
+    return r.id === id ? { id:id, step:step, desc:desc, effort:effort, hours:hours, unit:'hours', rate:rate } : r;
   });
 }
 
@@ -770,8 +936,8 @@ function syncAllRowsFromDOM() {
 // ── ROW MANAGEMENT ────────────────────────────────────────────
 function addRow(data) {
   var id = ++rowId;
-  var d = data || { step:'', desc:'', effort:1, unit:'hours', rate:0 };
-  rows.push({ id:id, step:d.step||'', desc:d.desc||'', effort:d.effort||1, unit:d.unit||'hours', rate:d.rate||0 });
+  var d = data || { step:'', desc:'', effort:1, hours:1, unit:'hours', rate:0 };
+  rows.push({ id:id, step:d.step||'', desc:d.desc||'', effort:d.effort||1, hours:d.hours!=null?d.hours:d.effort||1, unit:d.unit||'hours', rate:d.rate||0 });
   renderRows();
 }
 
@@ -804,7 +970,7 @@ function renderRows() {
   var tbody = document.getElementById('itemsBody');
   tbody.innerHTML = '';
   rows.forEach(function(r, idx) {
-    var lineTotal = r.effort * r.rate;
+    var lineTotal = (r.hours != null ? r.hours : r.effort) * r.rate;
     var isFirst = idx === 0;
     var isLast  = idx === rows.length - 1;
     var tr = document.createElement('tr');
@@ -831,9 +997,13 @@ function renderRows() {
         '</div>',
       '</td>',
       '<td class="col-num">' + (idx+1) + '</td>',
-      '<td class="col-step"><input type="text" class="f-step" value="' + esc(r.step) + '" placeholder="e.g. Pre-migration audit" oninput="updateRow(' + r.id + ')"/></td>',
+      '<td class="col-step">'
+        + '<input type="text" class="f-step" value="' + esc(r.step) + '" placeholder="e.g. Pre-migration audit" oninput="updateRow(' + r.id + ')"/>'
+        + '<span class="print-step-desc" style="display:none;font-size:10px;color:#7a7b7a;margin-top:2px;white-space:pre-wrap">' + esc(r.desc) + '</span>'
+      + '</td>',
       '<td class="col-desc"><input type="text" class="f-desc" value="' + esc(r.desc) + '" placeholder="Optional notes" oninput="updateRow(' + r.id + ')"/></td>',
       '<td class="col-effort"><input type="number" class="f-effort" value="' + r.effort + '" min="0" step="0.5" oninput="updateRow(' + r.id + ')"/></td>',
+      '<td class="col-hours"><input type="number" class="f-hours" value="' + (r.hours != null ? r.hours : r.effort) + '" min="0" step="0.5" oninput="updateRow(' + r.id + ')"/></td>',
       '<td class="col-rate"><div class="input-prefix"><span>' + currSym() + '</span><input type="number" class="f-rate" value="' + r.rate + '" min="0" step="100" oninput="updateRow(' + r.id + ')"/></div></td>',
       '<td class="col-cost" id="lc-' + r.id + '">' + fmt(lineTotal) + '</td>',
       '<td class="col-act no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="deleteRow(' + r.id + ')" title="Remove"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>'
@@ -850,8 +1020,9 @@ function updateRow(id) {
   var tr = document.getElementById('row-' + id);
   if (!tr) return;
   var effort = parseFloat(tr.querySelector('.f-effort').value) || 0;
+  var hours  = parseFloat(tr.querySelector('.f-hours').value)  || 0;
   var rate   = parseFloat(tr.querySelector('.f-rate').value)   || 0;
-  document.getElementById('lc-' + id).textContent = fmt(effort * rate);
+  document.getElementById('lc-' + id).textContent = fmt(hours * rate);
   recalc();
 }
 
@@ -860,19 +1031,22 @@ function recalc() {
   rows.forEach(function(r) {
     var tr = document.getElementById('row-' + r.id);
     if (tr) {
-      var effort = parseFloat(tr.querySelector('.f-effort').value)||0;
-      var rate   = parseFloat(tr.querySelector('.f-rate').value)||0;
-      subtotal += effort * rate;
-      document.getElementById('lc-' + r.id).textContent = fmt(effort * rate);
+      var hours = parseFloat(tr.querySelector('.f-hours').value)||0;
+      var rate  = parseFloat(tr.querySelector('.f-rate').value)||0;
+      subtotal += hours * rate;
+      document.getElementById('lc-' + r.id).textContent = fmt(hours * rate);
     }
   });
-  var discPct = parseFloat(document.getElementById('discountPct').value)||0;
-  var discAmt = subtotal * (discPct/100);
-  var grand   = subtotal - discAmt;
-  document.getElementById('subtotal').textContent    = fmt(subtotal);
-  document.getElementById('discountAmt').textContent = '- ' + fmt(discAmt);
-  document.getElementById('grandTotal').textContent  = fmt(grand);
-  document.getElementById('discountRow').style.display = discPct > 0 ? '' : 'none';
+  // Timeline display
+  var tlDays = parseInt(document.getElementById('timelineDays').value)||0;
+  var tlDisp = document.getElementById('timelineDisplay');
+  if (tlDays > 0) {
+    tlDisp.textContent = tlDays + ' business day' + (tlDays !== 1 ? 's' : '');
+    tlDisp.style.display = 'inline';
+  } else {
+    tlDisp.style.display = 'none';
+  }
+  document.getElementById('grandTotal').textContent = fmt(subtotal);
 }
 
 // ── DRAG-AND-DROP ─────────────────────────────────────────────
@@ -1007,12 +1181,8 @@ function renderTemplates() {
   }
   el.innerHTML = templates.map(function(t, idx) {
     var cat = t.category || serviceCategoryMap[t.type] || '';
-    var pillsHtml = '';
-    if (t.type)  pillsHtml += '<span class="template-item-type">'     + esc(t.type) + '</span>';
-    if (cat)     pillsHtml += '<span class="template-item-category">' + esc(cat)    + '</span>';
-
     return '<div class="template-item ' + (activeTemplateIdx === idx ? 'active' : '') + '" onclick="loadTemplate(' + idx + ')">'
-      + (pillsHtml ? '<div class="template-item-pills">' + pillsHtml + '</div>' : '')
+      + (cat ? '<div class="template-item-pills"><span class="template-item-category">' + esc(cat) + '</span></div>' : '')
       + '<div class="template-item-name">' + esc(t.name) + '</div>'
       + '<button class="template-delete" onclick="event.stopPropagation();deleteTemplate(' + idx + ')" title="Delete">✕</button>'
       + '</div>';
@@ -1027,7 +1197,7 @@ function saveTemplate() {
 
   syncAllRowsFromDOM();
   var rowSnapshot = rows.map(function(r) {
-    return { step:r.step, desc:r.desc, effort:r.effort, unit:'hours', rate:r.rate };
+    return { step:r.step, desc:r.desc, effort:r.effort, hours:r.hours!=null?r.hours:r.effort, unit:'hours', rate:r.rate };
   });
 
   var selectedType = document.getElementById('templateTypeInput').value;
@@ -1039,7 +1209,7 @@ function saveTemplate() {
     rows:        rowSnapshot,
     scopeDesc:   document.getElementById('scopeDesc').value,
     addlNotes:   document.getElementById('addlNotes').value,
-    discountPct: document.getElementById('discountPct').value,
+
   };
 
   var existingIdx = templates.findIndex(function(t){ return t.name === tmpl.name; });
@@ -1057,10 +1227,19 @@ function loadTemplate(idx) {
   activeTemplateIdx = idx;
   rows = []; rowId = 0;
   document.getElementById('itemsBody').innerHTML = '';
-  if (t.serviceType) document.getElementById('serviceType').value = t.serviceType;
+  if (t.type || t.serviceType) {
+    var svcVal = t.type || t.serviceType;
+    var catVal = t.category || serviceCategoryMap[svcVal] || '';
+    if (catVal) {
+      var catEl = document.getElementById('serviceCategory');
+      if (catEl) catEl.value = catVal;
+      populateServiceDropdown(catVal);
+    }
+    document.getElementById('serviceType').value = svcVal;
+  }
   if (t.scopeDesc)   document.getElementById('scopeDesc').value   = t.scopeDesc;
   document.getElementById('addlNotes').value   = t.addlNotes || DEFAULT_NOTES;
-  document.getElementById('discountPct').value = t.discountPct || 0;
+
   (t.rows || []).forEach(function(r) { addRow(r); });
   if (!rows.length) addRow();
   recalc(); renderTemplates();
@@ -1088,7 +1267,7 @@ function newQuotation() {
   });
   document.getElementById('addlNotes').value   = DEFAULT_NOTES;
   document.getElementById('serviceType').value = '';
-  document.getElementById('discountPct').value = 0;
+
   rows = []; rowId = 0;
   document.getElementById('itemsBody').innerHTML = '';
   addRow(); addRow(); addRow();
@@ -1104,10 +1283,25 @@ function exportPDF() {
   document.getElementById('printPreparedBy').textContent     = document.getElementById('preparedBy').value || '—';
   document.getElementById('printPreparedByRole').textContent = document.getElementById('preparedByRole').value || '—';
   document.getElementById('printFooterQuot').textContent     = qn;
-  var svcType  = document.getElementById('serviceType').value || '—';
+  // Rename columns for print
+  var thCost = document.querySelector('.items-table th.col-cost');
+  var thHours = document.querySelector('.items-table th.col-hours');
+  if (thCost)  { thCost._screenText  = thCost.textContent;  thCost.textContent  = 'Cost'; }
+  if (thHours) { thHours._screenText = thHours.textContent; thHours.textContent = 'Hours'; }
+  var svcType  = document.getElementById('serviceType').value || document.getElementById('serviceCategory').value || '—';
   var clientNm = document.getElementById('clientName').value  || '—';
   document.getElementById('printCostTitle').textContent = 'Cost Summary for ' + svcType + ' : ' + clientNm;
   syncPrintValues();
+  // Timeline
+  var tlDays = parseInt(document.getElementById('timelineDays').value)||0;
+  var printTl = document.getElementById('printTimeline');
+  var printTlText = document.getElementById('printTimelineText');
+  if (tlDays > 0 && printTl && printTlText) {
+    printTlText.textContent = 'Estimated Timeline of Completion: ' + tlDays + ' business day' + (tlDays !== 1 ? 's' : '');
+    printTl.style.display = 'flex';
+  } else if (printTl) {
+    printTl.style.display = 'none';
+  }
   window.print();
 }
 
@@ -1128,17 +1322,22 @@ function syncPrintValues() {
     el.parentNode.insertBefore(pv, el.nextSibling);
   });
   document.querySelectorAll('#itemsBody tr').forEach(function(tr) {
-    var stepInput = tr.querySelector('.f-step'), effortInput = tr.querySelector('.f-effort');
+    var stepInput   = tr.querySelector('.f-step');
+    var descInput   = tr.querySelector('.f-desc');
+    var hoursInput  = tr.querySelector('.f-hours');
     if (stepInput) {
       var td = stepInput.closest('td'), ex = td.querySelector('.print-value');
       if (ex) ex.remove();
       var pv = document.createElement('span'); pv.className = 'print-value'; pv.textContent = stepInput.value || '—';
       td.appendChild(pv);
+      // Update the desc subline
+      var descSpan = td.querySelector('.print-step-desc');
+      if (descSpan) descSpan.textContent = descInput ? (descInput.value || '') : '';
     }
-    if (effortInput) {
-      var td2 = effortInput.closest('td'), ex2 = td2.querySelector('.print-value');
+    if (hoursInput) {
+      var td2 = hoursInput.closest('td'), ex2 = td2.querySelector('.print-value');
       if (ex2) ex2.remove();
-      var pv2 = document.createElement('span'); pv2.className = 'print-value'; pv2.textContent = effortInput.value || '0';
+      var pv2 = document.createElement('span'); pv2.className = 'print-value'; pv2.textContent = hoursInput.value || '0';
       td2.appendChild(pv2);
     }
   });
@@ -1162,6 +1361,14 @@ function showStatus(msg) {
   setTimeout(function(){ bar.classList.remove('show'); }, 3000);
 }
 
+window.addEventListener('afterprint', function() {
+  var thCost  = document.querySelector('.items-table th.col-cost');
+  var thHours = document.querySelector('.items-table th.col-hours');
+  if (thCost  && thCost._screenText)  thCost.textContent  = thCost._screenText;
+  if (thHours && thHours._screenText) thHours.textContent = thHours._screenText;
+  var printTl = document.getElementById('printTimeline');
+  if (printTl) printTl.style.display = 'none';
+});
 document.getElementById('saveModal').addEventListener('click', function(e) { if (e.target === this) closeSaveModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSaveModal(); });
 </script>
