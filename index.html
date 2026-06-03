@@ -365,8 +365,9 @@ tr:hover td{background:var(--bg)}
 .sv-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.125rem;display:flex;flex-direction:column;gap:6px;transition:border-color 0.15s,box-shadow 0.15s;cursor:pointer;user-select:none}
 .sv-card:hover{border-color:var(--primary);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
 .sv-card.expanded{border-color:var(--primary);box-shadow:0 4px 16px rgba(33,122,61,0.1)}
-.sv-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);flex:1}
+.sv-card-header{display:flex;flex-direction:column;gap:5px}
+.sv-card-name{font-size:0.9rem;font-weight:600;color:var(--text);line-height:1.3}
+.sv-card-pills{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .sv-card-category{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dk);background:var(--primary-lt);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
 .sv-cost-free{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:#e0f5f8;color:#074f5a;white-space:nowrap;flex-shrink:0}
 .sv-cost-paid{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 7px;border-radius:20px;background:var(--mango-lt);color:#7a4800;white-space:nowrap;flex-shrink:0}
@@ -441,8 +442,11 @@ tr:hover td{background:var(--bg)}
 .sv-card-expand-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)}
 .sv-card-expand-value{font-size:0.8125rem;color:var(--text);line-height:1.5}
 .sv-card-expand-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
-.sv-card-chevron{transition:transform 0.2s;flex-shrink:0;color:var(--muted)}
+.sv-card-chevron{transition:transform 0.2s;flex-shrink:0;color:var(--muted);margin-top:1px}
 .sv-card.expanded .sv-card-chevron{transform:rotate(180deg)}
+.sv-admin-note{margin-top:8px;padding:9px 11px;background:#fffbea;border:1.5px dashed #e6b800;border-radius:7px}
+.sv-admin-note-label{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#7a4800;margin-bottom:4px}
+.sv-admin-note-body{font-size:0.78rem;color:#4a3a00;line-height:1.65;white-space:pre-wrap}
 .sv-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.875rem;grid-column:1/-1}
 .sv-empty p{margin-top:8px}
 .form-iframe-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
@@ -1039,6 +1043,7 @@ tr:hover td{background:var(--bg)}
     </div>
     <div class="svc-form-group" id="svcPriceGroup"><label id="svcPriceLabel">Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
     <div class="svc-form-group"><label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/></div>
+    <div class="svc-form-group" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px"><label>🔒 Internal Notes <span style="color:var(--muted);font-weight:400;font-size:0.7rem">(admin only — never shown to other users)</span></label><textarea id="svcInternalNote" rows="3" placeholder="Reference tickets, process quirks, escalation notes, known edge cases…" style="width:100%;margin-top:5px;font-family:'Rubik',sans-serif;font-size:0.875rem;color:var(--text);background:#fffbea;border:1.5px solid #e6b800;border-radius:7px;padding:8px 10px;outline:none;resize:vertical;min-height:72px;line-height:1.6;transition:border-color 0.15s"></textarea></div>
     <div class="svc-modal-actions">
       <button class="btn-cancel" onclick="closeSvcModal()">Cancel</button>
       <button class="btn-save" id="svcSaveBtn" onclick="saveService()">Save</button>
@@ -1314,17 +1319,25 @@ function renderServicesView() {
     var costDisplay = isFree ? 'Free — no charge to client' : (svc.price || 'Quoted per request');
     expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(costDisplay) + '</span></div>';
     if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
+    if (isAdmin && svc.internalNote) expandRows += '<div class="sv-card-expand-row" style="background:#fffbea;border:1.5px dashed #e6b800;border-radius:7px;padding:8px 10px"><span class="sv-card-expand-label" style="color:#7a4800">🔒 Internal Note (Admin only)</span><span class="sv-card-expand-value" style="color:#4a3a00;white-space:pre-wrap">' + esc(svc.internalNote) + '</span></div>';
     var expandFooter = '<div class="sv-card-expand-footer"><div style="display:flex;gap:6px">' + adminActions + '</div><button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button></div>';
     var costBadge = svc.costType === 'Free'
       ? '<span class="sv-cost-free">Free</span>'
       : '<span class="sv-cost-paid">With Cost</span>';
-    return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')">'
-      + '<div class="sv-card-header"><span class="sv-card-name">' + esc(svc.name) + '</span>'
-      + '<div style="display:flex;align-items:center;align-self:center;gap:5px;flex-shrink:0">'
+    var adminNoteHtml = (isAdmin && svc.internalNote)
+      ? '<div class="sv-admin-note"><div class="sv-admin-note-label">🔒 Admin Note</div><div class="sv-admin-note-body">' + esc(svc.internalNote) + '</div></div>'
+      : '';
+    return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')"> ' 
+      + '<div class="sv-card-header">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">'
+      + '<span class="sv-card-name">' + esc(svc.name) + '</span>'
+      + chevron + '</div>'
+      + '<div class="sv-card-pills">'
       + costBadge
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
-      + chevron + '</div></div>'
+      + '</div></div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
+      + adminNoteHtml
       + '<div class="sv-card-expand" id="' + cardId + '-expand">' + expandRows + expandFooter + '</div>'
       + '</div>';
   }
@@ -1354,7 +1367,7 @@ var editingServiceId = null;
 function openServiceModal(id) {
   editingServiceId = id || null;
   document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
-  ['svcName','svcCategory','svcDesc','svcPrice','svcTeams'].forEach(function(f) { document.getElementById(f).value = ''; });
+  ['svcName','svcCategory','svcDesc','svcPrice','svcTeams','svcInternalNote'].forEach(function(f) { document.getElementById(f).value = ''; });
   document.getElementById('svcCostType').value = 'With Cost';
   toggleSvcPriceField();
   if (id) {
@@ -1364,8 +1377,9 @@ function openServiceModal(id) {
       document.getElementById('svcCategory').value = svc.category    || '';
       document.getElementById('svcDesc').value     = svc.description || '';
       document.getElementById('svcPrice').value    = svc.price       || '';
-      document.getElementById('svcTeams').value    = svc.teams       || '';
-      document.getElementById('svcCostType').value = svc.costType    || 'With Cost';
+      document.getElementById('svcTeams').value         = svc.teams        || '';
+      document.getElementById('svcInternalNote').value  = svc.internalNote || '';
+      document.getElementById('svcCostType').value      = svc.costType     || 'With Cost';
       toggleSvcPriceField();
     }
   }
@@ -1397,7 +1411,8 @@ async function saveService() {
   if (!category) { document.getElementById('svcCategory').focus(); return; }
   var btn = document.getElementById('svcSaveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
-  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, costType, price, teams,
+  var internalNote = document.getElementById('svcInternalNote').value.trim();
+  var svc = { id: editingServiceId || ('svc_' + Date.now()), name, category, description: desc, costType, price, teams, internalNote,
     sortOrder: editingServiceId ? (servicesList.find(function(s) { return s.id === editingServiceId; }) || {}).sortOrder || 0 : servicesList.length + 1 };
   if (editingServiceId) { var idx = servicesList.findIndex(function(s) { return s.id === editingServiceId; }); if (idx >= 0) servicesList[idx] = svc; else servicesList.push(svc); } else servicesList.push(svc);
   lsWriteServices(servicesList); renderServicesView(); renderCatPills(); syncServiceNamesToForm();
