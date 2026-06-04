@@ -153,7 +153,6 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .cost-waived{background:#ede9ff;color:#3b1d9e}
 .cost-pending{background:#f4f5f4;color:#4a4b4a}
 .cost-withdrawn{background:#fff3cd;color:#7a4800}
-.cost-free{background:#e0f5f8;color:#074f5a}
 .detail{flex:1;overflow-y:auto;padding:1.75rem}
 .detail::-webkit-scrollbar{width:4px}
 .detail::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -1042,7 +1041,17 @@ tr:hover td{background:var(--bg)}
         <option value="Free">Free — no charge to client</option>
       </select>
     </div>
-    <div class="svc-form-group" id="svcPriceGroup"><label id="svcPriceLabel">Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcPrice" placeholder="e.g. ₱5,000 – ₱15,000 or Quoted per request"/></div>
+    <div class="svc-form-group" id="svcPriceGroup">
+      <label id="svcPriceLabel">Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <div id="svcPriceRangeWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--muted);flex-shrink:0">₱</span>
+        <input type="number" id="svcPriceMin" min="0" step="100" placeholder="Min" style="flex:1;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        <span style="font-size:0.78rem;color:var(--muted);flex-shrink:0">to</span>
+        <span style="font-size:0.85rem;font-weight:600;color:var(--muted);flex-shrink:0">₱</span>
+        <input type="number" id="svcPriceMax" min="0" step="100" placeholder="Max" style="flex:1;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+      </div>
+      <input type="text" id="svcPriceFreeNote" placeholder='e.g. Free for all active clients' style="display:none;width:100%;margin-top:6px;font-family:'Rubik',sans-serif;font-size:0.8125rem;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none;transition:border-color 0.15s" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+    </div>
     <div class="svc-form-group"><label>Teams Involved <span style="color:var(--muted);font-weight:400">(optional)</span></label><input type="text" id="svcTeams" placeholder="e.g. DBA, DevOps"/></div>
     <div class="svc-form-group" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px"><label>🔒 Internal Notes <span style="color:var(--muted);font-weight:400;font-size:0.7rem">(admin only — never shown to other users)</span></label><textarea id="svcInternalNote" rows="3" placeholder="Reference tickets, process quirks, escalation notes, known edge cases…" style="width:100%;margin-top:5px;font-family:'Rubik',sans-serif;font-size:0.875rem;color:var(--text);background:#fffbea;border:1.5px solid #e6b800;border-radius:7px;padding:8px 10px;outline:none;resize:vertical;min-height:72px;line-height:1.6;transition:border-color 0.15s"></textarea></div>
     <div class="svc-modal-actions">
@@ -1318,7 +1327,11 @@ function renderServicesView() {
     var expandRows = '';
     expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Cost Type</span><span class="sv-card-expand-value">' + (isFree ? '<span class="sv-cost-free" style="font-size:0.7rem">Free</span>' : '<span class="sv-cost-paid" style="font-size:0.7rem">With Cost</span>') + '</span></div>';
     var costDisplay = isFree ? 'Free — no charge to client' : (svc.price || 'Quoted per request');
-    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span><span class="sv-card-expand-value">' + esc(costDisplay) + '</span></div>';
+    expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Estimated Cost</span>'
+      + '<span class="sv-card-expand-value" style="display:flex;flex-direction:column;gap:3px">'
+      + '<span style="font-weight:600;color:var(--text)">' + esc(costDisplay) + '</span>'
+      + (!isFree ? '<span style="font-size:0.67rem;color:var(--muted);font-style:italic">Estimate only — subject to change upon actual request and scoping.</span>' : '')
+      + '</span></div>';
     if (svc.teams) expandRows += '<div class="sv-card-expand-row"><span class="sv-card-expand-label">Teams Involved</span><span class="sv-card-expand-value">' + esc(svc.teams) + '</span></div>';
     if (isAdmin && svc.internalNote) expandRows += '<div class="sv-card-expand-row" style="background:#fffbea;border:1.5px dashed #e6b800;border-radius:7px;padding:8px 10px"><span class="sv-card-expand-label" style="color:#7a4800">🔒 Internal Note (Admin only)</span><span class="sv-card-expand-value" style="color:#4a3a00;white-space:pre-wrap">' + esc(svc.internalNote) + '</span></div>';
     var expandFooter = '<div class="sv-card-expand-footer"><div style="display:flex;gap:6px">' + adminActions + '</div><button class="sv-btn-submit" onclick="event.stopPropagation();openFormWithService(\'' + svc.name.replace(/'/g, "\\'") + '\')">Submit a Request →</button></div>';
@@ -1364,7 +1377,7 @@ var editingServiceId = null;
 function openServiceModal(id) {
   editingServiceId = id || null;
   document.getElementById('svcModalTitle').textContent = id ? 'Edit Service' : 'Add Service';
-  ['svcName','svcCategory','svcDesc','svcPrice','svcTeams','svcInternalNote'].forEach(function(f) { document.getElementById(f).value = ''; });
+  ['svcName','svcCategory','svcDesc','svcPriceMin','svcPriceMax','svcPriceFreeNote','svcTeams','svcInternalNote'].forEach(function(f) { document.getElementById(f).value = ''; });
   document.getElementById('svcCostType').value = 'With Cost';
   toggleSvcPriceField();
   if (id) {
@@ -1373,7 +1386,24 @@ function openServiceModal(id) {
       document.getElementById('svcName').value     = svc.name        || '';
       document.getElementById('svcCategory').value = svc.category    || '';
       document.getElementById('svcDesc').value     = svc.description || '';
-      document.getElementById('svcPrice').value    = svc.price       || '';
+      // Parse stored price back into range fields
+      var storedPrice = svc.price || '';
+      if (svc.costType === 'Free') {
+        document.getElementById('svcPriceFreeNote').value = storedPrice;
+      } else {
+        // Try to parse "₱X,XXX – ₱Y,YYY" or "Up to ₱Y,YYY" or "₱X,XXX"
+        var rangeMatch = storedPrice.match(/₱([\d,]+)\s*[–\-]\s*₱([\d,]+)/);
+        var upToMatch  = storedPrice.match(/[Uu]p\s+to\s+₱([\d,]+)/);
+        var singleMatch= storedPrice.match(/^₱([\d,]+)$/);
+        if (rangeMatch) {
+          document.getElementById('svcPriceMin').value = rangeMatch[1].replace(/,/g,'');
+          document.getElementById('svcPriceMax').value = rangeMatch[2].replace(/,/g,'');
+        } else if (upToMatch) {
+          document.getElementById('svcPriceMax').value = upToMatch[1].replace(/,/g,'');
+        } else if (singleMatch) {
+          document.getElementById('svcPriceMin').value = singleMatch[1].replace(/,/g,'');
+        }
+      }
       document.getElementById('svcTeams').value         = svc.teams        || '';
       document.getElementById('svcInternalNote').value  = svc.internalNote || '';
       document.getElementById('svcCostType').value      = svc.costType     || 'With Cost';
@@ -1388,13 +1418,13 @@ function closeSvcModal() { document.getElementById('svcModal').classList.remove(
 function toggleSvcPriceField() {
   var isFree = document.getElementById('svcCostType').value === 'Free';
   var label = document.getElementById('svcPriceLabel');
-  var input = document.getElementById('svcPrice');
+  var rangeWrap = document.getElementById('svcPriceRangeWrap');
+  var freeNote  = document.getElementById('svcPriceFreeNote');
   if (label) label.innerHTML = isFree
     ? 'Cost Note <span style="color:var(--muted);font-weight:400">(optional — e.g. "Free for active clients")</span>'
     : 'Estimated Cost Range <span style="color:var(--muted);font-weight:400">(optional)</span>';
-  if (input) input.placeholder = isFree
-    ? 'e.g. Free for all active clients'
-    : 'e.g. ₱5,000 – ₱15,000 or Quoted per request';
+  if (rangeWrap) rangeWrap.style.display = isFree ? 'none' : 'flex';
+  if (freeNote)  freeNote.style.display  = isFree ? 'block' : 'none';
 }
 
 async function saveService() {
@@ -1402,7 +1432,17 @@ async function saveService() {
   var category = document.getElementById('svcCategory').value.trim();
   var desc     = document.getElementById('svcDesc').value.trim();
   var costType = document.getElementById('svcCostType').value || 'With Cost';
-  var price    = document.getElementById('svcPrice').value.trim();
+  var isFree   = costType === 'Free';
+  var price    = '';
+  if (isFree) {
+    price = (document.getElementById('svcPriceFreeNote').value || '').trim();
+  } else {
+    var pMin = (document.getElementById('svcPriceMin').value || '').trim();
+    var pMax = (document.getElementById('svcPriceMax').value || '').trim();
+    if (pMin && pMax)       price = '₱' + Number(pMin).toLocaleString('en-PH') + ' – ₱' + Number(pMax).toLocaleString('en-PH');
+    else if (pMin)          price = '₱' + Number(pMin).toLocaleString('en-PH');
+    else if (pMax)          price = 'Up to ₱' + Number(pMax).toLocaleString('en-PH');
+  }
   var teams    = document.getElementById('svcTeams').value.trim();
   if (!name) { document.getElementById('svcName').focus(); return; }
   if (!category) { document.getElementById('svcCategory').focus(); return; }
@@ -1738,7 +1778,7 @@ function renderDetail(s, d) {
   var lc = s ? s.lifecycle : '—';
   var bcls = lcBadge(lc);
   var costHtml = '';
-  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : s.costStatus === 'Withdrawn' ? 'cost-withdrawn' : s.costStatus === 'Free' ? 'cost-free' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
+  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : s.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
   var html = '<div class="dh"><h2>' + esc(s ? s.clientName : (psrv ? psrv.summary : '—')) + '</h2>'
     + '<div class="dh-meta"><span class="badge ' + bcls + '">' + esc(lc) + '</span>' + costHtml
     + (psrv ? '<a href="' + psrv.url + '" target="_blank">' + psrv.key + ' ↗</a>' : '')
@@ -1805,7 +1845,7 @@ function renderDetail(s, d) {
       var tid = 'tc' + i;
       html += '<div class="tcard"><div class="tc-hd" onclick="tog(\'' + tid + '\')">'
         + '<div><div class="tc-key"><a href="' + t.url + '" target="_blank" onclick="event.stopPropagation()">' + t.key + ' [' + t.project + '] ↗</a>'
-        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : t.costStatus === 'Withdrawn' ? 'cost-withdrawn' : t.costStatus === 'Free' ? 'cost-free' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
+        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : t.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
         + '</div><div class="tc-sum">' + esc(t.summary) + '</div><div class="tc-who">Assigned: ' + esc(t.assignee) + '</div></div>'
         + '<span class="badge ' + lcBadgeFromJira(t.status) + '">' + esc(t.status) + '</span>'
         + '</div><div class="tc-bd" id="' + tid + '">';
@@ -1974,7 +2014,7 @@ function render_analytics(data) {
     buildChart('an-chartMonthly','bar',{labels:monthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Requests',data:monthly.map(m=>m.count),backgroundColor:COLORS.greenL,borderColor:COLORS.green,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
     buildChart('an-chartLifecycle','bar',{labels:lcLabels,datasets:[{label:'Requests',data:lcValues,backgroundColor:LC_COLORS_CHART,borderColor:LC_BORDERS_CHART,borderWidth:1.5,borderRadius:4}]},{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     buildChart('an-chartService','doughnut',{labels:svcKeys,datasets:[{data:svcKeys.map(k=>svc[k]),backgroundColor:svcColors.slice(0,svcKeys.length),borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
-    buildChart('an-chartCost','doughnut',{labels:['Paid','Free','Waived','Withdrawn','Pending'],datasets:[{data:[cost.Paid||0,cost.Free||0,cost.Waived||0,cost.Withdrawn||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.teal,COLORS.purple,COLORS.amber,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
+    buildChart('an-chartCost','doughnut',{labels:['Paid','Waived','Withdrawn','Pending'],datasets:[{data:[cost.Paid||0,cost.Waived||0,cost.Withdrawn||0,cost.Pending||0],backgroundColor:[COLORS.blue,COLORS.purple,COLORS.amber,COLORS.gray],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}});
     buildChart('an-chartUrgency','bar',{labels:['High','Medium','Low'],datasets:[{label:'Requests',data:[urg.High||0,urg.Medium||0,urg.Low||0],backgroundColor:[COLORS.redL,COLORS.amberL,COLORS.greenL],borderColor:[COLORS.red,COLORS.amber,COLORS.green],borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}});
     var revMonthly = data.revenueByMonth || [];
     buildChart('an-chartRevTime','bar',{labels:revMonthly.map(m=>fmtMonth(m.month)),datasets:[{label:'Received',data:revMonthly.map(m=>m.received||0),backgroundColor:COLORS.blueL,borderColor:COLORS.blue,borderWidth:1.5,borderRadius:4},{label:'Lost (Waived)',data:revMonthly.map(m=>m.lost||0),backgroundColor:COLORS.purpleL,borderColor:COLORS.purple,borderWidth:1.5,borderRadius:4}]},{scales:{y:{beginAtZero:true,ticks:{callback:function(v){return'₱'+v.toLocaleString();}}}},plugins:{legend:{display:true,labels:{font:{family:"'Rubik'"},boxWidth:12}}}});
@@ -2038,7 +2078,7 @@ function renderOpCard(s) {
   var adate = s && s.activityDate ? normDateToYMD(s.activityDate) : '';
   var cstat = s && s.costStatus ? s.costStatus : 'Pending';
   var jk    = s && s.jiraKey ? s.jiraKey : '';
-  var statusOpts = ['Pending','Paid','Free','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  var statusOpts = ['Pending','Paid','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
   var quotUrl  = s && s.quotationUrl        ? s.quotationUrl        : '';
   var quotFile = s && s.quotationFilename   ? s.quotationFilename   : '';
   var quotBy   = s && s.quotationUploadedBy ? s.quotationUploadedBy : '';
@@ -2087,7 +2127,7 @@ async function saveOpDetails(jiraKey) {
       if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); }
     } catch(cacheErr) {}
     var cb = document.querySelector('.dh-meta .cost-badge');
-    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : status === 'Withdrawn' ? 'cost-withdrawn' : status === 'Free' ? 'cost-free' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
+    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : status === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
     render();
     if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
   } catch(e) { alert('Save failed: ' + e.message); }
