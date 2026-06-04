@@ -1324,9 +1324,6 @@ function renderServicesView() {
     var costBadge = svc.costType === 'Free'
       ? '<span class="sv-cost-free">Free</span>'
       : '<span class="sv-cost-paid">With Cost</span>';
-    var adminNoteHtml = (isAdmin && svc.internalNote)
-      ? '<div class="sv-admin-note"><div class="sv-admin-note-label">🔒 Admin Note</div><div class="sv-admin-note-body">' + esc(svc.internalNote) + '</div></div>'
-      : '';
     return '<div class="sv-card" id="' + cardId + '" onclick="toggleSvCard(\'' + cardId + '\')"> ' 
       + '<div class="sv-card-header">'
       + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">'
@@ -1337,7 +1334,6 @@ function renderServicesView() {
       + (svc.category ? '<span class="sv-card-category">' + esc(svc.category) + '</span>' : '')
       + '</div></div>'
       + (svc.description ? '<p class="sv-card-desc">' + esc(svc.description) + '</p>' : '')
-      + adminNoteHtml
       + '<div class="sv-card-expand" id="' + cardId + '-expand">' + expandRows + expandFooter + '</div>'
       + '</div>';
   }
