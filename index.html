@@ -153,6 +153,7 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .cost-waived{background:#ede9ff;color:#3b1d9e}
 .cost-pending{background:#f4f5f4;color:#4a4b4a}
 .cost-withdrawn{background:#fff3cd;color:#7a4800}
+.cost-free{background:#e0f5f8;color:#074f5a}
 .detail{flex:1;overflow-y:auto;padding:1.75rem}
 .detail::-webkit-scrollbar{width:4px}
 .detail::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -1778,7 +1779,7 @@ function renderDetail(s, d) {
   var lc = s ? s.lifecycle : '—';
   var bcls = lcBadge(lc);
   var costHtml = '';
-  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : s.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
+  if (s && s.costStatus) { var cc = s.costStatus === 'Paid' ? 'cost-paid' : s.costStatus === 'Waived' ? 'cost-waived' : s.costStatus === 'Withdrawn' ? 'cost-withdrawn' : s.costStatus === 'Free' ? 'cost-free' : 'cost-pending'; costHtml = '<span class="cost-badge ' + cc + '">' + s.costStatus + '</span>'; }
   var html = '<div class="dh"><h2>' + esc(s ? s.clientName : (psrv ? psrv.summary : '—')) + '</h2>'
     + '<div class="dh-meta"><span class="badge ' + bcls + '">' + esc(lc) + '</span>' + costHtml
     + (psrv ? '<a href="' + psrv.url + '" target="_blank">' + psrv.key + ' ↗</a>' : '')
@@ -1845,7 +1846,7 @@ function renderDetail(s, d) {
       var tid = 'tc' + i;
       html += '<div class="tcard"><div class="tc-hd" onclick="tog(\'' + tid + '\')">'
         + '<div><div class="tc-key"><a href="' + t.url + '" target="_blank" onclick="event.stopPropagation()">' + t.key + ' [' + t.project + '] ↗</a>'
-        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : t.costStatus === 'Withdrawn' ? 'cost-withdrawn' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
+        + (t.costStatus ? '<span class="cost-badge ' + (t.costStatus === 'Paid' ? 'cost-paid' : t.costStatus === 'Withdrawn' ? 'cost-withdrawn' : t.costStatus === 'Free' ? 'cost-free' : 'cost-waived') + '" style="margin-left:5px">' + t.costStatus + '</span>' : '')
         + '</div><div class="tc-sum">' + esc(t.summary) + '</div><div class="tc-who">Assigned: ' + esc(t.assignee) + '</div></div>'
         + '<span class="badge ' + lcBadgeFromJira(t.status) + '">' + esc(t.status) + '</span>'
         + '</div><div class="tc-bd" id="' + tid + '">';
@@ -2078,7 +2079,7 @@ function renderOpCard(s) {
   var adate = s && s.activityDate ? normDateToYMD(s.activityDate) : '';
   var cstat = s && s.costStatus ? s.costStatus : 'Pending';
   var jk    = s && s.jiraKey ? s.jiraKey : '';
-  var statusOpts = ['Pending','Paid','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  var statusOpts = ['Pending','Paid','Free','Waived','Withdrawn'].map(function(o) { return '<option value="' + o + '"' + (cstat === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
   var quotUrl  = s && s.quotationUrl        ? s.quotationUrl        : '';
   var quotFile = s && s.quotationFilename   ? s.quotationFilename   : '';
   var quotBy   = s && s.quotationUploadedBy ? s.quotationUploadedBy : '';
@@ -2127,7 +2128,7 @@ async function saveOpDetails(jiraKey) {
       if (existing) { var parsed = JSON.parse(existing); parsed.data.submissions = all; sessionStorage.setItem(cacheKey, JSON.stringify(parsed)); }
     } catch(cacheErr) {}
     var cb = document.querySelector('.dh-meta .cost-badge');
-    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : status === 'Withdrawn' ? 'cost-withdrawn' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
+    if (cb) { var cc = status === 'Paid' ? 'cost-paid' : status === 'Waived' ? 'cost-waived' : status === 'Withdrawn' ? 'cost-withdrawn' : status === 'Free' ? 'cost-free' : 'cost-pending'; cb.className = 'cost-badge ' + cc; cb.textContent = status; }
     render();
     if (msgEl) { msgEl.style.display = 'inline'; setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000); }
   } catch(e) { alert('Save failed: ' + e.message); }
