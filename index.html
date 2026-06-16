@@ -247,6 +247,16 @@ html,body{height:100%;font-family:'Rubik',sans-serif;background:var(--bg);color:
 .csm-comment-msg{font-size:0.72rem;margin-top:6px;min-height:16px}
 .csm-comment-ok{color:var(--primary-dk);font-weight:500}
 .csm-comment-err{color:var(--tomato)}
+.csm-img-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.csm-img-label{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:500;color:var(--muted);cursor:pointer;padding:5px 10px;border:1.5px dashed var(--border);border-radius:6px;transition:border-color 0.15s,color 0.15s;flex-shrink:0}
+.csm-img-label:hover{border-color:var(--primary);color:var(--primary)}
+.csm-img-label svg{flex-shrink:0}
+.csm-img-preview{display:none;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:0.72rem;color:var(--text);min-width:0;flex:1}
+.csm-img-preview.show{display:flex}
+.csm-img-thumb{width:28px;height:28px;object-fit:cover;border-radius:3px;flex-shrink:0}
+.csm-img-fname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csm-img-clear{background:none;border:none;cursor:pointer;color:var(--muted);padding:0;line-height:1;font-size:1rem;flex-shrink:0}
+.csm-img-clear:hover{color:var(--tomato)}
 .enh-shell{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .enh-scroll{flex:1;overflow-y:auto;padding:0}
 .enh-scroll::-webkit-scrollbar{width:4px}
@@ -1888,7 +1898,16 @@ function renderDetail(s, d) {
         + (jiraUrl ? ' <a href="' + esc(jiraUrl) + '" target="_blank" style="color:var(--primary);font-weight:500">Open ' + esc(s.jiraKey) + ' in Jira ↗</a>' : '')
         + '</p>';
     } else {
-      html += '<textarea id="csmCommentText" placeholder="Write a comment — it will be posted to the PSRV ticket on your behalf…"></textarea>'
+            html += '<textarea id="csmCommentText" placeholder="Write a comment \u2014 it will be posted to the PSRV ticket on your behalf\u2026"></textarea>'
+        + '<div class="csm-img-row">'
+        + '<label class="csm-img-label" for="csmImgInput"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Attach image</label>'
+        + '<input type="file" id="csmImgInput" accept="image/*" style="display:none" onchange="csmImgSelect(this)">'
+        + '<div class="csm-img-preview" id="csmImgPreview">'
+        + '<img class="csm-img-thumb" id="csmImgThumb" src="" alt="">'
+        + '<span class="csm-img-fname" id="csmImgFname"></span>'
+        + '<button class="csm-img-clear" onclick="csmImgClear()" title="Remove image">\u00d7</button>'
+        + '</div>'
+        + '</div>'
         + '<div class="csm-comment-actions">'
         + '<span class="csm-comment-hint">Will appear as: ' + esc(userEmail) + '</span>'
         + '<button class="csm-comment-send" onclick="sendCsmComment(\'' + esc(s.jiraKey) + '\')">Post Comment</button>'
@@ -1934,7 +1953,6 @@ function renderStepper(currentLc) {
 function renderComments(comments) {
   if (!comments || !comments.length) return '<p class="no-c">No comments yet.</p>';
   return '<div class="clist">' + comments.map(function(c) {
-    // c.body is HTML rendered from ADF by GAS — use directly (not esc'd)
     return '<div class="ci"><div class="ci-who">' + esc(c.author) + ' · ' + (c.date || '').substring(0, 10) + '</div><div class="ci-body adf-body">' + (c.body || '') + '</div></div>';
   }).join('') + '</div>';
 }
@@ -2326,22 +2344,65 @@ async function sendWaiveRequest(jiraKey, isTest) {
   }
 }
 
+// Image state for comment box
+var _csmImg = null;
+function csmImgSelect(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image file (JPG, PNG, GIF, etc.)'); input.value = ''; return;
+  }
+  if (file.size > 8 * 1024 * 1024) {
+    alert('Image must be under 8 MB.'); input.value = ''; return;
+  }
+  _csmImg = file;
+  var preview = document.getElementById('csmImgPreview');
+  var thumb   = document.getElementById('csmImgThumb');
+  var fname   = document.getElementById('csmImgFname');
+  if (preview) preview.classList.add('show');
+  if (fname)   fname.textContent = file.name;
+  if (thumb) { var reader = new FileReader(); reader.onload = function(e) { thumb.src = e.target.result; }; reader.readAsDataURL(file); }
+}
+function csmImgClear() {
+  _csmImg = null;
+  var preview = document.getElementById('csmImgPreview');
+  var input   = document.getElementById('csmImgInput');
+  var thumb   = document.getElementById('csmImgThumb');
+  if (preview) preview.classList.remove('show');
+  if (input)   input.value = '';
+  if (thumb)   thumb.src = '';
+}
 async function sendCsmComment(jiraKey) {
   var textarea = document.getElementById('csmCommentText');
   var msgEl    = document.getElementById('csmCommentMsg');
   var btn      = document.querySelector('.csm-comment-send');
-  if (!textarea || !textarea.value.trim()) {
-    if (msgEl) { msgEl.textContent = 'Please write a comment first.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
+  var hasText  = textarea && textarea.value.trim();
+  var hasImg   = !!_csmImg;
+  if (!hasText && !hasImg) {
+    if (msgEl) { msgEl.textContent = 'Please write a comment or attach an image first.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
     return;
   }
-  var body = textarea.value.trim();
-  btn.disabled = true; btn.textContent = 'Posting…';
+  var body = hasText ? textarea.value.trim() : '';
+  btn.disabled = true; btn.textContent = hasImg ? 'Uploading…' : 'Posting…';
   if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; }
   try {
-    await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'addComment', jiraKey:jiraKey, comment:body, email:userEmail }) });
-    textarea.value = '';
+    var payload = { action: 'addComment', jiraKey: jiraKey, comment: body, email: userEmail };
+    if (hasImg) {
+      var b64 = await new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function(e) { resolve(e.target.result.split(',')[1]); };
+        reader.onerror = reject;
+        reader.readAsDataURL(_csmImg);
+      });
+      payload.imageData = b64;
+      payload.imageName = _csmImg.name;
+      payload.imageMime = _csmImg.type || 'image/png';
+    }
+    await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    if (textarea) textarea.value = '';
+    csmImgClear();
     if (msgEl) { msgEl.textContent = 'Comment posted to Jira ✓'; msgEl.className = 'csm-comment-msg csm-comment-ok'; }
-    setTimeout(function() { if (msgEl) { msgEl.textContent=''; msgEl.className='csm-comment-msg'; } }, 4000);
+    setTimeout(function() { if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; } }, 4000);
   } catch(e) {
     if (msgEl) { msgEl.textContent = 'Failed to post. Please try again.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
   }
