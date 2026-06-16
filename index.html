@@ -1194,6 +1194,28 @@ function initApp(email, role) {
     document.getElementById('sv-add-btn').style.display = 'flex';
   }
   if (!isInternal) document.getElementById('trackerCardDesc').textContent = 'View your submitted service requests and their current status.';
+  // Deep-link: if ?ticket=PSRV-XXX is in the URL, auto-navigate to tracker and open that ticket
+  var _deepTicket = new URLSearchParams(window.location.search).get('ticket');
+  if (_deepTicket) {
+    switchTab('tracker');
+    // Wait for list to load then select the ticket
+    var _deepAttempts = 0;
+    var _deepInterval = setInterval(function() {
+      _deepAttempts++;
+      var match = all.find(function(x) { return x.jiraKey === _deepTicket; });
+      if (match) {
+        clearInterval(_deepInterval);
+        select(_deepTicket, null);
+        // Highlight the matching row card if visible
+        setTimeout(function() {
+          var card = document.querySelector('.rcard[data-key="' + _deepTicket + '"]');
+          if (card) { card.classList.add('on'); card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+        }, 200);
+      } else if (_deepAttempts > 30) {
+        clearInterval(_deepInterval); // give up after ~6s
+      }
+    }, 200);
+  }
   var cacheKey = 'tracker_cache_' + email;
   if (!sessionStorage.getItem(cacheKey)) {
     fetch(GAS_URL + '?action=list&email=' + encodeURIComponent(email) + '&role=' + encodeURIComponent(userRole))
@@ -1762,7 +1784,7 @@ function render() {
     var bcls = lcBadge(lc);
     var dateStr = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
     var isOn = s.jiraKey === activeKey ? 'on' : '';
-    return '<div class="rcard ' + isOn + '" onclick="select(\'' + esc(s.jiraKey) + '\',this)">'
+    return '<div class="rcard ' + isOn + '" data-key="' + esc(s.jiraKey) + '" onclick="select(\'' + esc(s.jiraKey) + '\',this)">'
       + '<div class="rc-top"><div class="rc-client">' + esc(s.clientName) + '</div><span class="badge ' + bcls + '">' + esc(lc) + '</span></div>'
       + '<div class="rc-service">' + esc(s.serviceType) + '</div>'
       + '<div class="rc-bottom"><span class="rc-date">' + dateStr + '</span><span class="rc-key">' + (s.jiraKey || '—') + '</span></div>'
@@ -1898,14 +1920,14 @@ function renderDetail(s, d) {
         + (jiraUrl ? ' <a href="' + esc(jiraUrl) + '" target="_blank" style="color:var(--primary);font-weight:500">Open ' + esc(s.jiraKey) + ' in Jira ↗</a>' : '')
         + '</p>';
     } else {
-            html += '<textarea id="csmCommentText" placeholder="Write a comment \u2014 it will be posted to the PSRV ticket on your behalf\u2026"></textarea>'
+            html += '<textarea id="csmCommentText" placeholder="Write a comment — it will be posted to the PSRV ticket on your behalf…"></textarea>'
         + '<div class="csm-img-row">'
         + '<label class="csm-img-label" for="csmImgInput"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Attach image</label>'
         + '<input type="file" id="csmImgInput" accept="image/*" style="display:none" onchange="csmImgSelect(this)">'
         + '<div class="csm-img-preview" id="csmImgPreview">'
         + '<img class="csm-img-thumb" id="csmImgThumb" src="" alt="">'
         + '<span class="csm-img-fname" id="csmImgFname"></span>'
-        + '<button class="csm-img-clear" onclick="csmImgClear()" title="Remove image">\u00d7</button>'
+        + '<button class="csm-img-clear" onclick="csmImgClear()" title="Remove image">×</button>'
         + '</div>'
         + '</div>'
         + '<div class="csm-comment-actions">'
@@ -2344,17 +2366,12 @@ async function sendWaiveRequest(jiraKey, isTest) {
   }
 }
 
-// Image state for comment box
 var _csmImg = null;
 function csmImgSelect(input) {
   var file = input.files && input.files[0];
   if (!file) return;
-  if (!file.type.startsWith('image/')) {
-    alert('Please select an image file (JPG, PNG, GIF, etc.)'); input.value = ''; return;
-  }
-  if (file.size > 8 * 1024 * 1024) {
-    alert('Image must be under 8 MB.'); input.value = ''; return;
-  }
+  if (!file.type.startsWith('image/')) { alert('Please select an image file (JPG, PNG, GIF, etc.)'); input.value = ''; return; }
+  if (file.size > 8 * 1024 * 1024) { alert('Image must be under 8 MB.'); input.value = ''; return; }
   _csmImg = file;
   var preview = document.getElementById('csmImgPreview');
   var thumb   = document.getElementById('csmImgThumb');
@@ -2382,11 +2399,10 @@ async function sendCsmComment(jiraKey) {
     if (msgEl) { msgEl.textContent = 'Please write a comment or attach an image first.'; msgEl.className = 'csm-comment-msg csm-comment-err'; }
     return;
   }
-  var body = hasText ? textarea.value.trim() : '';
   btn.disabled = true; btn.textContent = hasImg ? 'Uploading…' : 'Posting…';
   if (msgEl) { msgEl.textContent = ''; msgEl.className = 'csm-comment-msg'; }
   try {
-    var payload = { action: 'addComment', jiraKey: jiraKey, comment: body, email: userEmail };
+    var payload = { action: 'addComment', jiraKey: jiraKey, comment: hasText ? textarea.value.trim() : '', email: userEmail };
     if (hasImg) {
       var b64 = await new Promise(function(resolve, reject) {
         var reader = new FileReader();
