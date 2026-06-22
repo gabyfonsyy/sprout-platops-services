@@ -418,7 +418,8 @@ textarea { resize: vertical; min-height: 60px; }
   .terms-col textarea, .terms-col input { display: none !important; }
   .print-sig-row { display: none !important; }
   .col-num  { display: table-cell !important; }
-  .col-desc   { display: none !important; }
+  .col-desc   { display: table-cell !important; font-size: 10px; color: #4a4b4a; max-width: 160px; }
+  .col-desc .print-value { display: inline !important; font-size: 10px; font-weight: 400; color: #4a4b4a; white-space: pre-wrap; }
   .col-effort { display: none !important; }
   .col-rate   { display: none !important; }
   #discountRow[style*="display: none"] { display: none !important; }
@@ -1344,9 +1345,15 @@ function syncPrintValues() {
       if (ex) ex.remove();
       var pv = document.createElement('span'); pv.className = 'print-value'; pv.textContent = stepInput.value || '—';
       td.appendChild(pv);
-      // Update the desc subline
+      // Clear the desc subline since desc is now its own column in print
       var descSpan = td.querySelector('.print-step-desc');
-      if (descSpan) descSpan.textContent = descInput ? (descInput.value || '') : '';
+      if (descSpan) descSpan.textContent = '';
+    }
+    if (descInput) {
+      var tdDesc = descInput.closest('td'), exDesc = tdDesc.querySelector('.print-value');
+      if (exDesc) exDesc.remove();
+      var pvDesc = document.createElement('span'); pvDesc.className = 'print-value'; pvDesc.textContent = descInput.value || '';
+      tdDesc.appendChild(pvDesc);
     }
     if (hoursInput) {
       var td2 = hoursInput.closest('td'), ex2 = td2.querySelector('.print-value');
