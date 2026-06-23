@@ -1814,12 +1814,12 @@ function frLoadTemplate(idx) {
   (t.featureRows || []).forEach(function(r) {
     var id = ++frFeatureRowId;
     var tr = document.createElement('tr');
-    tr.id = 'frfr-' + id;
+    tr.id = 'frfrow-' + id;
     tr.innerHTML =
       '<td><input type="text" placeholder="Feature name" oninput="frRecalc()" value="' + esc(r.name||'') + '"/></td>' +
       '<td><input type="number" id="frfd-' + id + '" min="0" step="1" placeholder="0" oninput="frRecalc()" value="' + (r.days||0) + '"/></td>' +
       '<td><input type="number" min="0" step="0.5" placeholder="0" value="' + (r.hours||0) + '"/></td>' +
-      '<td><div class="input-prefix"><span id="frfSym-' + id + '">' + frCurrSym() + '</span><input type="number" id="frfr-' + id + '" min="0" step="100" placeholder="0" oninput="frRecalc()" value="' + (r.rate||0) + '"/></div></td>' +
+      '<td><div class="input-prefix"><span id="frfSym-' + id + '">' + frCurrSym() + '</span><input type="number" id="frfrate-' + id + '" min="0" step="100" placeholder="0" oninput="frRecalc()" value="' + (r.rate||0) + '"/></div></td>' +
       '<td class="fr-computed" id="frfc-' + id + '">' + frFmt(0) + '</td>' +
       '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelFeatureRow(' + id + ')" title="Remove">' +
         '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
@@ -2093,12 +2093,12 @@ function frFmt(n) {
 function frAddFeatureRow() {
   var id = ++frFeatureRowId;
   var tr = document.createElement('tr');
-  tr.id = 'frfr-' + id;
+  tr.id = 'frfrow-' + id;
   tr.innerHTML =
     '<td><input type="text" placeholder="Feature name" oninput="frRecalc()"/></td>' +
     '<td><input type="number" id="frfd-' + id + '" min="0" step="1" placeholder="0" oninput="frRecalc()"/></td>' +
     '<td><input type="number" min="0" step="0.5" placeholder="0"/></td>' +
-    '<td><div class="input-prefix"><span id="frfSym-' + id + '">₱</span><input type="number" id="frfr-' + id + '" min="0" step="100" placeholder="0" oninput="frRecalc()"/></div></td>' +
+    '<td><div class="input-prefix"><span id="frfSym-' + id + '">₱</span><input type="number" id="frfrate-' + id + '" min="0" step="100" placeholder="0" oninput="frRecalc()"/></div></td>' +
     '<td class="fr-computed" id="frfc-' + id + '">₱ 0.00</td>' +
     '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelFeatureRow(' + id + ')" title="Remove">' +
       '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
@@ -2108,8 +2108,8 @@ function frAddFeatureRow() {
 }
 
 function frDelFeatureRow(id) {
-  var el = document.getElementById('frfr-' + id);
-  if (el) el.closest('tr').remove();
+  var el = document.getElementById('frfrow-' + id);
+  if (el) el.remove();
   frRecalc();
 }
 
@@ -2151,10 +2151,10 @@ function frRecalc() {
   // Feature rows
   var fTotal = 0;
   for (var i = 1; i <= frFeatureRowId; i++) {
-    var row = document.getElementById('frfr-' + i);
+    var row = document.getElementById('frfrow-' + i);
     if (!row) continue;
     var days = parseFloat((document.getElementById('frfd-' + i)||{}).value) || 0;
-    var rate = parseFloat((document.getElementById('frfr-' + i)||{}).value) || 0;
+    var rate = parseFloat((document.getElementById('frfrate-' + i)||{}).value) || 0;
     var computed = days * rate;
     fTotal += computed;
     var cell = document.getElementById('frfc-' + i);
