@@ -354,6 +354,120 @@ textarea { resize: vertical; min-height: 60px; }
 }
 .status-bar.show { transform: translateY(0); opacity: 1; }
 
+/* ── TAB BAR ──────────────────────────────────────────── */
+.tab-bar {
+  display: flex; gap: 0; margin-bottom: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.tab-btn {
+  flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--text-muted); font-family: 'Rubik', sans-serif;
+  border-right: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all .15s;
+}
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active { background: var(--primary-light); color: var(--primary-dark); }
+.tab-badge {
+  background: var(--kangkong-500); color: #fff;
+  font-size: 9px; font-weight: 700; border-radius: 10px;
+  padding: 1px 6px; letter-spacing: .05em; text-transform: uppercase;
+}
+
+/* ── FEATURE REQUEST TAB ──────────────────────────────── */
+.fr-tab { display: none; }
+.fr-tab.active { display: block; }
+.std-tab { display: block; }
+.std-tab.hidden { display: none; }
+
+/* Monthly salary banner — screen only, no-print */
+.salary-banner {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--mango-lt); border: 1.5px solid #ffe08a;
+  border-radius: 8px; padding: 10px 16px; margin-bottom: 18px;
+}
+.salary-banner-label {
+  font-size: 12px; font-weight: 600; color: #7a5800;
+  white-space: nowrap; display: flex; align-items: center; gap: 6px;
+}
+.salary-banner-note {
+  font-size: 11px; color: #a07000; margin-left: auto;
+  display: flex; align-items: center; gap: 5px;
+}
+.salary-sym {
+  background: #fde68a; border: 1.5px solid #ffe08a; border-right: none;
+  border-radius: 7px 0 0 7px; padding: 7px 10px; font-size: 13px;
+  font-weight: 600; color: #7a5800;
+}
+.salary-input {
+  border: 1.5px solid #ffe08a; border-radius: 0 7px 7px 0;
+  padding: 7px 12px; font-size: 13px; font-weight: 500;
+  font-family: 'Rubik', sans-serif; width: 160px;
+  background: #fff; color: var(--text); outline: none;
+}
+.salary-input:focus { border-color: var(--mango); }
+
+/* FR subsection labels */
+.fr-subsec-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--primary-dark);
+  background: var(--primary-light); padding: 5px 12px;
+  border-radius: 6px; margin-bottom: 10px; display: inline-flex;
+  align-items: center; gap: 5px;
+}
+
+/* FR tables */
+.fr-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+.fr-table th {
+  background: var(--mushroom-50); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted);
+  padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border);
+}
+.fr-table th.right { text-align: right; }
+.fr-table td { padding: 6px 8px; border-bottom: 1px solid var(--mushroom-50); vertical-align: middle; }
+.fr-table tr:last-child td { border-bottom: none; }
+.fr-table tr.fr-total td {
+  background: var(--primary-light); font-weight: 700; color: var(--primary-dark);
+  border-top: 1.5px solid var(--kangkong-300); font-size: 13px;
+}
+.fr-table td.fr-computed {
+  text-align: right; color: var(--primary-dark); font-weight: 600;
+  background: #f9fef9;
+}
+.fr-table input[type=text], .fr-table input[type=number] {
+  padding: 5px 8px; font-size: 13px; border-radius: 6px;
+  border: 1.5px solid var(--border); font-family: 'Rubik', sans-serif;
+  color: var(--text); background: var(--surface); width: 100%;
+  outline: none; transition: border-color .15s;
+}
+.fr-table input:focus { border-color: var(--primary); }
+.fr-col-del { width: 36px; text-align: center; }
+
+/* FR Overall Breakdown */
+.fr-breakdown-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; padding-top: 16px; margin-top: 4px; border-top: 1px solid var(--border); }
+.fr-breakdown-box { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+.fr-breakdown-line { display: flex; justify-content: space-between; padding: 9px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.fr-breakdown-line:last-child { border-bottom: none; }
+.fr-breakdown-line.fr-grand { background: var(--kangkong-800); color: #fff; font-weight: 700; font-size: 15px; }
+.fr-breakdown-line.fr-grand .fr-amt { color: var(--kangkong-300); }
+.fr-amt { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* FR timeline unit buttons */
+.fr-tl-unit { display: flex; gap: 4px; }
+.fr-tl-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--border); cursor: pointer;
+  background: var(--mushroom-50); color: var(--text-muted);
+  font-family: 'Rubik', sans-serif; transition: all .15s;
+}
+.fr-tl-btn.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
+.fr-tl-btn:hover:not(.active) { background: var(--mushroom-100); }
+
+/* FR toolbar: no PSRV ticket column */
+.fr-toolbar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+
 /* ── NOTES/TERMS TEXTAREA ─────────────────────────────── */
 .terms-col { display: flex; flex-direction: column; gap: 5px; }
 .terms-col label { display: block; margin-bottom: 1px; }
@@ -366,6 +480,7 @@ textarea { resize: vertical; min-height: 60px; }
   .topbar, .sidebar, .toolbar, .no-print, .card-header button,
   .btn, .template-delete, .row-drag, .col-act, .col-order,
   .items-table input, .items-table select, .items-table textarea,
+  .salary-banner, .fr-col-del,
   input, select, textarea { display: none !important; }
   .layout { display: block !important; }
   .main { padding: 0 !important; }
@@ -437,7 +552,7 @@ textarea { resize: vertical; min-height: 60px; }
 <div class="topbar">
   <span class="topbar-logo">Sprout Solutions</span>
   <span class="topbar-sep">›</span>
-  <span class="topbar-title">Service Request Quotation Builder</span>
+  <span class="topbar-title" id="topbarTitle">Service Request Quotation Builder</span>
   <div class="topbar-actions">
     <button class="btn btn-ghost" onclick="openSaveTemplateModal()">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
@@ -447,7 +562,7 @@ textarea { resize: vertical; min-height: 60px; }
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       New
     </button>
-    <button class="btn btn-primary" onclick="exportPDF()">
+    <button class="btn btn-primary" onclick="frCurrentTab==='feature'?exportFRPDF():exportPDF()">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
       Export PDF
     </button>
@@ -487,6 +602,22 @@ textarea { resize: vertical; min-height: 60px; }
       </div>
     </div>
     <div class="print-cost-title" id="printCostTitle"></div>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar no-print">
+      <button class="tab-btn active" id="tabStandard" onclick="switchQuotTab('standard')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        Standard Quotation
+      </button>
+      <button class="tab-btn" id="tabFeature" onclick="switchQuotTab('feature')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Feature Request Quotation
+        <span class="tab-badge">NEW</span>
+      </button>
+    </div>
+
+    <!-- STANDARD TAB CONTENT -->
+    <div id="stdTabContent" class="std-tab">
 
     <!-- TOOLBAR -->
     <div class="no-print" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px">
@@ -666,9 +797,250 @@ textarea { resize: vertical; min-height: 60px; }
       <span>This quotation is valid for 30 days from the date of issue.</span>
     </div>
 
+    </div><!-- /stdTabContent -->
+
+    <div id="frTabContent" class="fr-tab">
+
+      <!-- FR Toolbar: no PSRV ticket -->
+      <div class="no-print fr-toolbar">
+        <div class="form-group">
+          <label>Quotation #</label>
+          <div class="input-prefix">
+            <span id="frQuotNumPrefix">FR-2026-</span>
+            <input type="text" id="frQuotNum" placeholder="001" style="border-radius:0 7px 7px 0"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="frQuotDate"/>
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="frCurrency" onchange="frRecalc()">
+            <option value="PHP">PHP ₱</option>
+            <option value="USD">USD $</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- FR Print Header -->
+      <div class="print-header">
+        <div class="print-logo-block">
+          <img src="logo.svg" alt="Sprout Solutions" style="height:36px;margin-bottom:6px;display:block"/>
+          <p>Platform Operations — Feature Request</p>
+        </div>
+        <div class="print-doc-block">
+          <div class="doc-title">FEATURE REQUEST QUOTATION</div>
+          <div class="doc-sub" id="frPrintQuotNum">—</div>
+          <div class="doc-sub" id="frPrintDate">—</div>
+        </div>
+      </div>
+      <div class="print-cost-title" id="frPrintCostTitle"></div>
+
+      <!-- FR Client Info: no PSRV Reference, no Account MRR -->
+      <div class="card">
+        <div class="card-header">
+          <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <h2>Client Information</h2>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Client / Company Name</label>
+              <input type="text" id="frClientName" placeholder="e.g. ABC Corporation"/>
+            </div>
+            <div class="form-group">
+              <label>HR URL</label>
+              <input type="text" id="frHrUrl" placeholder="companyname.hrhub.ph"/>
+            </div>
+            <div class="form-group">
+              <label>Payroll Company Code/s</label>
+              <input type="text" id="frPayrollCodes" placeholder="e.g. ABC01, ABC02"/>
+            </div>
+            <div class="form-group">
+              <label>Customer Success Manager</label>
+              <input type="text" id="frCsm" placeholder="CSM name"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FR Work Items -->
+      <div class="card">
+        <div class="card-header">
+          <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <h2>Work Items &amp; Effort Breakdown</h2>
+        </div>
+        <div class="card-body">
+
+          <!-- Scope -->
+          <div class="form-group" style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)">
+            <label>Scope of Work / Brief Description</label>
+            <textarea id="frScopeDesc" rows="2" placeholder="Describe the overall scope of this feature request..."></textarea>
+          </div>
+
+          <!-- Monthly Salary — hidden on export -->
+          <div class="salary-banner no-print">
+            <span class="salary-banner-label">
+              <svg width="14" height="14" fill="none" stroke="#7a5800" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Monthly Salary
+            </span>
+            <div class="input-prefix">
+              <span class="salary-sym" id="frSalarySym">₱</span>
+              <input class="salary-input" id="frMonthlySalary" type="number" min="0" step="100" placeholder="0.00" oninput="frRecalc()"/>
+            </div>
+            <span class="salary-banner-note">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              Hidden on export
+            </span>
+          </div>
+
+          <!-- Feature subsection -->
+          <div style="margin-bottom:22px">
+            <div class="fr-subsec-label">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Feature
+            </div>
+            <div class="items-table-wrap">
+              <table class="fr-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th style="width:90px">Est. Days</th>
+                    <th style="width:90px">Est. Hours</th>
+                    <th style="width:110px">Hourly Rate</th>
+                    <th class="right" style="width:130px">Computed Amount<br/><span style="font-size:9px;font-weight:400;opacity:.7">Days × Rate</span></th>
+                    <th class="fr-col-del no-print"></th>
+                  </tr>
+                </thead>
+                <tbody id="frFeatureBody"></tbody>
+                <tfoot>
+                  <tr class="fr-total">
+                    <td colspan="4" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase">Total Feature Operational Cost</td>
+                    <td class="fr-computed" id="frFeatureTotal">₱ 0.00</td>
+                    <td class="no-print"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <button class="btn btn-primary btn-sm no-print" onclick="frAddFeatureRow()" style="margin-top:6px">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Feature
+            </button>
+          </div>
+
+          <!-- Activity subsection -->
+          <div style="margin-bottom:22px">
+            <div class="fr-subsec-label">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Activity
+            </div>
+            <div class="items-table-wrap">
+              <table class="fr-table">
+                <thead>
+                  <tr>
+                    <th>Activity Item</th>
+                    <th style="width:130px">% of Labor Cost</th>
+                    <th class="right" style="width:140px">Cost<br/><span style="font-size:9px;font-weight:400;opacity:.7">Salary × %</span></th>
+                    <th class="fr-col-del no-print"></th>
+                  </tr>
+                </thead>
+                <tbody id="frActivityBody"></tbody>
+                <tfoot>
+                  <tr class="fr-total">
+                    <td colspan="2" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase">Total Activity Operational Cost</td>
+                    <td class="fr-computed" id="frActivityTotal">₱ 0.00</td>
+                    <td class="no-print"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <button class="btn btn-primary btn-sm no-print" onclick="frAddActivityRow()" style="margin-top:6px">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Activity
+            </button>
+          </div>
+
+          <!-- Overall Breakdown + Timeline -->
+          <div class="fr-breakdown-wrap">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                <span style="font-size:13px;font-weight:500">Estimated Timeline of Completion</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="number" id="frTimelineVal" min="1" step="1" placeholder="e.g. 3"
+                  style="width:72px;padding:5px 8px;font-size:13px;border-radius:6px;border:1.5px solid var(--border);font-family:'Rubik',sans-serif;text-align:center"/>
+                <div class="fr-tl-unit">
+                  <button class="fr-tl-btn active" onclick="frSetUnit(this,'days')">Days</button>
+                  <button class="fr-tl-btn" onclick="frSetUnit(this,'weeks')">Weeks</button>
+                  <button class="fr-tl-btn" onclick="frSetUnit(this,'months')">Months</button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Overall Breakdown</div>
+              <div class="fr-breakdown-box">
+                <div class="fr-breakdown-line"><span>Base Labor Cost</span><span class="fr-amt" id="frBaseLaborDisplay">₱ 0.00</span></div>
+                <div class="fr-breakdown-line"><span>Operational Cost</span><span class="fr-amt" id="frOpCostDisplay">₱ 0.00</span></div>
+                <div class="fr-breakdown-line fr-grand"><span>TOTAL</span><span class="fr-amt" id="frGrandTotal">₱ 0.00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FR Print Timeline -->
+          <div id="frPrintTimeline" style="display:none;margin-top:14px;padding:10px 16px;border:1.5px solid #d4f5df;border-radius:8px;background:#f4fcf7;font-size:12px;font-weight:600;color:#1a5c2e;align-items:center;gap:8px">
+            <svg width="14" height="14" fill="none" stroke="#1a5c2e" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+            <span id="frPrintTimelineText"></span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FR Notes & Prepared By -->
+      <div class="card">
+        <div class="card-header">
+          <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          <h2>Notes &amp; Prepared By</h2>
+        </div>
+        <div class="card-body">
+          <div class="terms-wrap">
+            <div class="terms-col">
+              <label>Additional Notes / Assumptions</label>
+              <textarea id="frAddlNotes" rows="6" placeholder="Add notes or assumptions..."></textarea>
+            </div>
+            <div class="terms-col">
+              <div class="form-group">
+                <label>Prepared By</label>
+                <input type="text" id="frPreparedBy" placeholder="Your name"/>
+              </div>
+              <div class="form-group" style="margin-top:10px">
+                <label>Designation</label>
+                <input type="text" id="frPreparedByRole" placeholder="e.g. Engineering Ops Lead"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FR Print-only Signature -->
+      <div class="print-sig-row">
+        <div class="print-sig-box">
+          <div class="sig-name" id="frPrintPreparedBy">—</div>
+          <div class="sig-role" id="frPrintPreparedByRole">—</div>
+          <div style="font-size:10px;color:#7a7b7a;margin-top:2px">Prepared by</div>
+        </div>
+      </div>
+      <div class="print-footer">
+        <span>Sprout Solutions · Platform Operations</span>
+        <span id="frPrintFooterQuot">—</span>
+        <span>This quotation is valid for 30 days from the date of issue.</span>
+      </div>
+
+    </div><!-- /frTabContent -->
+
   </main>
 </div>
-
 <!-- SAVE TEMPLATE MODAL -->
 <div class="modal-overlay" id="saveModal">
   <div class="modal">
@@ -1381,6 +1753,203 @@ function showStatus(msg) {
   bar.classList.add('show');
   setTimeout(function(){ bar.classList.remove('show'); }, 3000);
 }
+
+// ── FEATURE REQUEST TAB ──────────────────────────────────────
+var frCurrentTab = 'standard';
+var frFeatureRowId = 0;
+var frActivityRowId = 0;
+var frTimelineUnit = 'days';
+
+function switchQuotTab(tab) {
+  frCurrentTab = tab;
+  var isFeature = tab === 'feature';
+  document.getElementById('stdTabContent').classList.toggle('hidden', isFeature);
+  document.getElementById('frTabContent').classList.toggle('active', isFeature);
+  document.getElementById('tabStandard').classList.toggle('active', !isFeature);
+  document.getElementById('tabFeature').classList.toggle('active', isFeature);
+  // Update topbar title
+  document.getElementById('topbarTitle').textContent = isFeature
+    ? 'Feature Request Quotation Builder'
+    : 'Service Request Quotation Builder';
+  if (isFeature && !frFeatureRowId) {
+    frAddFeatureRow(); frAddFeatureRow();
+    frAddActivityRow(); frAddActivityRow();
+    frSetToday();
+  }
+}
+
+function frSetToday() {
+  var now = new Date();
+  var y = now.getFullYear();
+  var m = String(now.getMonth() + 1).padStart(2, '0');
+  var d = String(now.getDate()).padStart(2, '0');
+  var today = y + '-' + m + '-' + d;
+  var el = document.getElementById('frQuotDate');
+  if (el && !el.value) el.value = today;
+  var pfx = document.getElementById('frQuotNumPrefix');
+  if (pfx) pfx.textContent = 'FR-' + y + '-';
+  var num = document.getElementById('frQuotNum');
+  if (num && !num.value) num.value = '001';
+}
+
+function frCurrSym() {
+  var sel = document.getElementById('frCurrency');
+  var v = sel ? sel.value : 'PHP';
+  return v === 'USD' ? '$' : '₱';
+}
+function frFmt(n) {
+  var sym = frCurrSym();
+  return sym + ' ' + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function frAddFeatureRow() {
+  var id = ++frFeatureRowId;
+  var tr = document.createElement('tr');
+  tr.id = 'frfr-' + id;
+  tr.innerHTML =
+    '<td><input type="text" placeholder="Feature name" oninput="frRecalc()"/></td>' +
+    '<td><input type="number" id="frfd-' + id + '" min="0" step="1" placeholder="0" oninput="frRecalc()"/></td>' +
+    '<td><input type="number" min="0" step="0.5" placeholder="0"/></td>' +
+    '<td><div class="input-prefix"><span id="frfSym-' + id + '">₱</span><input type="number" id="frfr-' + id + '" min="0" step="100" placeholder="0" oninput="frRecalc()"/></div></td>' +
+    '<td class="fr-computed" id="frfc-' + id + '">₱ 0.00</td>' +
+    '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelFeatureRow(' + id + ')" title="Remove">' +
+      '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+    '</button></td>';
+  document.getElementById('frFeatureBody').appendChild(tr);
+  frRecalc();
+}
+
+function frDelFeatureRow(id) {
+  var el = document.getElementById('frfr-' + id);
+  if (el) el.closest('tr').remove();
+  frRecalc();
+}
+
+function frAddActivityRow() {
+  var id = ++frActivityRowId;
+  var tr = document.createElement('tr');
+  tr.id = 'frar-' + id;
+  tr.innerHTML =
+    '<td><input type="text" placeholder="Activity name" oninput="frRecalc()"/></td>' +
+    '<td><div class="input-prefix"><input type="number" id="frap-' + id + '" min="0" max="100" step="1" placeholder="0" oninput="frRecalc()"/><span style="padding:7px 8px;font-size:13px;color:var(--text-muted)">%</span></div></td>' +
+    '<td class="fr-computed" id="frac-' + id + '">₱ 0.00</td>' +
+    '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelActivityRow(' + id + ')" title="Remove">' +
+      '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+    '</button></td>';
+  document.getElementById('frActivityBody').appendChild(tr);
+  frRecalc();
+}
+
+function frDelActivityRow(id) {
+  var el = document.getElementById('frap-' + id);
+  if (el) el.closest('tr').remove();
+  frRecalc();
+}
+
+function frSetUnit(el, unit) {
+  frTimelineUnit = unit;
+  document.querySelectorAll('.fr-tl-btn').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function frRecalc() {
+  var salary = parseFloat(document.getElementById('frMonthlySalary').value) || 0;
+  var sym = frCurrSym();
+
+  // Update currency symbol in salary banner
+  var salSym = document.getElementById('frSalarySym');
+  if (salSym) salSym.textContent = sym;
+
+  // Feature rows
+  var fTotal = 0;
+  for (var i = 1; i <= frFeatureRowId; i++) {
+    var row = document.getElementById('frfr-' + i);
+    if (!row) continue;
+    var days = parseFloat((document.getElementById('frfd-' + i)||{}).value) || 0;
+    var rate = parseFloat((document.getElementById('frfr-' + i)||{}).value) || 0;
+    var computed = days * rate;
+    fTotal += computed;
+    var cell = document.getElementById('frfc-' + i);
+    if (cell) cell.textContent = frFmt(computed);
+    var symEl = document.getElementById('frfSym-' + i);
+    if (symEl) symEl.textContent = sym;
+  }
+  document.getElementById('frFeatureTotal').textContent = frFmt(fTotal);
+
+  // Activity rows
+  var aTotal = 0;
+  for (var j = 1; j <= frActivityRowId; j++) {
+    var arow = document.getElementById('frar-' + j);
+    if (!arow) continue;
+    var pct = parseFloat((document.getElementById('frap-' + j)||{}).value) || 0;
+    var cost = salary * (pct / 100);
+    aTotal += cost;
+    var acell = document.getElementById('frac-' + j);
+    if (acell) acell.textContent = frFmt(cost);
+  }
+  document.getElementById('frActivityTotal').textContent = frFmt(aTotal);
+
+  // Overall breakdown
+  document.getElementById('frBaseLaborDisplay').textContent = frFmt(fTotal);
+  document.getElementById('frOpCostDisplay').textContent = frFmt(aTotal);
+  document.getElementById('frGrandTotal').textContent = frFmt(fTotal + aTotal);
+}
+
+// ── FR PDF EXPORT ─────────────────────────────────────────────
+function exportFRPDF() {
+  var y = new Date().getFullYear();
+  var pfx = document.getElementById('frQuotNumPrefix');
+  var qnSuffix = document.getElementById('frQuotNum').value || '—';
+  var qn = (pfx ? pfx.textContent : ('FR-' + y + '-')) + qnSuffix;
+  var qd = document.getElementById('frQuotDate').value;
+  document.getElementById('frPrintQuotNum').textContent = qn;
+  document.getElementById('frPrintDate').textContent = qd ? 'Date: ' + formatDateDisplay(qd) : '';
+  document.getElementById('frPrintPreparedBy').textContent = document.getElementById('frPreparedBy').value || '—';
+  document.getElementById('frPrintPreparedByRole').textContent = document.getElementById('frPreparedByRole').value || '—';
+  document.getElementById('frPrintFooterQuot').textContent = qn;
+  var clientNm = document.getElementById('frClientName').value || '—';
+  document.getElementById('frPrintCostTitle').textContent = 'Feature Request Quotation for ' + clientNm;
+
+  // Timeline
+  var tlVal = parseInt(document.getElementById('frTimelineVal').value) || 0;
+  var printTl = document.getElementById('frPrintTimeline');
+  var printTlText = document.getElementById('frPrintTimelineText');
+  if (tlVal > 0 && printTl && printTlText) {
+    var unitLabel = frTimelineUnit === 'days' ? ('business day' + (tlVal !== 1 ? 's' : ''))
+      : frTimelineUnit === 'weeks' ? ('week' + (tlVal !== 1 ? 's' : ''))
+      : ('month' + (tlVal !== 1 ? 's' : ''));
+    printTlText.textContent = 'Estimated Timeline of Completion: ' + tlVal + ' ' + unitLabel;
+    printTl.style.display = 'flex';
+  } else if (printTl) {
+    printTl.style.display = 'none';
+  }
+
+  // Sync print values for FR card-body fields
+  document.querySelectorAll('#frTabContent .card-body input, #frTabContent .card-body select, #frTabContent .card-body textarea').forEach(function(el) {
+    var old = el.parentNode.querySelector('.print-value');
+    if (old) old.remove();
+    var pv = document.createElement('span');
+    pv.className = 'print-value';
+    var val = '';
+    if (el.tagName === 'SELECT') {
+      val = el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : '';
+      if (val === '— Select —') val = '—';
+    } else {
+      val = el.value || '—';
+    }
+    pv.textContent = val;
+    el.parentNode.insertBefore(pv, el.nextSibling);
+  });
+
+  window.print();
+}
+
+window.addEventListener('afterprint', function() {
+  var printTl = document.getElementById('frPrintTimeline');
+  if (printTl) printTl.style.display = 'none';
+});
+
+// ── END FEATURE REQUEST TAB ───────────────────────────────────
 
 window.addEventListener('afterprint', function() {
   var thCost  = document.querySelector('.items-table th.col-cost');
