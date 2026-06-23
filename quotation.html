@@ -214,6 +214,21 @@ body {
 .template-item:hover .template-delete { opacity: 1; }
 .sidebar-empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px 10px; }
 
+/* Sidebar tab toggle */
+.sidebar-tabs {
+  display: flex; gap: 0; margin-bottom: 10px;
+  border: 1.5px solid var(--border); border-radius: 7px; overflow: hidden;
+}
+.sidebar-tab-btn {
+  flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--text-muted); font-family: 'Rubik', sans-serif;
+  border-right: 1px solid var(--border); transition: all .15s;
+  letter-spacing: .01em; line-height: 1.3; text-align: center;
+}
+.sidebar-tab-btn:last-child { border-right: none; }
+.sidebar-tab-btn.active { background: var(--primary-light); color: var(--primary-dark); }
+
 /* ── MAIN ─────────────────────────────────────────────── */
 .main { padding: 28px 32px; overflow-y: auto; }
 
@@ -554,7 +569,7 @@ textarea { resize: vertical; min-height: 60px; }
   <span class="topbar-sep">›</span>
   <span class="topbar-title" id="topbarTitle">Service Request Quotation Builder</span>
   <div class="topbar-actions">
-    <button class="btn btn-ghost" onclick="openSaveTemplateModal()">
+    <button class="btn btn-ghost" onclick="frCurrentTab==='feature'?openFrSaveModal():openSaveTemplateModal()">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
       Save as Template
     </button>
@@ -573,17 +588,38 @@ textarea { resize: vertical; min-height: 60px; }
 
   <!-- SIDEBAR: Templates -->
   <aside class="sidebar">
-    <div class="sidebar-label">Templates</div>
-    <button class="btn btn-outline btn-sm no-print" style="width:100%;justify-content:center;margin-bottom:4px" onclick="openSaveTemplateModal()">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Save Current as Template
-    </button>
-    <button class="btn btn-sm no-print" id="syncBtn" onclick="forceSyncToSheet()" title="Push all locally cached templates to the Google Sheet"
-      style="width:100%;justify-content:center;margin-bottom:8px;background:var(--mushroom-50);color:var(--text-muted);border:1.5px solid var(--border)">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
-      <span id="syncBtnLabel">Sync to Sheet</span>
-    </button>
-    <div id="templateList"></div>
+    <div class="sidebar-tabs no-print">
+      <button class="sidebar-tab-btn active" id="sidebarTabStd" onclick="sidebarSwitchTab('standard')">PSRV</button>
+      <button class="sidebar-tab-btn" id="sidebarTabFr" onclick="sidebarSwitchTab('feature')">Feature Req</button>
+    </div>
+
+    <!-- PSRV template controls -->
+    <div id="sidebarStdControls">
+      <button class="btn btn-outline btn-sm no-print" style="width:100%;justify-content:center;margin-bottom:4px" onclick="openSaveTemplateModal()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Save Current as Template
+      </button>
+      <button class="btn btn-sm no-print" id="syncBtn" onclick="forceSyncToSheet()" title="Push all locally cached templates to the Google Sheet"
+        style="width:100%;justify-content:center;margin-bottom:8px;background:var(--mushroom-50);color:var(--text-muted);border:1.5px solid var(--border)">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        <span id="syncBtnLabel">Sync to Sheet</span>
+      </button>
+      <div id="templateList"></div>
+    </div>
+
+    <!-- FR template controls -->
+    <div id="sidebarFrControls" style="display:none">
+      <button class="btn btn-outline btn-sm no-print" style="width:100%;justify-content:center;margin-bottom:4px" onclick="openFrSaveModal()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Save Current as Template
+      </button>
+      <button class="btn btn-sm no-print" id="frSyncBtn" onclick="frForceSyncToSheet()" title="Push all FR templates to the Google Sheet"
+        style="width:100%;justify-content:center;margin-bottom:8px;background:var(--mushroom-50);color:var(--text-muted);border:1.5px solid var(--border)">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        <span id="frSyncBtnLabel">Sync to Sheet</span>
+      </button>
+      <div id="frTemplateList"></div>
+    </div>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -1062,6 +1098,21 @@ textarea { resize: vertical; min-height: 60px; }
   </div>
 </div>
 
+<!-- FR SAVE TEMPLATE MODAL -->
+<div class="modal-overlay" id="frSaveModal">
+  <div class="modal">
+    <h3>Save as FR Template</h3>
+    <div class="form-group">
+      <label>Template Name</label>
+      <input type="text" id="frTemplateNameInput" placeholder="e.g. New Payroll Feature"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="color:var(--text-muted);border-color:var(--border)" onclick="closeFrSaveModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="frSaveTemplate()">Save Template</button>
+    </div>
+  </div>
+</div>
+
 <!-- STATUS BAR -->
 <div class="status-bar" id="statusBar">
   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
@@ -1192,6 +1243,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setToday();
   loadServiceOptions();
   loadTemplates();
+  frLoadTemplates();
   addRow(); addRow(); addRow();
   // Re-apply date after a tick in case iframe rendering delayed the input
   setTimeout(setToday, 0);
@@ -1640,6 +1692,235 @@ function deleteTemplate(idx) {
   deleteTemplateFromServer(name);
 }
 
+// ── FR TEMPLATE SYSTEM ───────────────────────────────────────
+var FR_LS_KEY = 'sprout_fr_templates_cache';
+var frTemplates = [];
+var frActiveTemplateIdx = -1;
+
+function frLsRead()        { try { return JSON.parse(localStorage.getItem(FR_LS_KEY) || '[]'); } catch(e) { return []; } }
+function frLsWrite(arr)    { try { localStorage.setItem(FR_LS_KEY, JSON.stringify(arr)); } catch(e) {} }
+
+function sidebarSwitchTab(tab) {
+  var isFeature = tab === 'feature';
+  document.getElementById('sidebarTabStd').classList.toggle('active', !isFeature);
+  document.getElementById('sidebarTabFr').classList.toggle('active', isFeature);
+  document.getElementById('sidebarStdControls').style.display = isFeature ? 'none' : '';
+  document.getElementById('sidebarFrControls').style.display  = isFeature ? ''     : 'none';
+}
+
+function openFrSaveModal() {
+  document.getElementById('frTemplateNameInput').value = '';
+  document.getElementById('frSaveModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('frTemplateNameInput').focus(); }, 100);
+}
+function closeFrSaveModal() { document.getElementById('frSaveModal').classList.remove('open'); }
+
+function frSaveTemplate() {
+  var name = document.getElementById('frTemplateNameInput').value.trim();
+  if (!name) { alert('Please enter a template name.'); return; }
+
+  // Snapshot feature rows
+  var featureRows = [];
+  for (var i = 1; i <= frFeatureRowId; i++) {
+    var row = document.getElementById('frfr-' + i);
+    if (!row) continue;
+    var inputs = row.querySelectorAll('input');
+    featureRows.push({
+      name:    inputs[0] ? inputs[0].value : '',
+      days:    inputs[1] ? parseFloat(inputs[1].value)||0 : 0,
+      hours:   inputs[2] ? parseFloat(inputs[2].value)||0 : 0,
+      rate:    inputs[3] ? parseFloat(inputs[3].value)||0 : 0
+    });
+  }
+
+  // Snapshot activity rows
+  var activityRows = [];
+  for (var j = 1; j <= frActivityRowId; j++) {
+    var arow = document.getElementById('frar-' + j);
+    if (!arow) continue;
+    var ainputs = arow.querySelectorAll('input');
+    activityRows.push({
+      name: ainputs[0] ? ainputs[0].value : '',
+      pct:  ainputs[1] ? parseFloat(ainputs[1].value)||0 : 0
+    });
+  }
+
+  var tmpl = {
+    name:         name,
+    clientName:   (document.getElementById('frClientName')    ||{}).value || '',
+    hrUrl:        (document.getElementById('frHrUrl')         ||{}).value || '',
+    payrollCodes: (document.getElementById('frPayrollCodes')  ||{}).value || '',
+    csm:          (document.getElementById('frCsm')           ||{}).value || '',
+    scopeDesc:    (document.getElementById('frScopeDesc')     ||{}).value || '',
+    monthlySalary:(document.getElementById('frMonthlySalary') ||{}).value || '',
+    timelineVal:  (document.getElementById('frTimelineVal')   ||{}).value || '',
+    timelineUnit: frTimelineUnit,
+    addlNotes:    (document.getElementById('frAddlNotes')     ||{}).value || '',
+    preparedBy:   (document.getElementById('frPreparedBy')    ||{}).value || '',
+    preparedByRole:(document.getElementById('frPreparedByRole')||{}).value || '',
+    featureRows:  featureRows,
+    activityRows: activityRows
+  };
+
+  var existingIdx = frTemplates.findIndex(function(t){ return t.name === tmpl.name; });
+  if (existingIdx >= 0) { frTemplates[existingIdx] = tmpl; } else { frTemplates.unshift(tmpl); }
+  frLsWrite(frTemplates);
+  frRenderTemplates();
+  closeFrSaveModal();
+  showStatus('FR Template "' + name + '" saved!');
+  frSaveToServer(tmpl, null);
+}
+
+function frLoadTemplate(idx) {
+  if (!confirm('Load this template? Current items will be replaced.')) return;
+  var t = frTemplates[idx];
+  frActiveTemplateIdx = idx;
+
+  // Clear and repopulate client info
+  ['frClientName','frHrUrl','frPayrollCodes','frCsm','frScopeDesc','frAddlNotes','frPreparedBy','frPreparedByRole'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = t[id.replace('fr','').replace(/^./,function(c){return c.toLowerCase()})] ||
+      t[id] || '';
+  });
+  // Explicitly map fields
+  var fieldMap = {
+    frClientName: t.clientName, frHrUrl: t.hrUrl, frPayrollCodes: t.payrollCodes,
+    frCsm: t.csm, frScopeDesc: t.scopeDesc, frAddlNotes: t.addlNotes,
+    frPreparedBy: t.preparedBy, frPreparedByRole: t.preparedByRole,
+    frMonthlySalary: t.monthlySalary, frTimelineVal: t.timelineVal
+  };
+  Object.keys(fieldMap).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && fieldMap[id] !== undefined) el.value = fieldMap[id];
+  });
+
+  // Restore timeline unit
+  if (t.timelineUnit) {
+    frTimelineUnit = t.timelineUnit;
+    document.querySelectorAll('.fr-tl-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.fr-tl-btn').forEach(function(b){
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf(t.timelineUnit) >= 0) b.classList.add('active');
+    });
+  }
+
+  // Restore feature rows
+  document.getElementById('frFeatureBody').innerHTML = '';
+  frFeatureRowId = 0;
+  (t.featureRows || []).forEach(function(r) {
+    var id = ++frFeatureRowId;
+    var tr = document.createElement('tr');
+    tr.id = 'frfr-' + id;
+    tr.innerHTML =
+      '<td><input type="text" placeholder="Feature name" oninput="frRecalc()" value="' + esc(r.name||'') + '"/></td>' +
+      '<td><input type="number" id="frfd-' + id + '" min="0" step="1" placeholder="0" oninput="frRecalc()" value="' + (r.days||0) + '"/></td>' +
+      '<td><input type="number" min="0" step="0.5" placeholder="0" value="' + (r.hours||0) + '"/></td>' +
+      '<td><div class="input-prefix"><span id="frfSym-' + id + '">' + frCurrSym() + '</span><input type="number" id="frfr-' + id + '" min="0" step="100" placeholder="0" oninput="frRecalc()" value="' + (r.rate||0) + '"/></div></td>' +
+      '<td class="fr-computed" id="frfc-' + id + '">' + frFmt(0) + '</td>' +
+      '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelFeatureRow(' + id + ')" title="Remove">' +
+        '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button></td>';
+    document.getElementById('frFeatureBody').appendChild(tr);
+  });
+  if (!frFeatureRowId) { frAddFeatureRow(); frAddFeatureRow(); }
+
+  // Restore activity rows
+  document.getElementById('frActivityBody').innerHTML = '';
+  frActivityRowId = 0;
+  (t.activityRows || []).forEach(function(r) {
+    var id = ++frActivityRowId;
+    var tr = document.createElement('tr');
+    tr.id = 'frar-' + id;
+    tr.innerHTML =
+      '<td><input type="text" placeholder="Activity name" oninput="frRecalc()" value="' + esc(r.name||'') + '"/></td>' +
+      '<td><div class="input-prefix"><input type="number" id="frap-' + id + '" min="0" max="100" step="1" placeholder="0" oninput="frRecalc()" value="' + (r.pct||0) + '"/><span style="padding:7px 8px;font-size:13px;color:var(--text-muted)">%</span></div></td>' +
+      '<td class="fr-computed" id="frac-' + id + '">' + frFmt(0) + '</td>' +
+      '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelActivityRow(' + id + ')" title="Remove">' +
+        '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button></td>';
+    document.getElementById('frActivityBody').appendChild(tr);
+  });
+  if (!frActivityRowId) { frAddActivityRow(); frAddActivityRow(); }
+
+  frRecalc();
+  frRenderTemplates();
+  showStatus('FR Template loaded: ' + t.name);
+}
+
+function frDeleteTemplate(idx) {
+  if (!confirm('Delete this FR template?')) return;
+  var name = frTemplates[idx] ? frTemplates[idx].name : '';
+  if (!name) return;
+  if (frActiveTemplateIdx === idx) frActiveTemplateIdx = -1;
+  frTemplates.splice(idx, 1);
+  frLsWrite(frTemplates);
+  frRenderTemplates();
+  showStatus('FR Template deleted.');
+  frDeleteFromServer(name);
+}
+
+function frRenderTemplates() {
+  var el = document.getElementById('frTemplateList');
+  if (!el) return;
+  if (!frTemplates.length) {
+    el.innerHTML = '<div class="sidebar-empty">No FR templates yet.<br/>Save your current layout as a template to reuse it.</div>';
+    return;
+  }
+  el.innerHTML = frTemplates.map(function(t, idx) {
+    return '<div class="template-item ' + (frActiveTemplateIdx === idx ? 'active' : '') + '" onclick="frLoadTemplate(' + idx + ')">'
+      + '<div class="template-item-name">' + esc(t.name) + '</div>'
+      + '<button class="template-delete" onclick="event.stopPropagation();frDeleteTemplate(' + idx + ')" title="Delete">✕</button>'
+      + '</div>';
+  }).join('');
+}
+
+function frLoadTemplates() {
+  var el = document.getElementById('frTemplateList');
+  if (!el) return;
+  var lsCopy = frLsRead();
+  if (lsCopy.length) {
+    frTemplates = lsCopy; frRenderTemplates();
+    el.insertAdjacentHTML('beforeend', '<div style="font-size:10px;color:var(--text-muted);padding:4px 8px;opacity:.6">Syncing…</div>');
+  } else {
+    el.innerHTML = '<div class="sidebar-empty"><span style="opacity:.5">Loading…</span></div>';
+  }
+  fetch(GAS_URL + '?action=getFRTemplates')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ frTemplates = d.templates || []; frLsWrite(frTemplates); frRenderTemplates(); })
+    .catch(function(){ if (!lsCopy.length) { frTemplates = []; frRenderTemplates(); } });
+}
+
+function frSaveToServer(tmpl, callback) {
+  fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({ action:'saveFRTemplate', template:tmpl }) })
+    .then(function(){ if (callback) callback(true); })
+    .catch(function(){ if (callback) callback(false); });
+}
+
+function frDeleteFromServer(name) {
+  fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({ action:'deleteFRTemplate', name:name }) }).catch(function(){});
+}
+
+function frForceSyncToSheet() {
+  var local = frLsRead();
+  if (!local.length) { showStatus('No local FR templates to sync.'); return; }
+  var btn = document.getElementById('frSyncBtn'), label = document.getElementById('frSyncBtnLabel');
+  if (btn) btn.disabled = true;
+  if (label) label.textContent = 'Syncing ' + local.length + '…';
+  var total = local.length, failed = 0;
+  function next(idx) {
+    if (idx >= total) {
+      if (btn) btn.disabled = false;
+      if (label) label.textContent = 'Sync to Sheet';
+      showStatus(failed === 0 ? 'All ' + total + ' FR template(s) synced ✓' : failed + ' template(s) failed.');
+      return;
+    }
+    if (label) label.textContent = 'Syncing ' + (idx+1) + '/' + total + '…';
+    frSaveToServer(local[idx], function(ok){ if (!ok) failed++; next(idx+1); });
+  }
+  next(0);
+}
+
 // ── NEW QUOTATION ─────────────────────────────────────────────
 function newQuotation() {
   if (!confirm('Start a new quotation? Unsaved changes will be lost.')) return;
@@ -1767,6 +2048,7 @@ function switchQuotTab(tab) {
   document.getElementById('frTabContent').classList.toggle('active', isFeature);
   document.getElementById('tabStandard').classList.toggle('active', !isFeature);
   document.getElementById('tabFeature').classList.toggle('active', isFeature);
+  sidebarSwitchTab(tab);
   // Update topbar title
   document.getElementById('topbarTitle').textContent = isFeature
     ? 'Feature Request Quotation Builder'
@@ -1960,7 +2242,8 @@ window.addEventListener('afterprint', function() {
   if (printTl) printTl.style.display = 'none';
 });
 document.getElementById('saveModal').addEventListener('click', function(e) { if (e.target === this) closeSaveModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSaveModal(); });
+document.getElementById('frSaveModal').addEventListener('click', function(e) { if (e.target === this) closeFrSaveModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSaveModal(); closeFrSaveModal(); } });
 </script>
 </body>
 </html>
