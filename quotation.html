@@ -557,6 +557,11 @@ textarea { resize: vertical; min-height: 60px; }
 
 /* Print-only elements hidden during screen */
 .print-header, .print-footer, .print-sig-row, .print-cost-title, .print-opnote { display: none; }
+
+/* When printing FR tab, suppress the standard SERVICE QUOTATION header */
+@media print {
+  body.printing-fr .print-header:not(.fr-print-header) { display: none !important; }
+}
 .print-value { display: none; font-size: 13px; font-weight: 500; color: #131413; }
 @media screen { .print-value { display: none; } }
 </style>
@@ -860,7 +865,7 @@ textarea { resize: vertical; min-height: 60px; }
       </div>
 
       <!-- FR Print Header -->
-      <div class="print-header">
+      <div class="print-header fr-print-header">
         <div class="print-logo-block">
           <img src="logo.svg" alt="Sprout Solutions" style="height:36px;margin-bottom:6px;display:block"/>
           <p>Platform Operations — Feature Request</p>
@@ -1970,6 +1975,7 @@ function exportPDF() {
   } else if (printTl) {
     printTl.style.display = 'none';
   }
+  document.body.classList.remove('printing-fr');
   window.print();
 }
 
@@ -2223,12 +2229,14 @@ function exportFRPDF() {
     el.parentNode.insertBefore(pv, el.nextSibling);
   });
 
+  document.body.classList.add('printing-fr');
   window.print();
 }
 
 window.addEventListener('afterprint', function() {
   var printTl = document.getElementById('frPrintTimeline');
   if (printTl) printTl.style.display = 'none';
+  document.body.classList.remove('printing-fr');
 });
 
 // ── END FEATURE REQUEST TAB ───────────────────────────────────
