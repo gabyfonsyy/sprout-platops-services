@@ -424,6 +424,103 @@ textarea { resize: vertical; min-height: 60px; }
 }
 .salary-input:focus { border-color: var(--mango); }
 
+/* ── BUILDER VERSION TOGGLE — screen only, no-print ───── */
+.fr-builder-toggle {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+  background: var(--blueberry-lt); border: 1.5px solid #c7d2fd;
+  border-radius: 8px; padding: 10px 16px;
+}
+.fr-builder-toggle-label {
+  font-size: 12px; font-weight: 600; color: var(--blueberry);
+  white-space: nowrap; display: flex; align-items: center; gap: 6px;
+}
+.fr-builder-seg { display: flex; gap: 4px; }
+.fr-seg-btn {
+  padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid #c7d2fd; cursor: pointer; background: #fff;
+  color: var(--blueberry); font-family: 'Rubik', sans-serif; transition: all .15s;
+}
+.fr-seg-btn.active { background: var(--blueberry); border-color: var(--blueberry); color: #fff; }
+.fr-seg-btn:hover:not(.active) { background: #dbe3fd; }
+.fr-builder-toggle-note {
+  font-size: 11px; color: #5a6bc4; margin-left: auto;
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ── HOURLY RATE BANNER — mirrors salary banner (wintermelon) ── */
+.rate-banner {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--wintermelon-lt); border: 1.5px solid #a8dde6;
+  border-radius: 8px; padding: 10px 16px; margin-bottom: 18px;
+}
+.rate-banner-label {
+  font-size: 12px; font-weight: 600; color: #075e6e;
+  white-space: nowrap; display: flex; align-items: center; gap: 6px;
+}
+.rate-banner-note {
+  font-size: 11px; color: #0a7284; margin-left: auto;
+  display: flex; align-items: center; gap: 5px;
+}
+.rate-sym {
+  background: #c5ecf2; border: 1.5px solid #a8dde6; border-right: none;
+  border-radius: 7px 0 0 7px; padding: 7px 10px; font-size: 13px;
+  font-weight: 600; color: #075e6e;
+}
+.rate-input {
+  border: 1.5px solid #a8dde6; border-radius: 0 7px 7px 0;
+  padding: 7px 12px; font-size: 13px; font-weight: 500;
+  font-family: 'Rubik', sans-serif; width: 160px;
+  background: #fff; color: var(--text); outline: none;
+}
+.rate-input:focus { border-color: var(--wintermelon); }
+
+/* ── MODULE BLOCKS (hourly builder) ───────────────────── */
+.fr-module {
+  border: 1.5px solid var(--border); border-radius: 10px;
+  margin-bottom: 18px; overflow: hidden;
+}
+.fr-module-head {
+  display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+  background: var(--mushroom-50); border-bottom: 1px solid var(--border);
+}
+.fr-module-icon { color: var(--primary); display: flex; flex-shrink: 0; }
+.fr-module-title-input {
+  flex: 1; font-size: 14px; font-weight: 600; color: var(--text);
+  border: 1.5px solid transparent; background: transparent; border-radius: 6px;
+  padding: 5px 8px; font-family: 'Rubik', sans-serif; outline: none;
+}
+.fr-module-title-input:hover { background: #fff; border-color: var(--border); }
+.fr-module-title-input:focus { background: #fff; border-color: var(--primary); }
+.fr-module-body { padding: 12px 14px; }
+.fr-complexity-sel { min-width: 108px; }
+.fr-module-head .print-value { display: none; }
+
+/* Prominent full-width "Add Module" zone */
+.fr-add-module {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; margin: 4px 0 18px; padding: 13px 16px;
+  border: 1.5px dashed var(--kangkong-300); border-radius: 10px;
+  background: #f4fcf7; color: var(--primary-dark);
+  font-family: 'Rubik', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.fr-add-module:hover { background: var(--primary-light); border-color: var(--primary); border-style: solid; }
+.fr-add-module svg { flex-shrink: 0; }
+
+/* Overall cost box (module version) */
+.fr-overall-wrap { display: flex; justify-content: flex-end; margin-top: 6px; }
+.fr-overall-box {
+  min-width: 320px; border: 1.5px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.fr-overall-line {
+  display: flex; justify-content: space-between; padding: 9px 16px;
+  border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.fr-overall-line:last-child { border-bottom: none; }
+.fr-overall-line.fr-grand { background: var(--kangkong-800); color: #fff; font-weight: 700; font-size: 15px; }
+.fr-overall-line.fr-grand .fr-amt { color: var(--kangkong-300); }
+
 /* FR subsection labels */
 .fr-subsec-label {
   font-size: 10px; font-weight: 700; letter-spacing: .08em;
@@ -495,7 +592,7 @@ textarea { resize: vertical; min-height: 60px; }
   .topbar, .sidebar, .toolbar, .no-print, .card-header button,
   .btn, .template-delete, .row-drag, .col-act, .col-order,
   .items-table input, .items-table select, .items-table textarea,
-  .salary-banner, .fr-col-del,
+  .salary-banner, .rate-banner, .fr-builder-toggle, .fr-col-del,
   input, select, textarea { display: none !important; }
   .layout { display: block !important; }
   .main { padding: 0 !important; }
@@ -553,6 +650,14 @@ textarea { resize: vertical; min-height: 60px; }
   .col-effort { display: none !important; }
   .col-rate   { display: none !important; }
   #discountRow[style*="display: none"] { display: none !important; }
+  /* Module builder print */
+  .fr-module { border: 1.5px solid #d4f5df !important; page-break-inside: avoid; }
+  .fr-module-head { background: #f4f5f4 !important; padding: 7px 12px !important; }
+  .fr-module-icon { display: none !important; }
+  .fr-module-title-input { display: none !important; }
+  .fr-module-head .print-value { display: block !important; font-size: 14px; font-weight: 700; color: #1a5c2e; }
+  .fr-overall-line.fr-grand { background: #1a5c2e !important; color: #fff !important; }
+  .fr-overall-line.fr-grand .fr-amt { color: #7dd49a !important; }
 }
 
 /* Print-only elements hidden during screen */
@@ -857,7 +962,7 @@ textarea { resize: vertical; min-height: 60px; }
         </div>
         <div class="form-group">
           <label>Currency</label>
-          <select id="frCurrency" onchange="frRecalc()">
+          <select id="frCurrency" onchange="frRecalc();frRecalcModules()">
             <option value="PHP">PHP ₱</option>
             <option value="USD">USD $</option>
           </select>
@@ -919,6 +1024,25 @@ textarea { resize: vertical; min-height: 60px; }
             <label>Scope of Work / Brief Description</label>
             <textarea id="frScopeDesc" rows="2" placeholder="Describe the overall scope of this feature request..."></textarea>
           </div>
+
+          <!-- Builder version toggle — hidden on export -->
+          <div class="fr-builder-toggle no-print">
+            <span class="fr-builder-toggle-label">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg>
+              Costing Method
+            </span>
+            <div class="fr-builder-seg">
+              <button class="fr-seg-btn active" id="frSegSalary" onclick="frSwitchBuilder('salary')">Salary-based</button>
+              <button class="fr-seg-btn" id="frSegModule" onclick="frSwitchBuilder('module')">Hourly / Module</button>
+            </div>
+            <span class="fr-builder-toggle-note">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              Hidden on export
+            </span>
+          </div>
+
+          <!-- ═══════════ VERSION A: Salary-based ═══════════ -->
+          <div id="frVersionSalary" class="fr-version">
 
           <!-- Monthly Salary — hidden on export -->
           <div class="salary-banner no-print">
@@ -1028,6 +1152,45 @@ textarea { resize: vertical; min-height: 60px; }
               </div>
             </div>
           </div>
+
+          </div><!-- /frVersionSalary -->
+
+          <!-- ═══════════ VERSION B: Hourly / Module-based ═══════════ -->
+          <div id="frVersionModule" class="fr-version" style="display:none">
+
+            <!-- Hourly Rate — hidden on export -->
+            <div class="rate-banner no-print">
+              <span class="rate-banner-label">
+                <svg width="14" height="14" fill="none" stroke="#075e6e" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                Hourly Rate
+              </span>
+              <div class="input-prefix">
+                <span class="rate-sym" id="frRateSym">₱</span>
+                <input class="rate-input" id="frHourlyRate" type="number" min="0" step="50" placeholder="0.00" oninput="frRecalcModules()"/>
+              </div>
+              <span class="rate-banner-note">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                All costs = Hours × this rate · Hidden on export
+              </span>
+            </div>
+
+            <!-- Modules render here -->
+            <div id="frModulesContainer"></div>
+
+            <button class="fr-add-module no-print" onclick="frAddModule()">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Module
+            </button>
+
+            <!-- Overall Cost -->
+            <div class="fr-overall-wrap">
+              <div class="fr-overall-box">
+                <div class="fr-overall-line"><span>Modules</span><span class="fr-amt" id="frModuleCount">0</span></div>
+                <div class="fr-overall-line fr-grand"><span>OVERALL COST</span><span class="fr-amt" id="frOverallCost">₱ 0.00</span></div>
+              </div>
+            </div>
+
+          </div><!-- /frVersionModule -->
 
           <!-- FR Print Timeline -->
           <div id="frPrintTimeline" style="display:none;margin-top:14px;padding:10px 16px;border:1.5px solid #d4f5df;border-radius:8px;background:#f4fcf7;font-size:12px;font-weight:600;color:#1a5c2e;align-items:center;gap:8px">
@@ -1750,6 +1913,29 @@ function frSaveTemplate() {
     });
   }
 
+  // Snapshot modules (hourly builder)
+  var modules = [];
+  var modContainer = document.getElementById('frModulesContainer');
+  if (modContainer) {
+    modContainer.querySelectorAll('.fr-module').forEach(function(modEl) {
+      var mid = modEl.id.replace('frmod-', '');
+      var nm = (document.getElementById('frmodname-' + mid) || {}).value || '';
+      var mrows = [];
+      var body = document.getElementById('frmodbody-' + mid);
+      if (body) body.querySelectorAll('tr').forEach(function(tr) {
+        var inp = tr.querySelectorAll('input');
+        var sel = tr.querySelector('select');
+        mrows.push({
+          feature:    inp[0] ? inp[0].value : '',
+          complexity: sel ? sel.value : '',
+          notes:      inp[1] ? inp[1].value : '',
+          hours:      inp[2] ? parseFloat(inp[2].value) || 0 : 0
+        });
+      });
+      modules.push({ name: nm, rows: mrows });
+    });
+  }
+
   var tmpl = {
     name:         name,
     clientName:   (document.getElementById('frClientName')    ||{}).value || '',
@@ -1764,7 +1950,10 @@ function frSaveTemplate() {
     preparedBy:   (document.getElementById('frPreparedBy')    ||{}).value || '',
     preparedByRole:(document.getElementById('frPreparedByRole')||{}).value || '',
     featureRows:  featureRows,
-    activityRows: activityRows
+    activityRows: activityRows,
+    builderVersion: frBuilderVersion,
+    hourlyRate:   (document.getElementById('frHourlyRate')    ||{}).value || '',
+    modules:      modules
   };
 
   var existingIdx = frTemplates.findIndex(function(t){ return t.name === tmpl.name; });
@@ -1845,6 +2034,16 @@ function frLoadTemplate(idx) {
     document.getElementById('frActivityBody').appendChild(tr);
   });
   if (!frActivityRowId) { frAddActivityRow(); frAddActivityRow(); }
+
+  // Restore hourly rate + modules (hourly builder)
+  var hrEl = document.getElementById('frHourlyRate');
+  if (hrEl) hrEl.value = t.hourlyRate || '';
+  var modContainer = document.getElementById('frModulesContainer');
+  if (modContainer) modContainer.innerHTML = '';
+  frModuleId = 0; frModuleRowIds = {};
+  (t.modules || []).forEach(function(m) { frAddModule(m); });
+  // Apply saved builder version (adds a default module if module view w/ none)
+  frSwitchBuilder(t.builderVersion === 'module' ? 'module' : 'salary');
 
   frRecalc();
   frRenderTemplates();
@@ -2138,6 +2337,136 @@ function frSetUnit(el, unit) {
   frTimelineUnit = unit;
   document.querySelectorAll('.fr-tl-btn').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
+}
+
+// ── BUILDER VERSION SWITCH (salary vs hourly/module) ──────────
+var frBuilderVersion = 'salary';
+var frModuleId = 0;
+var frModuleRowIds = {};
+
+function frSwitchBuilder(version) {
+  frBuilderVersion = version;
+  var isModule = version === 'module';
+  var vs = document.getElementById('frVersionSalary');
+  var vm = document.getElementById('frVersionModule');
+  if (vs) vs.style.display = isModule ? 'none' : '';
+  if (vm) vm.style.display = isModule ? '' : 'none';
+  var bs = document.getElementById('frSegSalary');
+  var bm = document.getElementById('frSegModule');
+  if (bs) bs.classList.toggle('active', !isModule);
+  if (bm) bm.classList.toggle('active', isModule);
+  if (isModule && frModuleId === 0) frAddModule();
+  if (isModule) frRecalcModules(); else frRecalc();
+}
+
+var FR_DEL_SVG = '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+function frAddModule(data) {
+  data = data || {};
+  var mid = ++frModuleId;
+  frModuleRowIds[mid] = 0;
+  var div = document.createElement('div');
+  div.className = 'fr-module';
+  div.id = 'frmod-' + mid;
+  div.innerHTML =
+    '<div class="fr-module-head">' +
+      '<span class="fr-module-icon no-print"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>' +
+      '<input class="fr-module-title-input" id="frmodname-' + mid + '" type="text" placeholder="Module name (e.g. Payroll Integration)" oninput="frRecalcModules()" value="' + esc(data.name || '') + '"/>' +
+      '<button class="btn btn-primary btn-sm no-print" onclick="frAddModuleRow(' + mid + ')" style="flex-shrink:0">' +
+        '<svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Feature</button>' +
+      '<button class="btn btn-danger btn-sm btn-icon no-print" onclick="frDelModule(' + mid + ')" title="Remove module" style="flex-shrink:0">' + FR_DEL_SVG + '</button>' +
+    '</div>' +
+    '<div class="fr-module-body">' +
+      '<div class="items-table-wrap"><table class="fr-table">' +
+        '<thead><tr>' +
+          '<th>Feature</th>' +
+          '<th style="width:120px">Complexity</th>' +
+          '<th>Notes</th>' +
+          '<th style="width:90px">Hours</th>' +
+          '<th class="right" style="width:130px">Cost<br/><span class="no-print" style="font-size:9px;font-weight:400;opacity:.7">Hours × Rate</span></th>' +
+          '<th class="fr-col-del no-print"></th>' +
+        '</tr></thead>' +
+        '<tbody id="frmodbody-' + mid + '"></tbody>' +
+        '<tfoot><tr class="fr-total">' +
+          '<td colspan="4" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase"><span id="frmodtotallabel-' + mid + '">Total Cost for Module</span></td>' +
+          '<td class="fr-computed" id="frmodtotal-' + mid + '">' + frFmt(0) + '</td>' +
+          '<td class="no-print"></td>' +
+        '</tr></tfoot>' +
+      '</table></div>' +
+    '</div>';
+  document.getElementById('frModulesContainer').appendChild(div);
+  if (data.rows && data.rows.length) {
+    data.rows.forEach(function(r){ frAddModuleRow(mid, r); });
+  } else {
+    frAddModuleRow(mid);
+  }
+  frRecalcModules();
+}
+
+function frDelModule(mid) {
+  var el = document.getElementById('frmod-' + mid);
+  if (el) el.remove();
+  frRecalcModules();
+}
+
+function frAddModuleRow(mid, r) {
+  r = r || {};
+  var rid = ++frModuleRowIds[mid];
+  var cx = r.complexity || 'Medium';
+  var opts = ['High','Medium','Low'].map(function(v){
+    return '<option' + (cx === v ? ' selected' : '') + '>' + v + '</option>';
+  }).join('');
+  var tr = document.createElement('tr');
+  tr.id = 'frmrow-' + mid + '-' + rid;
+  tr.innerHTML =
+    '<td><input type="text" placeholder="Feature" oninput="frRecalcModules()" value="' + esc(r.feature || '') + '"/></td>' +
+    '<td><select class="fr-complexity-sel" onchange="frRecalcModules()">' + opts + '</select></td>' +
+    '<td><input type="text" placeholder="Notes" value="' + esc(r.notes || '') + '"/></td>' +
+    '<td><input type="number" id="frmh-' + mid + '-' + rid + '" min="0" step="0.5" placeholder="0" oninput="frRecalcModules()" value="' + (r.hours != null ? r.hours : '') + '"/></td>' +
+    '<td class="fr-computed" id="frmc-' + mid + '-' + rid + '">' + frFmt(0) + '</td>' +
+    '<td class="fr-col-del no-print"><button class="btn btn-danger btn-sm btn-icon" onclick="frDelModuleRow(' + mid + ',' + rid + ')" title="Remove">' + FR_DEL_SVG + '</button></td>';
+  document.getElementById('frmodbody-' + mid).appendChild(tr);
+  frRecalcModules();
+}
+
+function frDelModuleRow(mid, rid) {
+  var el = document.getElementById('frmrow-' + mid + '-' + rid);
+  if (el) el.remove();
+  frRecalcModules();
+}
+
+function frRecalcModules() {
+  var rate = parseFloat((document.getElementById('frHourlyRate')||{}).value) || 0;
+  var sym = frCurrSym();
+  var rs = document.getElementById('frRateSym'); if (rs) rs.textContent = sym;
+  var container = document.getElementById('frModulesContainer');
+  if (!container) return;
+  var overall = 0, moduleCount = 0;
+  container.querySelectorAll('.fr-module').forEach(function(modEl) {
+    moduleCount++;
+    var mid = modEl.id.replace('frmod-', '');
+    var body = document.getElementById('frmodbody-' + mid);
+    var modTotal = 0;
+    if (body) {
+      body.querySelectorAll('tr').forEach(function(tr) {
+        var rid = tr.id.replace('frmrow-' + mid + '-', '');
+        var hrs = parseFloat((document.getElementById('frmh-' + mid + '-' + rid)||{}).value) || 0;
+        var cost = hrs * rate;
+        modTotal += cost;
+        var cell = document.getElementById('frmc-' + mid + '-' + rid);
+        if (cell) cell.textContent = frFmt(cost);
+      });
+    }
+    overall += modTotal;
+    var totCell = document.getElementById('frmodtotal-' + mid);
+    if (totCell) totCell.textContent = frFmt(modTotal);
+    var nameEl = document.getElementById('frmodname-' + mid);
+    var lbl = document.getElementById('frmodtotallabel-' + mid);
+    if (lbl) lbl.textContent = 'Total Cost for ' +
+      ((nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Module');
+  });
+  var oc = document.getElementById('frOverallCost'); if (oc) oc.textContent = frFmt(overall);
+  var mc = document.getElementById('frModuleCount'); if (mc) mc.textContent = moduleCount;
 }
 
 function frRecalc() {
