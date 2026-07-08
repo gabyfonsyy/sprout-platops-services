@@ -521,6 +521,12 @@ textarea { resize: vertical; min-height: 60px; }
 .fr-overall-line.fr-grand { background: var(--kangkong-800); color: #fff; font-weight: 700; font-size: 15px; }
 .fr-overall-line.fr-grand .fr-amt { color: var(--kangkong-300); }
 
+/* Support section */
+.fr-inc-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); cursor: pointer; }
+.fr-inc-label input[type=checkbox] { width: auto; margin: 0; accent-color: var(--primary); }
+.fr-table input:disabled { background: var(--mushroom-50); opacity: .5; cursor: not-allowed; }
+.fr-supsym { background: var(--mushroom-100); border: 1.5px solid var(--border); border-right: none; border-radius: 6px 0 0 6px; padding: 6px 8px; font-size: 13px; color: var(--text-muted); }
+
 /* FR subsection labels */
 .fr-subsec-label {
   font-size: 10px; font-weight: 700; letter-spacing: .08em;
@@ -596,7 +602,7 @@ textarea { resize: vertical; min-height: 60px; }
   input, select, textarea { display: none !important; }
   .layout { display: block !important; }
   .main { padding: 0 !important; }
-  .card { box-shadow: none !important; margin-bottom: 14px !important; page-break-inside: avoid; }
+  .card { box-shadow: none !important; margin-bottom: 14px !important; page-break-inside: auto; }
   .print-header {
     display: flex !important; align-items: flex-start; justify-content: space-between;
     padding: 0 0 18px; border-bottom: 3px solid #1a5c2e; margin-bottom: 20px;
@@ -651,8 +657,9 @@ textarea { resize: vertical; min-height: 60px; }
   .col-rate   { display: none !important; }
   #discountRow[style*="display: none"] { display: none !important; }
   /* Module builder print */
-  .fr-module { border: 1.5px solid #d4f5df !important; page-break-inside: avoid; }
-  .fr-module-head { background: #f4f5f4 !important; padding: 7px 12px !important; }
+  .fr-module { border: 1.5px solid #d4f5df !important; page-break-inside: auto; }
+  .fr-module-head { background: #f4f5f4 !important; padding: 7px 12px !important; page-break-after: avoid; }
+  .fr-table tr, .items-table tr { page-break-inside: avoid; }
   .fr-module-icon { display: none !important; }
   .fr-module-title-input { display: none !important; }
   .fr-module-head .print-value { display: block !important; font-size: 14px; font-weight: 700; color: #1a5c2e; }
@@ -1182,11 +1189,63 @@ textarea { resize: vertical; min-height: 60px; }
               Add Module
             </button>
 
-            <!-- Overall Cost -->
+            <!-- Build Summary: module count + total build fee -->
             <div class="fr-overall-wrap">
               <div class="fr-overall-box">
                 <div class="fr-overall-line"><span>Modules</span><span class="fr-amt" id="frModuleCount">0</span></div>
-                <div class="fr-overall-line fr-grand"><span>OVERALL COST</span><span class="fr-amt" id="frOverallCost">₱ 0.00</span></div>
+                <div class="fr-overall-line"><span>Total Build Fee</span><span class="fr-amt" id="frBuildFee">₱ 0.00</span></div>
+              </div>
+            </div>
+
+            <!-- Support Section -->
+            <div class="card" style="margin-top:20px">
+              <div class="card-header">
+                <svg width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1120.77 15"/><path d="M18 22l-3-3 3-3"/><circle cx="12" cy="12" r="3"/></svg>
+                <h2>Support</h2>
+              </div>
+              <div class="card-body">
+                <div class="items-table-wrap">
+                  <table class="fr-table">
+                    <thead>
+                      <tr>
+                        <th>Support</th>
+                        <th style="width:130px">Duration</th>
+                        <th style="width:120px">Included</th>
+                        <th style="width:150px">Cost / Month</th>
+                        <th class="right" style="width:140px">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>High-Touch Support</td>
+                        <td><div class="input-prefix"><input type="number" id="frInitDur" min="0" step="1" placeholder="0" oninput="frRecalcModules()"/><span>mo</span></div></td>
+                        <td>
+                          <label class="fr-inc-label no-print"><input type="checkbox" id="frInitIncluded" checked onchange="frRecalcModules()"/> Included</label>
+                          <span class="print-value" id="frInitIncPrint"></span>
+                        </td>
+                        <td><div class="input-prefix"><span class="fr-supsym" id="frInitSym">₱</span><input type="number" id="frInitCost" min="0" step="100" placeholder="0" oninput="frRecalcModules()"/></div></td>
+                        <td class="fr-computed" id="frInitSubtotal">Included</td>
+                      </tr>
+                      <tr>
+                        <td>Low-Touch Support</td>
+                        <td><div class="input-prefix"><input type="number" id="frExtDur" min="0" step="1" placeholder="0" oninput="frRecalcModules()"/><span>mo</span></div></td>
+                        <td style="color:var(--text-muted);font-size:12px">—</td>
+                        <td><div class="input-prefix"><span class="fr-supsym" id="frExtSym">₱</span><input type="number" id="frExtCost" min="0" step="100" placeholder="0" oninput="frRecalcModules()"/></div></td>
+                        <td class="fr-computed" id="frExtSubtotal">₱ 0.00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Final Overall Cost -->
+                <div class="fr-overall-wrap" style="margin-top:16px">
+                  <div class="fr-overall-box">
+                    <div class="fr-overall-line"><span>Total Build Fee</span><span class="fr-amt" id="frOverallBuild">₱ 0.00</span></div>
+                    <div class="fr-overall-line"><span>High-Touch Support</span><span class="fr-amt" id="frOverallInit">Included</span></div>
+                    <div class="fr-overall-line"><span>Low-Touch Support</span><span class="fr-amt" id="frOverallExt">₱ 0.00</span></div>
+                    <div class="fr-overall-line fr-grand"><span>OVERALL COST</span><span class="fr-amt" id="frOverallCost">₱ 0.00</span></div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1953,7 +2012,12 @@ function frSaveTemplate() {
     activityRows: activityRows,
     builderVersion: frBuilderVersion,
     hourlyRate:   (document.getElementById('frHourlyRate')    ||{}).value || '',
-    modules:      modules
+    modules:      modules,
+    initDur:      (document.getElementById('frInitDur')       ||{}).value || '',
+    initIncluded: !!(document.getElementById('frInitIncluded')||{}).checked,
+    initCost:     (document.getElementById('frInitCost')      ||{}).value || '',
+    extDur:       (document.getElementById('frExtDur')        ||{}).value || '',
+    extCost:      (document.getElementById('frExtCost')       ||{}).value || ''
   };
 
   var existingIdx = frTemplates.findIndex(function(t){ return t.name === tmpl.name; });
@@ -2038,6 +2102,12 @@ function frLoadTemplate(idx) {
   // Restore hourly rate + modules (hourly builder)
   var hrEl = document.getElementById('frHourlyRate');
   if (hrEl) hrEl.value = t.hourlyRate || '';
+  // Restore support fields
+  var setV = function(id, v){ var e = document.getElementById(id); if (e) e.value = (v != null ? v : ''); };
+  setV('frInitDur', t.initDur); setV('frInitCost', t.initCost);
+  setV('frExtDur', t.extDur);   setV('frExtCost', t.extCost);
+  var incEl = document.getElementById('frInitIncluded');
+  if (incEl) incEl.checked = (t.initIncluded === undefined ? true : !!t.initIncluded);
   var modContainer = document.getElementById('frModulesContainer');
   if (modContainer) modContainer.innerHTML = '';
   frModuleId = 0; frModuleRowIds = {};
@@ -2465,8 +2535,36 @@ function frRecalcModules() {
     if (lbl) lbl.textContent = 'Total Cost for ' +
       ((nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Module');
   });
-  var oc = document.getElementById('frOverallCost'); if (oc) oc.textContent = frFmt(overall);
+  var buildFee = overall;
   var mc = document.getElementById('frModuleCount'); if (mc) mc.textContent = moduleCount;
+  var bf = document.getElementById('frBuildFee'); if (bf) bf.textContent = frFmt(buildFee);
+
+  // Support symbols
+  var iSym = document.getElementById('frInitSym'); if (iSym) iSym.textContent = sym;
+  var eSym = document.getElementById('frExtSym'); if (eSym) eSym.textContent = sym;
+
+  // Initial Support: free if "Included", else duration × cost/month
+  var initInc = (document.getElementById('frInitIncluded')||{}).checked;
+  var initDur = parseFloat((document.getElementById('frInitDur')||{}).value) || 0;
+  var initCostEl = document.getElementById('frInitCost');
+  var initCost = parseFloat((initCostEl||{}).value) || 0;
+  if (initCostEl) initCostEl.disabled = !!initInc;
+  var initSub = initInc ? 0 : (initDur * initCost);
+  var initDisp = initInc ? 'Included' : frFmt(initSub);
+  var iSubCell = document.getElementById('frInitSubtotal'); if (iSubCell) iSubCell.textContent = initDisp;
+  var oInit = document.getElementById('frOverallInit'); if (oInit) oInit.textContent = initDisp;
+
+  // Extended Support: duration × cost/month
+  var extDur = parseFloat((document.getElementById('frExtDur')||{}).value) || 0;
+  var extCost = parseFloat((document.getElementById('frExtCost')||{}).value) || 0;
+  var extSub = extDur * extCost;
+  var eSubCell = document.getElementById('frExtSubtotal'); if (eSubCell) eSubCell.textContent = frFmt(extSub);
+  var oExt = document.getElementById('frOverallExt'); if (oExt) oExt.textContent = frFmt(extSub);
+
+  // Final overall = build + support
+  var grand = buildFee + initSub + extSub;
+  var oBuild = document.getElementById('frOverallBuild'); if (oBuild) oBuild.textContent = frFmt(buildFee);
+  var oc = document.getElementById('frOverallCost'); if (oc) oc.textContent = frFmt(grand);
 }
 
 function frRecalc() {
@@ -2543,6 +2641,7 @@ function exportFRPDF() {
 
   // Sync print values for FR card-body fields
   document.querySelectorAll('#frTabContent .card-body input, #frTabContent .card-body select, #frTabContent .card-body textarea').forEach(function(el) {
+    if (el.type === 'checkbox') return; // handled separately below
     var old = el.parentNode.querySelector('.print-value');
     if (old) old.remove();
     var pv = document.createElement('span');
@@ -2557,6 +2656,16 @@ function exportFRPDF() {
     pv.textContent = val;
     el.parentNode.insertBefore(pv, el.nextSibling);
   });
+
+  // Support: Initial "Included" state + suppress cost when included
+  var initInc = (document.getElementById('frInitIncluded')||{}).checked;
+  var incPrint = document.getElementById('frInitIncPrint');
+  if (incPrint) incPrint.textContent = initInc ? 'Yes' : 'No';
+  var initCostEl = document.getElementById('frInitCost');
+  if (initCostEl && initInc) {
+    var cpv = initCostEl.parentNode.querySelector('.print-value');
+    if (cpv) cpv.textContent = '—';
+  }
 
   document.body.classList.add('printing-fr');
   window.print();
