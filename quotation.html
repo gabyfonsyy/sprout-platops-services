@@ -562,6 +562,39 @@ textarea { resize: vertical; min-height: 60px; }
 .fr-imp-mod-row td { background: #f4fcf7; font-weight: 600; color: var(--primary-dark); }
 .fr-imp-muted { color: var(--text-muted); }
 
+/* ── SHEET / PASTE SOURCE MODAL ───────────────────────── */
+.fr-imp-tabpick {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  background: var(--lavender-lt); border: 1.5px solid #d3c9fb;
+  border-radius: 8px; padding: 8px 12px;
+}
+.fr-imp-tabpick label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .05em; color: #4c2fb5; margin: 0;
+}
+.fr-imp-tabpick select {
+  flex: 1; border: 1.5px solid #d3c9fb; border-radius: 7px; background: #fff;
+  padding: 6px 10px; font-size: 13px; font-family: 'Rubik', sans-serif;
+  color: var(--text); outline: none;
+}
+.fr-imp-tabpick select:focus { border-color: var(--lavender); }
+.fr-src-note {
+  font-size: 11.5px; color: #4c2fb5; background: var(--lavender-lt);
+  border: 1.5px solid #d3c9fb; border-radius: 8px; padding: 8px 12px; margin-top: 12px;
+}
+.fr-src-error {
+  font-size: 11.5px; color: var(--tomato); background: var(--tomato-lt);
+  border: 1.5px solid #fbbdbd; border-radius: 8px; padding: 8px 12px; margin-top: 12px;
+  white-space: pre-line;
+}
+#frPasteBox {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 7px;
+  padding: 8px 12px; font-size: 13px; font-family: 'Rubik', sans-serif;
+  color: var(--text); background: #fff; outline: none; box-sizing: border-box;
+}
+#frPasteBox:focus { border-color: var(--primary); }
+#frPasteBox { resize: vertical; }
+
 /* Overall cost box (module version) */
 .fr-overall-wrap { display: flex; justify-content: flex-end; margin-top: 6px; }
 .fr-overall-box {
@@ -1245,6 +1278,10 @@ textarea { resize: vertical; min-height: 60px; }
               <button class="btn btn-sm btn-lav" onclick="frPickImportFile()">Choose file</button>
               <input type="file" id="frImportFile" accept=".csv,.tsv,.txt,.xlsx,.xlsm,.xls" style="display:none"
                      onchange="frHandleImportFile(this.files[0]); this.value='';"/>
+              <button class="btn btn-sm btn-lav" onclick="frOpenPasteModal()">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg>
+                Paste rows
+              </button>
               <button class="btn btn-sm btn-lav-ghost" onclick="frDownloadImportTemplate()">Sample CSV</button>
               <button class="btn btn-sm btn-lav-ghost" onclick="frExportModulesCsv()">Export current</button>
               <span class="fr-import-hint">
@@ -1418,10 +1455,34 @@ textarea { resize: vertical; min-height: 60px; }
   </div>
 </div>
 
+<!-- FR PASTE ROWS MODAL -->
+<div class="modal-overlay" id="frPasteModal">
+  <div class="modal" style="max-width:560px">
+    <h3>Paste rows</h3>
+    <div class="form-group">
+      <label>Paste cells copied from your spreadsheet &mdash; include the header row</label>
+      <textarea id="frPasteBox" rows="9" placeholder="Module	Feature	Complexity	Notes	Hours&#10;Payroll Integration	Register export	High	Needs GL codes	8"
+                style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px"></textarea>
+    </div>
+    <div class="fr-src-note">
+      Select the range in your sheet, copy, and paste here. Tab, comma and semicolon separated text all work.
+    </div>
+    <div id="frPasteError" class="fr-src-error" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="color:var(--text-muted);border-color:var(--border)" onclick="frClosePasteModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="frImportPastedRows()">Read rows</button>
+    </div>
+  </div>
+</div>
+
 <!-- FR IMPORT REVIEW MODAL -->
 <div class="modal-overlay" id="frImportModal">
   <div class="modal" style="max-width:680px">
     <h3 id="frImportTitle">Review import</h3>
+    <div id="frImportSheetPick" class="fr-imp-tabpick" style="display:none">
+      <label>Tab</label>
+      <select id="frImportSheetSel" onchange="frSelectImportSheet(this.value)"></select>
+    </div>
     <div id="frImportStats" class="fr-imp-stats"></div>
     <div id="frImportWarnings"></div>
     <div class="fr-imp-scroll">
@@ -2849,6 +2910,7 @@ function frRowsToModules(rows, warnings) {
     modules: order.map(function(k) { return byKey[k]; }),
     rowCount: dataRows,
     headerRow: head.index + 1,
+    score: head.score,
     map: m
   };
 }
@@ -2879,28 +2941,20 @@ function frHandleImportFile(file) {
       rd.onload = function(e) {
         try {
           var wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-          var warnings = [], used = null, skippedSheets = [], result = null;
-          for (var s = 0; s < wb.SheetNames.length; s++) {
-            var sn = wb.SheetNames[s];
-            var sheetRows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: false, defval: '' });
-            if (!result) {
-              var attemptWarn = [];
-              var res = frRowsToModules(sheetRows, attemptWarn);
-              if (res && res.modules.length) { result = res; used = sn; warnings = attemptWarn; continue; }
-            }
-            skippedSheets.push(sn);
-          }
-          if (!result) { frImportFailed(name); return; }
-          if (skippedSheets.length) warnings.push('Read sheet "' + used + '". Other sheets ignored: ' + skippedSheets.join(', ') + '.');
-          frShowImportModal(result, name, warnings);
+          var sheets = wb.SheetNames.map(function(sn) {
+            var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: false, defval: '' });
+            if (rows.length > FR_IMPORT_MAX_ROWS) rows = rows.slice(0, FR_IMPORT_MAX_ROWS);
+            return { name: sn, rows: rows };
+          });
+          frPrepareSheets(sheets, name);
         } catch (err) {
-          alert('That Excel file could not be read (' + (err && err.message ? err.message : 'unknown error') + '). Saving it as CSV usually fixes it.');
+          alert('That Excel file could not be read (' + (err && err.message ? err.message : 'unknown error') + '). Saving the tab as CSV usually fixes it.');
         }
       };
       rd.onerror = function() { alert('That file could not be read. Try again or save it as CSV.'); };
       rd.readAsArrayBuffer(file);
     }, function() {
-      alert('The Excel reader could not be downloaded, so .xlsx files cannot be read right now. Save the sheet as CSV and import that instead.');
+      alert('The Excel reader could not be downloaded, so .xlsx files cannot be read right now. Save the tab as CSV and import that instead.');
     });
     return;
   }
@@ -2909,18 +2963,127 @@ function frHandleImportFile(file) {
   rd2.onload = function(e) {
     var text = String(e.target.result || '');
     var rows = frParseDelimited(text, frSniffDelim(text));
-    var warnings = [];
-    var result = frRowsToModules(rows, warnings);
-    if (!result || !result.modules.length) { frImportFailed(name); return; }
-    frShowImportModal(result, name, warnings);
+    frPrepareSheets([{ name: name, rows: rows }], name);
   };
   rd2.onerror = function() { alert('That file could not be read. Try again or re-save it as CSV.'); };
   rd2.readAsText(file);
 }
 
-function frImportFailed(name) {
-  alert('No feature rows were found in "' + name + '".\n\n' +
-        'The file needs a header row with at least a Feature column, plus any of Module, Complexity, Notes, Hours. ' +
+/* ── Multi-tab handling ─────────────────────────────────────
+   Workbooks hold cover pages, assumption tabs, pricing tabs and so on,
+   so the scope tab is picked by name instead of "first tab that parses".
+   Change FR_IMPORT_PREFERRED_TABS if the tab gets renamed. Matching
+   ignores case, spacing and punctuation, and also accepts a tab whose
+   name merely contains one of these.                                    */
+var FR_IMPORT_PREFERRED_TABS = ['Scope Summary', 'Scope'];
+var FR_IMPORT_MAX_ROWS = 5000;
+
+var frImportSheets = [];      // [{ name, rows, result, warnings, readable }]
+var frImportSheetIdx = -1;    // tab currently shown in the review modal
+var frImportAutoIdx = -1;     // tab picked automatically
+var frImportPickNote = '';    // explanation when the preferred tab wasn't used
+var frImportLabel = '';
+
+function frPrepareSheets(sheets, fileName) {
+  var multi = sheets.length > 1;
+  frImportSheets = sheets.map(function(sh) {
+    var warnings = [];
+    var result = frRowsToModules(sh.rows, warnings);
+    var readable = !!(result && result.modules.length);
+    // In a multi-tab workbook, only a tab with 2+ recognised columns is
+    // trusted for automatic selection. One lone match is how a pricing or
+    // assumptions tab gets mistaken for the scope table.
+    var confident = readable && (!multi || result.score >= 2);
+    return { name: sh.name, rows: sh.rows, result: result,
+             warnings: warnings, readable: readable, confident: confident };
+  });
+  frImportLabel = fileName;
+  frImportPickNote = '';
+
+  var wanted = -1;
+  // exact name match on a preferred tab
+  for (var p = 0; p < FR_IMPORT_PREFERRED_TABS.length && wanted < 0; p++) {
+    var target = frImpNorm(FR_IMPORT_PREFERRED_TABS[p]);
+    for (var i = 0; i < frImportSheets.length; i++) {
+      if (frImpNorm(frImportSheets[i].name) === target) { wanted = i; break; }
+    }
+  }
+  // then a tab that contains a preferred name, e.g. "FR Scope Summary v2"
+  for (var p2 = 0; p2 < FR_IMPORT_PREFERRED_TABS.length && wanted < 0; p2++) {
+    var t2 = frImpNorm(FR_IMPORT_PREFERRED_TABS[p2]);
+    for (var j = 0; j < frImportSheets.length; j++) {
+      if (frImpNorm(frImportSheets[j].name).indexOf(t2) > -1) { wanted = j; break; }
+    }
+  }
+
+  var firstAuto = -1;
+  for (var k = 0; k < frImportSheets.length; k++) {
+    if (frImportSheets[k].confident) { firstAuto = k; break; }
+  }
+
+  var pick = -1;
+  if (wanted > -1 && frImportSheets[wanted].readable) {
+    pick = wanted;                                  // the named tab always wins
+  } else if (wanted > -1) {
+    // the tab is there but nothing could be mapped from it — never guess quietly
+    if (firstAuto < 0) {
+      alert('The "' + frImportSheets[wanted].name + '" tab was found, but no feature rows could be read from it, ' +
+            'and no other tab looks like a scope table.\n\n' +
+            'It needs a header row with a Feature column, plus any of Module, Complexity, Notes, Hours. ' +
+            'Click "Sample CSV" to see the expected shape.');
+      return;
+    }
+    pick = firstAuto;
+    frImportPickNote = 'The "' + frImportSheets[wanted].name + '" tab had no rows that could be mapped, so the "' +
+                       frImportSheets[pick].name + '" tab was read instead. Check its header row, or switch tabs above.';
+  } else {
+    if (firstAuto < 0) { frImportFailed(fileName, frImportSheets); return; }
+    pick = firstAuto;
+    if (frImportSheets.length > 1) {
+      frImportPickNote = 'No "' + FR_IMPORT_PREFERRED_TABS[0] + '" tab in this file, so the "' +
+                         frImportSheets[pick].name + '" tab was read. Switch tabs above if that is wrong.';
+    }
+  }
+
+  frImportAutoIdx = pick;
+  frSelectImportSheet(pick);
+}
+
+function frSelectImportSheet(idx) {
+  idx = parseInt(idx, 10);
+  var sh = frImportSheets[idx];
+  if (!sh || !sh.readable) return;
+  frImportSheetIdx = idx;
+
+  var warnings = [];
+  if (idx === frImportAutoIdx && frImportPickNote) warnings.push(frImportPickNote);
+  var others = frImportSheets.filter(function(s, i) { return i !== idx; }).map(function(s) { return s.name; });
+  if (others.length) warnings.push('Read the "' + sh.name + '" tab. Other tabs in the file: ' + others.join(', ') + '.');
+  warnings = warnings.concat(sh.warnings);
+
+  frShowImportModal(sh.result, frImportLabel + (frImportSheets.length > 1 ? ' · ' + sh.name : ''), warnings);
+}
+
+function frRenderSheetPicker() {
+  var wrap = document.getElementById('frImportSheetPick');
+  var sel = document.getElementById('frImportSheetSel');
+  if (!wrap || !sel) return;
+  if (frImportSheets.length < 2) { wrap.style.display = 'none'; return; }
+  sel.innerHTML = frImportSheets.map(function(s, i) {
+    return '<option value="' + i + '"' + (i === frImportSheetIdx ? ' selected' : '') +
+           (s.readable ? '' : ' disabled') + '>' + esc(s.name) +
+           (s.readable ? '' : ' — no feature rows') + '</option>';
+  }).join('');
+  wrap.style.display = '';
+}
+
+function frImportFailed(name, sheets) {
+  var tabs = '';
+  if (sheets && sheets.length > 1) {
+    tabs = '\n\nTabs checked: ' + sheets.map(function(s) { return s.name; }).join(', ') + '.';
+  }
+  alert('No feature rows were found in "' + name + '".' + tabs + '\n\n' +
+        'The tab needs a header row with at least a Feature column, plus any of Module, Complexity, Notes, Hours. ' +
         'Click "Sample CSV" to get a file in the expected shape.');
 }
 
@@ -2977,6 +3140,7 @@ function frShowImportModal(result, fileName, warnings) {
     'Import ' + result.modules.length + ' module' + (result.modules.length === 1 ? '' : 's');
 
   document.getElementById('frImportModal').classList.add('open');
+  frRenderSheetPicker();
 }
 
 function frCloseImportModal() {
@@ -3000,6 +3164,45 @@ function frApplyImport() {
   frCloseImportModal();
   frRecalcModules();
   showStatus('Imported ' + count + ' feature' + (count === 1 ? '' : 's') + ' across ' + mods + ' module' + (mods === 1 ? '' : 's'));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PASTE ROWS — clipboard fallback, no file needed
+   ══════════════════════════════════════════════════════════════ */
+
+function frOpenPasteModal() {
+  document.getElementById('frPasteError').style.display = 'none';
+  document.getElementById('frPasteModal').classList.add('open');
+  setTimeout(function() { var el = document.getElementById('frPasteBox'); if (el) el.focus(); }, 100);
+}
+
+function frClosePasteModal() {
+  document.getElementById('frPasteModal').classList.remove('open');
+}
+
+/* ── 3. Pasted rows ────────────────────────────────────────── */
+function frImportPastedRows() {
+  var errEl = document.getElementById('frPasteError');
+  errEl.style.display = 'none';
+  var text = document.getElementById('frPasteBox').value;
+  if (!text.trim()) {
+    errEl.textContent = 'Paste some rows first, header row included.';
+    errEl.style.display = '';
+    return;
+  }
+  var rows = frParseDelimited(text, frSniffDelim(text));
+  var warnings = [];
+  var result = frRowsToModules(rows, warnings);
+  if (!result || !result.modules.length) {
+    errEl.textContent = 'No feature rows found in what you pasted.\n' +
+      'The first pasted line needs to be the header row — at least a Feature column, plus any of Module, Complexity, Notes, Hours.';
+    errEl.style.display = '';
+    return;
+  }
+  frClosePasteModal();
+  document.getElementById('frPasteBox').value = '';
+  frImportSheets = []; frImportSheetIdx = -1; frImportAutoIdx = -1; frImportPickNote = '';
+  frShowImportModal(result, 'Pasted rows', warnings);
 }
 
 /* ── CSV out: sample template + round-trip export ──────────── */
@@ -3248,7 +3451,8 @@ window.addEventListener('afterprint', function() {
 document.getElementById('saveModal').addEventListener('click', function(e) { if (e.target === this) closeSaveModal(); });
 document.getElementById('frSaveModal').addEventListener('click', function(e) { if (e.target === this) closeFrSaveModal(); });
 document.getElementById('frImportModal').addEventListener('click', function(e) { if (e.target === this) frCloseImportModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSaveModal(); closeFrSaveModal(); frCloseImportModal(); } });
+document.getElementById('frPasteModal').addEventListener('click', function(e) { if (e.target === this) frClosePasteModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSaveModal(); closeFrSaveModal(); frCloseImportModal(); frClosePasteModal(); } });
 
 // ── Drag & drop onto the import bar ───────────────────────────
 (function() {
