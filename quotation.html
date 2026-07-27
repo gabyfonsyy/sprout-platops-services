@@ -346,9 +346,24 @@ textarea { resize: vertical; min-height: 60px; }
 .toolbar-sep { width: 1px; height: 24px; background: var(--border); }
 
 /* ── MODAL ────────────────────────────────────────────── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 999; align-items: center; justify-content: center; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 999; align-items: center; justify-content: center; overflow-y: auto; padding: 20px; }
 .modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 28px; min-width: 360px; max-width: 480px; width: 100%; }
+.modal {
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow-lg);
+  padding: 28px; min-width: min(360px, 100%); max-width: 480px; width: 100%;
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);   /* dvh where supported — mobile URL bars */
+  overflow-y: auto;
+}
+
+/* The review modal keeps its footer on screen: the header block and the
+   Import button stay put, and the preview table takes whatever height is
+   left over. Without this the modal grows past the viewport and the
+   action buttons become unreachable, since a fixed overlay can't scroll. */
+#frImportModal .modal { display: flex; flex-direction: column; overflow: hidden; }
+#frImportModal .modal > * { flex: 0 0 auto; }
+#frImportModal #frImportWarnings { flex: 0 1 auto; overflow-y: auto; min-height: 0; }
+#frImportModal .fr-imp-scroll { flex: 1 1 auto; min-height: 96px; max-height: none; }
 .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 
@@ -557,6 +572,7 @@ textarea { resize: vertical; min-height: 60px; }
   max-height: 260px; overflow: auto; border: 1.5px solid var(--border);
   border-radius: 8px;
 }
+#frImportWarnings { max-height: 22vh; }
 .fr-imp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .fr-imp-table th {
   position: sticky; top: 0; background: var(--mushroom-50); text-align: left;
@@ -568,6 +584,19 @@ textarea { resize: vertical; min-height: 60px; }
 .fr-imp-table td.right { text-align: right; font-variant-numeric: tabular-nums; }
 .fr-imp-mod-row td { background: #f4fcf7; font-weight: 600; color: var(--primary-dark); }
 .fr-imp-muted { color: var(--text-muted); }
+
+@media (max-height: 760px) {
+  .modal { padding: 18px; }
+  .modal h3 { margin-bottom: 12px; }
+  #frImportWarnings { max-height: 15vh; }
+  #frImportModal .fr-imp-scroll { min-height: 72px; }
+  .fr-imp-stat { padding: 6px 10px; }
+  .fr-imp-stat-num { font-size: 16px; }
+}
+@media (max-width: 560px) {
+  .modal-overlay { padding: 10px; }
+  .modal { padding: 18px; max-height: calc(100dvh - 20px); }
+}
 
 /* ── SHEET / PASTE SOURCE MODAL ───────────────────────── */
 .fr-imp-tabpick {
