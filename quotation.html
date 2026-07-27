@@ -507,6 +507,61 @@ textarea { resize: vertical; min-height: 60px; }
 .fr-add-module:hover { background: var(--primary-light); border-color: var(--primary); border-style: solid; }
 .fr-add-module svg { flex-shrink: 0; }
 
+/* ── SPREADSHEET IMPORT BAR (lavender) ─────────────────── */
+.fr-import-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--lavender-lt); border: 1.5px solid #d3c9fb;
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 18px;
+  transition: all .15s;
+}
+.fr-import-bar.dragover {
+  border-style: dashed; border-color: var(--lavender);
+  background: #e2dbff; box-shadow: 0 0 0 3px rgba(112,72,232,.12);
+}
+.fr-import-label {
+  font-size: 12px; font-weight: 600; color: #4c2fb5;
+  white-space: nowrap; display: flex; align-items: center; gap: 6px;
+}
+.fr-import-hint {
+  font-size: 11px; color: #5a44b8; margin-left: auto;
+  display: flex; align-items: center; gap: 5px; max-width: 100%;
+}
+.btn-lav { background: var(--lavender); color: #fff; }
+.btn-lav:hover { background: #5c37d1; }
+.btn-lav-ghost { background: #fff; color: #4c2fb5; border: 1.5px solid #d3c9fb; }
+.btn-lav-ghost:hover { background: #f1edff; border-color: var(--lavender); }
+.fr-import-bar .btn:focus-visible,
+.fr-add-module:focus-visible { outline: 2px solid var(--lavender); outline-offset: 2px; }
+
+/* ── IMPORT REVIEW MODAL ──────────────────────────────── */
+.fr-imp-stats { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.fr-imp-stat {
+  flex: 1; min-width: 96px; border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 8px 12px; background: var(--mushroom-50);
+}
+.fr-imp-stat-num { font-size: 18px; font-weight: 600; color: var(--primary-dark); line-height: 1.2; }
+.fr-imp-stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); }
+.fr-imp-warn {
+  background: var(--mango-lt); border: 1.5px solid #f5d78a; border-radius: 8px;
+  padding: 8px 12px; margin-bottom: 12px; font-size: 11.5px; color: #8a5300;
+}
+.fr-imp-warn ul { margin: 0; padding-left: 16px; }
+.fr-imp-scroll {
+  max-height: 260px; overflow: auto; border: 1.5px solid var(--border);
+  border-radius: 8px;
+}
+.fr-imp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.fr-imp-table th {
+  position: sticky; top: 0; background: var(--mushroom-50); text-align: left;
+  padding: 7px 10px; font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--text-muted); border-bottom: 1px solid var(--border);
+}
+.fr-imp-table td { padding: 6px 10px; border-bottom: 1px solid var(--mushroom-50); vertical-align: top; }
+.fr-imp-table tr:last-child td { border-bottom: none; }
+.fr-imp-table td.right { text-align: right; font-variant-numeric: tabular-nums; }
+.fr-imp-mod-row td { background: #f4fcf7; font-weight: 600; color: var(--primary-dark); }
+.fr-imp-muted { color: var(--text-muted); }
+
 /* Overall cost box (module version) */
 .fr-overall-wrap { display: flex; justify-content: flex-end; margin-top: 6px; }
 .fr-overall-box {
@@ -1181,6 +1236,23 @@ textarea { resize: vertical; min-height: 60px; }
               </span>
             </div>
 
+            <!-- Import from CSV / Excel — hidden on export -->
+            <div class="fr-import-bar no-print" id="frImportBar">
+              <span class="fr-import-label">
+                <svg width="14" height="14" fill="none" stroke="#4c2fb5" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import modules
+              </span>
+              <button class="btn btn-sm btn-lav" onclick="frPickImportFile()">Choose file</button>
+              <input type="file" id="frImportFile" accept=".csv,.tsv,.txt,.xlsx,.xlsm,.xls" style="display:none"
+                     onchange="frHandleImportFile(this.files[0]); this.value='';"/>
+              <button class="btn btn-sm btn-lav-ghost" onclick="frDownloadImportTemplate()">Sample CSV</button>
+              <button class="btn btn-sm btn-lav-ghost" onclick="frExportModulesCsv()">Export current</button>
+              <span class="fr-import-hint">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Or drop a file here · Module, Feature, Complexity, Notes, Hours
+              </span>
+            </div>
+
             <!-- Modules render here -->
             <div id="frModulesContainer"></div>
 
@@ -1342,6 +1414,39 @@ textarea { resize: vertical; min-height: 60px; }
     <div class="modal-actions">
       <button class="btn btn-ghost" style="color:var(--text-muted);border-color:var(--border)" onclick="closeFrSaveModal()">Cancel</button>
       <button class="btn btn-primary" onclick="frSaveTemplate()">Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- FR IMPORT REVIEW MODAL -->
+<div class="modal-overlay" id="frImportModal">
+  <div class="modal" style="max-width:680px">
+    <h3 id="frImportTitle">Review import</h3>
+    <div id="frImportStats" class="fr-imp-stats"></div>
+    <div id="frImportWarnings"></div>
+    <div class="fr-imp-scroll">
+      <table class="fr-imp-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th style="width:90px">Complexity</th>
+            <th>Notes</th>
+            <th style="width:70px" class="right">Hours</th>
+          </tr>
+        </thead>
+        <tbody id="frImportPreviewBody"></tbody>
+      </table>
+    </div>
+    <div class="form-group" style="margin-top:14px">
+      <label>Apply as</label>
+      <select id="frImportMode">
+        <option value="replace">Replace all current modules</option>
+        <option value="append">Add to current modules</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="color:var(--text-muted);border-color:var(--border)" onclick="frCloseImportModal()">Cancel</button>
+      <button class="btn btn-primary" id="frImportApplyBtn" onclick="frApplyImport()">Import modules</button>
     </div>
   </div>
 </div>
@@ -2516,6 +2621,443 @@ function frDelModuleRow(mid, rid) {
   frRecalcModules();
 }
 
+/* ══════════════════════════════════════════════════════════════
+   SPREADSHEET IMPORT — CSV / Excel → modules + feature rows
+   Recognised columns: Module, Feature, Complexity, Notes, Hours
+   ══════════════════════════════════════════════════════════════ */
+
+var FR_IMP_ALIASES = [
+  ['module',     ['module','module name','modules','group','grouping','section','epic','category','area','component','feature group']],
+  ['feature',    ['feature','features','feature name','deliverable','deliverables','task','tasks','item','line item','requirement','requirements','story','user story','description','work item','scope item','sub feature','subfeature']],
+  ['hours',      ['hours','hour','hrs','hr','est hours','estimated hours','estimate','effort','man hours','manhours','dev hours','build hours','total hours','hours estimate','no of hours','number of hours']],
+  ['complexity', ['complexity','complex','difficulty','size','t shirt size','tshirt size','effort level','level','weight']],
+  ['notes',      ['notes','note','remarks','remark','comment','comments','details','detail','assumptions','assumption','justification','rationale']]
+];
+
+var FR_IMP_SKIP_LABELS = ['total','totals','subtotal','sub total','grand total','total hours','total cost','sum','overall','overall total'];
+
+var FR_XLSX_SRCS = [
+  'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'
+];
+
+var frImportPending = null;
+
+function frImpNorm(s) {
+  return String(s == null ? '' : s)
+    .toLowerCase()
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function frPickImportFile() {
+  var el = document.getElementById('frImportFile');
+  if (el) el.click();
+}
+
+/* ── Delimited text parsing (RFC-4180 style, quote aware) ───── */
+function frSniffDelim(text) {
+  var line = '', inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text.charAt(i);
+    if (c === '"') inQ = !inQ;
+    if (c === '\n' && !inQ) break;
+    line += c;
+  }
+  var counts = { ',': 0, ';': 0, '\t': 0, '|': 0 };
+  inQ = false;
+  for (var j = 0; j < line.length; j++) {
+    var ch = line.charAt(j);
+    if (ch === '"') { inQ = !inQ; continue; }
+    if (!inQ && counts.hasOwnProperty(ch)) counts[ch]++;
+  }
+  var best = ',', bestN = -1;
+  Object.keys(counts).forEach(function(d) { if (counts[d] > bestN) { bestN = counts[d]; best = d; } });
+  return bestN > 0 ? best : ',';
+}
+
+function frParseDelimited(text, delim) {
+  text = String(text || '').replace(/^\uFEFF/, '');
+  var rows = [], row = [], cell = '', inQ = false, i = 0;
+  while (i < text.length) {
+    var c = text.charAt(i);
+    if (inQ) {
+      if (c === '"') {
+        if (text.charAt(i + 1) === '"') { cell += '"'; i += 2; continue; }
+        inQ = false; i++; continue;
+      }
+      cell += c; i++; continue;
+    }
+    if (c === '"') { inQ = true; i++; continue; }
+    if (c === delim) { row.push(cell); cell = ''; i++; continue; }
+    if (c === '\r') { i++; continue; }
+    if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; i++; continue; }
+    cell += c; i++;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+/* ── Value normalisers ─────────────────────────────────────── */
+function frNormHours(v) {
+  if (v == null) return null;
+  var s = String(v).trim();
+  if (!s) return null;
+  s = s.replace(/\s+/g, '');
+  if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+  else if (/^\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.');
+  s = s.replace(/[^0-9.]/g, '');
+  var n = parseFloat(s);
+  if (!isFinite(n) || n < 0) return null;
+  return Math.round(n * 100) / 100;
+}
+
+var FR_CX_MAP = {
+  high: 'High', h: 'High', hi: 'High', hard: 'High', complex: 'High', large: 'High',
+  xl: 'High', l3: 'High', '3': 'High', heavy: 'High',
+  medium: 'Medium', med: 'Medium', m: 'Medium', moderate: 'Medium', normal: 'Medium',
+  average: 'Medium', avg: 'Medium', l2: 'Medium', '2': 'Medium',
+  low: 'Low', l: 'Low', lo: 'Low', easy: 'Low', simple: 'Low', small: 'Low',
+  s: 'Low', trivial: 'Low', minor: 'Low', l1: 'Low', '1': 'Low'
+};
+
+var FR_CX_TSHIRT = {
+  xs: 'Low', s: 'Low', sm: 'Low', small: 'Low',
+  m: 'Medium', md: 'Medium', medium: 'Medium',
+  l: 'High', lg: 'High', large: 'High', xl: 'High', xxl: 'High', xxxl: 'High'
+};
+
+// tshirt = true when the source column is sized S / M / L rather than High / Medium / Low
+function frNormComplexity(v, tshirt) {
+  var s = frImpNorm(v).replace(/\s+/g, '');
+  if (!s) return { value: 'Medium', matched: true };
+  if (tshirt && FR_CX_TSHIRT[s]) return { value: FR_CX_TSHIRT[s], matched: true };
+  if (FR_CX_MAP[s]) return { value: FR_CX_MAP[s], matched: true };
+  if (s.indexOf('high') > -1) return { value: 'High', matched: true };
+  if (s.indexOf('med') > -1)  return { value: 'Medium', matched: true };
+  if (s.indexOf('low') > -1)  return { value: 'Low', matched: true };
+  return { value: 'Medium', matched: false };
+}
+
+/* ── Header detection + column mapping ─────────────────────── */
+function frMapHeaderRow(cells) {
+  var norm = cells.map(frImpNorm);
+  var map = {}, claimed = {};
+  // pass 1 — exact alias match
+  FR_IMP_ALIASES.forEach(function(pair) {
+    var field = pair[0], aliases = pair[1].map(frImpNorm);
+    if (map[field] != null) return;
+    for (var i = 0; i < norm.length; i++) {
+      if (claimed[i] || !norm[i]) continue;
+      if (aliases.indexOf(norm[i]) > -1) { map[field] = i; claimed[i] = true; return; }
+    }
+  });
+  // pass 2 — partial match
+  FR_IMP_ALIASES.forEach(function(pair) {
+    var field = pair[0], aliases = pair[1].map(frImpNorm);
+    if (map[field] != null) return;
+    for (var i = 0; i < norm.length; i++) {
+      if (claimed[i] || !norm[i]) continue;
+      for (var a = 0; a < aliases.length; a++) {
+        var al = aliases[a];
+        if (al.length < 3) continue;
+        if (norm[i].indexOf(al) > -1 || al.indexOf(norm[i]) > -1) {
+          map[field] = i; claimed[i] = true; return;
+        }
+      }
+    }
+  });
+  var score = 0;
+  Object.keys(map).forEach(function(k) { if (map[k] != null) score++; });
+  var unused = [];
+  norm.forEach(function(n, i) { if (n && !claimed[i]) unused.push(String(cells[i]).trim()); });
+  return { map: map, score: score, unused: unused };
+}
+
+function frDetectHeader(rows) {
+  var best = null;
+  var limit = Math.min(rows.length, 20);
+  for (var i = 0; i < limit; i++) {
+    var cells = rows[i] || [];
+    var filled = cells.filter(function(c) { return String(c || '').trim() !== ''; }).length;
+    if (filled < 2) continue;
+    var res = frMapHeaderRow(cells);
+    if (res.map.feature == null && res.map.hours == null) continue;
+    // 2+ recognised columns, or a lone Feature column
+    if (res.score < 2 && res.map.feature == null) continue;
+    if (!best || res.score > best.score) { best = res; best.index = i; }
+    if (best && best.score >= 4) break;
+  }
+  return best;
+}
+
+/* ── Rows → modules ────────────────────────────────────────── */
+function frRowsToModules(rows, warnings) {
+  var head = frDetectHeader(rows);
+  if (!head) return null;
+  var m = head.map, order = [], byKey = {};
+  var lastModule = '', skippedNoFeature = 0, skippedTotals = 0, noHours = 0, badCx = 0, dataRows = 0;
+  var cxHeader = m.complexity != null ? frImpNorm((rows[head.index] || [])[m.complexity]) : '';
+  var cxIsTshirt = /shirt|size/.test(cxHeader);
+
+  function cell(row, idx) {
+    if (idx == null) return '';
+    var v = row[idx];
+    return String(v == null ? '' : v).trim();
+  }
+
+  for (var r = head.index + 1; r < rows.length; r++) {
+    var row = rows[r] || [];
+    var filled = row.filter(function(c) { return String(c || '').trim() !== ''; }).length;
+    if (!filled) continue;
+
+    var modRaw = cell(row, m.module);
+    var feature = cell(row, m.feature);
+    var notes = cell(row, m.notes);
+    var hours = frNormHours(cell(row, m.hours));
+    var featNorm = frImpNorm(feature);
+
+    // repeated header row inside the sheet
+    if (featNorm && FR_IMP_ALIASES[1][1].map(frImpNorm).indexOf(featNorm) > -1) continue;
+    // total / subtotal rows
+    if (FR_IMP_SKIP_LABELS.indexOf(featNorm) > -1 || FR_IMP_SKIP_LABELS.indexOf(frImpNorm(modRaw)) > -1) { skippedTotals++; continue; }
+
+    if (modRaw) lastModule = modRaw;
+    if (!feature) { skippedNoFeature++; continue; }
+
+    var cx = frNormComplexity(cell(row, m.complexity), cxIsTshirt);
+    if (!cx.matched) badCx++;
+    if (hours == null) noHours++;
+    dataRows++;
+
+    var modName = lastModule || 'Imported features';
+    var key = frImpNorm(modName) || 'imported features';
+    if (!byKey[key]) { byKey[key] = { name: modName, rows: [] }; order.push(key); }
+    byKey[key].rows.push({ feature: feature, complexity: cx.value, notes: notes, hours: hours });
+  }
+
+  if (m.module == null) warnings.push('No Module column found — every feature was placed in one module.');
+  if (skippedNoFeature) warnings.push('Skipped ' + skippedNoFeature + ' row(s) with no feature name.');
+  if (skippedTotals) warnings.push('Skipped ' + skippedTotals + ' total/subtotal row(s).');
+  if (noHours) warnings.push(noHours + ' row(s) had no hours — those Hours fields are left blank.');
+  if (badCx) warnings.push(badCx + ' complexity value(s) were not High/Medium/Low — set to Medium.');
+  if (head.unused.length) warnings.push('Columns ignored: ' + head.unused.join(', ') + '.');
+
+  return {
+    modules: order.map(function(k) { return byKey[k]; }),
+    rowCount: dataRows,
+    headerRow: head.index + 1,
+    map: m
+  };
+}
+
+/* ── File reading ──────────────────────────────────────────── */
+function frLoadXlsxLib(cb, onErr) {
+  if (window.XLSX) { cb(); return; }
+  var i = 0;
+  (function tryNext() {
+    if (i >= FR_XLSX_SRCS.length) { onErr(); return; }
+    var s = document.createElement('script');
+    s.src = FR_XLSX_SRCS[i++];
+    s.onload = function() { window.XLSX ? cb() : tryNext(); };
+    s.onerror = tryNext;
+    document.head.appendChild(s);
+  })();
+}
+
+function frHandleImportFile(file) {
+  if (!file) return;
+  var name = String(file.name || '');
+  var isExcel = /\.(xlsx|xlsm|xls)$/i.test(name);
+  showStatus('Reading ' + name + '…');
+
+  if (isExcel) {
+    frLoadXlsxLib(function() {
+      var rd = new FileReader();
+      rd.onload = function(e) {
+        try {
+          var wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+          var warnings = [], used = null, skippedSheets = [], result = null;
+          for (var s = 0; s < wb.SheetNames.length; s++) {
+            var sn = wb.SheetNames[s];
+            var sheetRows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: false, defval: '' });
+            if (!result) {
+              var attemptWarn = [];
+              var res = frRowsToModules(sheetRows, attemptWarn);
+              if (res && res.modules.length) { result = res; used = sn; warnings = attemptWarn; continue; }
+            }
+            skippedSheets.push(sn);
+          }
+          if (!result) { frImportFailed(name); return; }
+          if (skippedSheets.length) warnings.push('Read sheet "' + used + '". Other sheets ignored: ' + skippedSheets.join(', ') + '.');
+          frShowImportModal(result, name, warnings);
+        } catch (err) {
+          alert('That Excel file could not be read (' + (err && err.message ? err.message : 'unknown error') + '). Saving it as CSV usually fixes it.');
+        }
+      };
+      rd.onerror = function() { alert('That file could not be read. Try again or save it as CSV.'); };
+      rd.readAsArrayBuffer(file);
+    }, function() {
+      alert('The Excel reader could not be downloaded, so .xlsx files cannot be read right now. Save the sheet as CSV and import that instead.');
+    });
+    return;
+  }
+
+  var rd2 = new FileReader();
+  rd2.onload = function(e) {
+    var text = String(e.target.result || '');
+    var rows = frParseDelimited(text, frSniffDelim(text));
+    var warnings = [];
+    var result = frRowsToModules(rows, warnings);
+    if (!result || !result.modules.length) { frImportFailed(name); return; }
+    frShowImportModal(result, name, warnings);
+  };
+  rd2.onerror = function() { alert('That file could not be read. Try again or re-save it as CSV.'); };
+  rd2.readAsText(file);
+}
+
+function frImportFailed(name) {
+  alert('No feature rows were found in "' + name + '".\n\n' +
+        'The file needs a header row with at least a Feature column, plus any of Module, Complexity, Notes, Hours. ' +
+        'Click "Sample CSV" to get a file in the expected shape.');
+}
+
+/* ── Review modal ──────────────────────────────────────────── */
+function frShowImportModal(result, fileName, warnings) {
+  frImportPending = result;
+  var totalHours = 0, featureCount = 0;
+  result.modules.forEach(function(mod) {
+    mod.rows.forEach(function(r) { featureCount++; totalHours += (r.hours || 0); });
+  });
+
+  document.getElementById('frImportTitle').textContent = 'Review import — ' + fileName;
+
+  document.getElementById('frImportStats').innerHTML =
+    '<div class="fr-imp-stat"><div class="fr-imp-stat-num">' + result.modules.length + '</div><div class="fr-imp-stat-lbl">Modules</div></div>' +
+    '<div class="fr-imp-stat"><div class="fr-imp-stat-num">' + featureCount + '</div><div class="fr-imp-stat-lbl">Features</div></div>' +
+    '<div class="fr-imp-stat"><div class="fr-imp-stat-num">' + (Math.round(totalHours * 100) / 100) + '</div><div class="fr-imp-stat-lbl">Total hours</div></div>';
+
+  var warnBox = document.getElementById('frImportWarnings');
+  if (warnings && warnings.length) {
+    warnBox.innerHTML = '<div class="fr-imp-warn"><ul>' +
+      warnings.map(function(w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>';
+  } else {
+    warnBox.innerHTML = '';
+  }
+
+  var html = '', rendered = 0, cap = 300, truncated = false;
+  result.modules.forEach(function(mod) {
+    var mh = 0;
+    mod.rows.forEach(function(r) { mh += (r.hours || 0); });
+    html += '<tr class="fr-imp-mod-row"><td colspan="3">' + esc(mod.name) + ' <span class="fr-imp-muted" style="font-weight:400">· ' +
+            mod.rows.length + ' feature' + (mod.rows.length === 1 ? '' : 's') + '</span></td>' +
+            '<td class="right">' + (Math.round(mh * 100) / 100) + '</td></tr>';
+    mod.rows.forEach(function(r) {
+      if (rendered >= cap) { truncated = true; return; }
+      rendered++;
+      html += '<tr>' +
+        '<td>' + esc(r.feature) + '</td>' +
+        '<td>' + esc(r.complexity) + '</td>' +
+        '<td class="' + (r.notes ? '' : 'fr-imp-muted') + '">' + (r.notes ? esc(r.notes) : '—') + '</td>' +
+        '<td class="right">' + (r.hours != null ? r.hours : '<span class="fr-imp-muted">—</span>') + '</td>' +
+      '</tr>';
+    });
+  });
+  if (truncated) html += '<tr><td colspan="4" class="fr-imp-muted">Preview stops at ' + cap + ' rows. All rows will still be imported.</td></tr>';
+  document.getElementById('frImportPreviewBody').innerHTML = html;
+
+  var existing = document.querySelectorAll('#frModulesContainer .fr-module').length;
+  var modeSel = document.getElementById('frImportMode');
+  modeSel.options[0].text = existing ? 'Replace all current modules (' + existing + ')' : 'Replace all current modules';
+  modeSel.value = 'replace';
+
+  document.getElementById('frImportApplyBtn').textContent =
+    'Import ' + result.modules.length + ' module' + (result.modules.length === 1 ? '' : 's');
+
+  document.getElementById('frImportModal').classList.add('open');
+}
+
+function frCloseImportModal() {
+  document.getElementById('frImportModal').classList.remove('open');
+  frImportPending = null;
+}
+
+function frApplyImport() {
+  if (!frImportPending) { frCloseImportModal(); return; }
+  var mode = (document.getElementById('frImportMode') || {}).value || 'replace';
+  var container = document.getElementById('frModulesContainer');
+  if (mode === 'replace' && container) container.innerHTML = '';
+
+  var count = 0;
+  frImportPending.modules.forEach(function(mod) {
+    frAddModule({ name: mod.name, rows: mod.rows });
+    count += mod.rows.length;
+  });
+
+  var mods = frImportPending.modules.length;
+  frCloseImportModal();
+  frRecalcModules();
+  showStatus('Imported ' + count + ' feature' + (count === 1 ? '' : 's') + ' across ' + mods + ' module' + (mods === 1 ? '' : 's'));
+}
+
+/* ── CSV out: sample template + round-trip export ──────────── */
+function frCsvCell(v) {
+  var s = String(v == null ? '' : v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function frCsvDownload(filename, rows) {
+  var text = rows.map(function(r) { return r.map(frCsvCell).join(','); }).join('\r\n');
+  var blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+function frDownloadImportTemplate() {
+  frCsvDownload('fr-quotation-import-template.csv', [
+    ['Module', 'Feature', 'Complexity', 'Notes', 'Hours'],
+    ['Payroll Integration', 'Custom payroll register export', 'High', 'Needs mapping to client GL codes', 8],
+    ['Payroll Integration', 'Automated post-payroll email', 'Medium', '', 4],
+    ['Payroll Integration', 'UAT support', 'Low', 'Two rounds of feedback', 3],
+    ['Timekeeping', 'Biometric device sync', 'High', 'Vendor API dependency', 12],
+    ['Timekeeping', 'Overtime approval workflow', 'Medium', '', 6],
+    ['', 'Repeat the module name or leave blank to continue the module above', 'Low', 'This row is just a hint — delete it', 1]
+  ]);
+  showStatus('Sample CSV downloaded');
+}
+
+function frExportModulesCsv() {
+  var container = document.getElementById('frModulesContainer');
+  var rows = [['Module', 'Feature', 'Complexity', 'Notes', 'Hours']];
+  if (container) {
+    container.querySelectorAll('.fr-module').forEach(function(modEl) {
+      var mid = modEl.id.replace('frmod-', '');
+      var nm = (document.getElementById('frmodname-' + mid) || {}).value || '';
+      var body = document.getElementById('frmodbody-' + mid);
+      if (body) body.querySelectorAll('tr').forEach(function(tr) {
+        var inp = tr.querySelectorAll('input');
+        var sel = tr.querySelector('select');
+        rows.push([
+          nm,
+          inp[0] ? inp[0].value : '',
+          sel ? sel.value : '',
+          inp[1] ? inp[1].value : '',
+          inp[2] && inp[2].value !== '' ? inp[2].value : ''
+        ]);
+      });
+    });
+  }
+  if (rows.length === 1) { showStatus('Nothing to export yet — add a module first'); return; }
+  var client = ((document.getElementById('frClientName') || {}).value || 'modules').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  frCsvDownload('fr-' + client + '-modules.csv', rows);
+  showStatus('Exported ' + (rows.length - 1) + ' feature row(s)');
+}
+
 function frRecalcModules() {
   var rate = parseFloat((document.getElementById('frHourlyRate')||{}).value) || 0;
   var sym = frCurrSym();
@@ -2705,7 +3247,39 @@ window.addEventListener('afterprint', function() {
 });
 document.getElementById('saveModal').addEventListener('click', function(e) { if (e.target === this) closeSaveModal(); });
 document.getElementById('frSaveModal').addEventListener('click', function(e) { if (e.target === this) closeFrSaveModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSaveModal(); closeFrSaveModal(); } });
+document.getElementById('frImportModal').addEventListener('click', function(e) { if (e.target === this) frCloseImportModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSaveModal(); closeFrSaveModal(); frCloseImportModal(); } });
+
+// ── Drag & drop onto the import bar ───────────────────────────
+(function() {
+  var bar = document.getElementById('frImportBar');
+  if (!bar) return;
+  ['dragenter', 'dragover'].forEach(function(ev) {
+    bar.addEventListener(ev, function(e) {
+      e.preventDefault(); e.stopPropagation();
+      bar.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'dragend'].forEach(function(ev) {
+    bar.addEventListener(ev, function(e) {
+      e.preventDefault(); e.stopPropagation();
+      bar.classList.remove('dragover');
+    });
+  });
+  bar.addEventListener('drop', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    bar.classList.remove('dragover');
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) frHandleImportFile(f);
+  });
+  // Don't let a stray drop navigate away from the page
+  ['dragover', 'drop'].forEach(function(ev) {
+    window.addEventListener(ev, function(e) {
+      if (bar.contains(e.target)) return;
+      e.preventDefault();
+    });
+  });
+})();
 </script>
 </body>
 </html>
