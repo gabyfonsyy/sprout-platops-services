@@ -541,6 +541,13 @@ textarea { resize: vertical; min-height: 60px; }
 }
 .fr-imp-stat-num { font-size: 18px; font-weight: 600; color: var(--primary-dark); line-height: 1.2; }
 .fr-imp-stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); }
+.fr-imp-rate {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  background: var(--primary-light); border: 1.5px solid var(--primary);
+  border-radius: 8px; padding: 8px 12px; font-size: 12px;
+  color: var(--primary-dark); cursor: pointer;
+}
+.fr-imp-rate input { width: 14px; height: 14px; accent-color: var(--primary); cursor: pointer; }
 .fr-imp-warn {
   background: var(--mango-lt); border: 1.5px solid #f5d78a; border-radius: 8px;
   padding: 8px 12px; margin-bottom: 12px; font-size: 11.5px; color: #8a5300;
@@ -1484,6 +1491,10 @@ textarea { resize: vertical; min-height: 60px; }
       <select id="frImportSheetSel" onchange="frSelectImportSheet(this.value)"></select>
     </div>
     <div id="frImportStats" class="fr-imp-stats"></div>
+    <label id="frImportRateWrap" class="fr-imp-rate" style="display:none">
+      <input type="checkbox" id="frImportRateChk" checked/>
+      <span id="frImportRateTxt"></span>
+    </label>
     <div id="frImportWarnings"></div>
     <div class="fr-imp-scroll">
       <table class="fr-imp-table">
@@ -2697,6 +2708,17 @@ var FR_IMP_ALIASES = [
 
 var FR_IMP_SKIP_LABELS = ['total','totals','subtotal','sub total','grand total','total hours','total cost','sum','overall','overall total'];
 
+/* A row whose first filled cell is one of these ends the scope table.
+   Anything below it (complexity tallies, legends, sign-off blocks) is
+   summary, not scope, so reading stops there. */
+var FR_IMP_STOP_LABELS = [
+  'complexity summary', 'summary of complexity', 'complexity breakdown', 'complexity count',
+  'summary', 'hours summary', 'effort summary', 'breakdown', 'legend', 'key'
+];
+
+/* Tally lines such as "High: 4", "Medium - 6", or a bare "Low" beside a count. */
+var FR_IMP_TALLY_RE = /^\s*(high|medium|med|low)\s*[:\-\u2013=]/i;
+
 var FR_XLSX_SRCS = [
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'
@@ -2791,9 +2813,15 @@ var FR_CX_TSHIRT = {
 };
 
 // tshirt = true when the source column is sized S / M / L rather than High / Medium / Low
+/* Placeholders meaning "not decided yet". These default to Medium without
+   a warning — only genuinely unrecognised values get flagged. */
+var FR_CX_UNKNOWN = ['tbd', 'tba', 'tbc', 'na', 'none', 'unknown', 'undetermined',
+                     'undecided', 'pending', 'unsure', 'notset', 'blank'];
+
 function frNormComplexity(v, tshirt) {
   var s = frImpNorm(v).replace(/\s+/g, '');
-  if (!s) return { value: 'Medium', matched: true };
+  // Empty after normalising covers blanks and marks like "?", "-", "—", "n/a"
+  if (!s || FR_CX_UNKNOWN.indexOf(s) > -1) return { value: 'Medium', matched: true };
   if (tshirt && FR_CX_TSHIRT[s]) return { value: FR_CX_TSHIRT[s], matched: true };
   if (FR_CX_MAP[s]) return { value: FR_CX_MAP[s], matched: true };
   if (s.indexOf('high') > -1) return { value: 'High', matched: true };
@@ -2854,12 +2882,52 @@ function frDetectHeader(rows) {
   return best;
 }
 
+/* An "Hourly rate" line, usually sitting in the summary block under the
+   scope table. Returned for confirmation in the review modal, never
+   applied silently. */
+var FR_IMP_RATE_LABELS = ['hourly rate', 'hourly rate php', 'rate per hour', 'hourly cost', 'rate hour', 'hourly'];
+
+function frImpFindRate(rows) {
+  for (var r = 0; r < rows.length; r++) {
+    var row = rows[r] || [];
+    var filled = [];
+    for (var c = 0; c < row.length; c++) {
+      var v = String(row[c] == null ? '' : row[c]).trim();
+      if (v) filled.push(v);
+    }
+    if (filled.length < 2 || filled.length > 3) continue;
+    if (FR_IMP_RATE_LABELS.indexOf(frImpNorm(filled[0])) < 0) continue;
+    for (var i = 1; i < filled.length; i++) {
+      var n = frNormHours(filled[i]);
+      if (n != null && n > 0) return n;
+    }
+  }
+  return null;
+}
+
+/* True when the row carries a section label and nothing that looks like
+   feature data — i.e. it sits alone, or beside counts / complexity words
+   as in a "Complexity Summary | High | Medium | Low" header. */
+function frImpIsBlockHeader(row, lead) {
+  var others = [];
+  for (var i = 0; i < row.length; i++) {
+    var v = String(row[i] == null ? '' : row[i]).trim();
+    if (v && v !== lead) others.push(v);
+  }
+  if (others.length <= 1) return true;
+  return others.every(function(v) {
+    var n = frImpNorm(v);
+    return /^[0-9.,%]+$/.test(v) || n === 'high' || n === 'medium' || n === 'med' || n === 'low' || n === 'count' || n === 'total';
+  });
+}
+
 /* ── Rows → modules ────────────────────────────────────────── */
 function frRowsToModules(rows, warnings) {
   var head = frDetectHeader(rows);
   if (!head) return null;
   var m = head.map, order = [], byKey = {};
   var lastModule = '', skippedNoFeature = 0, skippedTotals = 0, noHours = 0, badCx = 0, dataRows = 0;
+  var stoppedAt = '', stoppedRows = 0, tallyRows = 0;
   var cxHeader = m.complexity != null ? frImpNorm((rows[head.index] || [])[m.complexity]) : '';
   var cxIsTshirt = /shirt|size/.test(cxHeader);
 
@@ -2873,6 +2941,34 @@ function frRowsToModules(rows, warnings) {
     var row = rows[r] || [];
     var filled = row.filter(function(c) { return String(c || '').trim() !== ''; }).length;
     if (!filled) continue;
+
+    // First filled cell of the row, whichever column it sits in — summary
+    // blocks are not always aligned to the Module or Feature column.
+    var lead = '';
+    for (var c0 = 0; c0 < row.length; c0++) {
+      var cv = String(row[c0] == null ? '' : row[c0]).trim();
+      if (cv) { lead = cv; break; }
+    }
+    var leadNorm = frImpNorm(lead);
+
+    // End of the scope table — everything below is a summary block.
+    // Guarded so a real row that happens to start with one of these words
+    // (a module actually named "Summary", say) doesn't halt the import:
+    // the row has to look like a lone block header rather than data.
+    if (FR_IMP_STOP_LABELS.indexOf(leadNorm) > -1 && frImpIsBlockHeader(row, lead)) {
+      stoppedAt = lead;
+      for (var rr = r + 1; rr < rows.length; rr++) {
+        var after = rows[rr] || [];
+        if (after.filter(function(c) { return String(c || '').trim() !== ''; }).length) stoppedRows++;
+      }
+      break;
+    }
+
+    // Stray complexity tallies ("High: 4") with no surrounding block header
+    if (filled <= 2 && (FR_IMP_TALLY_RE.test(lead) || leadNorm === 'high' || leadNorm === 'medium' || leadNorm === 'low')) {
+      tallyRows++;
+      continue;
+    }
 
     var modRaw = cell(row, m.module);
     var feature = cell(row, m.feature);
@@ -2899,6 +2995,11 @@ function frRowsToModules(rows, warnings) {
     byKey[key].rows.push({ feature: feature, complexity: cx.value, notes: notes, hours: hours });
   }
 
+  if (stoppedAt) {
+    warnings.push('Stopped at the "' + stoppedAt + '" row' +
+                  (stoppedRows ? ' — ' + stoppedRows + ' row(s) below it were left out' : '') + '.');
+  }
+  if (tallyRows) warnings.push('Skipped ' + tallyRows + ' complexity tally row(s).');
   if (m.module == null) warnings.push('No Module column found — every feature was placed in one module.');
   if (skippedNoFeature) warnings.push('Skipped ' + skippedNoFeature + ' row(s) with no feature name.');
   if (skippedTotals) warnings.push('Skipped ' + skippedTotals + ' total/subtotal row(s).');
@@ -2911,6 +3012,7 @@ function frRowsToModules(rows, warnings) {
     rowCount: dataRows,
     headerRow: head.index + 1,
     score: head.score,
+    hourlyRate: frImpFindRate(rows),
     map: m
   };
 }
@@ -3139,6 +3241,21 @@ function frShowImportModal(result, fileName, warnings) {
   document.getElementById('frImportApplyBtn').textContent =
     'Import ' + result.modules.length + ' module' + (result.modules.length === 1 ? '' : 's');
 
+  var rateWrap = document.getElementById('frImportRateWrap');
+  var sheetRate = result.hourlyRate;
+  var currentRate = parseFloat((document.getElementById('frHourlyRate') || {}).value) || 0;
+  if (sheetRate && sheetRate !== currentRate) {
+    document.getElementById('frImportRateTxt').innerHTML =
+      'Also set the hourly rate to <strong>' + fmt(sheetRate) + '</strong> — found in the sheet' +
+      (currentRate ? ', replacing ' + fmt(currentRate) : '');
+    document.getElementById('frImportRateChk').checked = true;
+    rateWrap.style.display = '';
+    rateWrap.setAttribute('data-rate', sheetRate);
+  } else {
+    rateWrap.style.display = 'none';
+    rateWrap.removeAttribute('data-rate');
+  }
+
   document.getElementById('frImportModal').classList.add('open');
   frRenderSheetPicker();
 }
@@ -3160,10 +3277,20 @@ function frApplyImport() {
     count += mod.rows.length;
   });
 
+  // Opt-in hourly rate from the sheet
+  var rateWrap = document.getElementById('frImportRateWrap');
+  var rateApplied = 0;
+  if (rateWrap && rateWrap.style.display !== 'none' && document.getElementById('frImportRateChk').checked) {
+    var rate = parseFloat(rateWrap.getAttribute('data-rate')) || 0;
+    var rateEl = document.getElementById('frHourlyRate');
+    if (rate && rateEl) { rateEl.value = rate; rateApplied = rate; }
+  }
+
   var mods = frImportPending.modules.length;
   frCloseImportModal();
   frRecalcModules();
-  showStatus('Imported ' + count + ' feature' + (count === 1 ? '' : 's') + ' across ' + mods + ' module' + (mods === 1 ? '' : 's'));
+  showStatus('Imported ' + count + ' feature' + (count === 1 ? '' : 's') + ' across ' + mods + ' module' + (mods === 1 ? '' : 's') +
+             (rateApplied ? ' at ' + fmt(rateApplied) + '/hr' : ''));
 }
 
 /* ══════════════════════════════════════════════════════════════
